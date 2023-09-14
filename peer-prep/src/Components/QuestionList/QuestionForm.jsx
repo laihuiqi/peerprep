@@ -15,28 +15,28 @@ export const QuestionForm = ({qId, addQuestion, setAddQ}) => {
   }
   return (
     <form className = "container" onSubmit={handleSubmit(setAddQ, addQuestion)}>
-      <div className="q-header">
-        <div className="q-id">#{qId}</div>
-        <input type="text" className="q-title q-input" 
+      <div className="q-form-header">
+        <div className="q-form-id">#{qId}</div>
+        <input type="text" className="q-form-title q-form-input" 
         placeholder='Question Title' onChange = {
           (e) => setTitle(e.target.value)
         }/>
       </div>
        
-        <div className="q-tags">
-          <input type="text" className="q-tag q-input" 
+        <div className="q-form-tags">
+          <input type="text" className="q-form-tag q-form-input" 
           placeholder = 'Difficulty'
           onChange = {
             (e) => setDifficulty(e.target.value)
           }/>
-          <input type="text" className="q-tag q-input" 
+          <input type="text" className="q-form-tag q-form-input" 
           placeholder = 'Topic'
           onChange = {
             (e) => setTopic(e.target.value)
           }
           />
         </div>
-        <textarea type="text" className="q-description q-input" 
+        <textarea type="text" className="q-form-description q-form-input" 
         placeholder = "Question description"
         onChange = {
           (e) => setDescription(e.target.value)
