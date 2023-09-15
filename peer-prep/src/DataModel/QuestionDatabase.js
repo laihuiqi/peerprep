@@ -1,4 +1,4 @@
-import QuestionModel from "./QuestionModel";
+// A Class that stores and encapsulates Database Features
 
 class QuestionDatabase {
     constructor() {
@@ -49,6 +49,10 @@ class QuestionDatabase {
         }
 
         return false;
+    }
+
+    toJSON() {
+        return this.database;
     }
 }
 
