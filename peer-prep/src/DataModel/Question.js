@@ -1,6 +1,6 @@
 // Class that stores and encapsulates the Question and its related fields
 
-class QuestionModel {
+class Question {
     constructor(id, title, description, complexity, category) {
       this.id = id;
       this.title = title;
@@ -24,6 +24,16 @@ class QuestionModel {
     updateQuestionCategory(newQuestionCategory) {
         this.category = newQuestionCategory;
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            complexity: this.complexity,
+            category: this.category,
+        };
+    }
 }
   
-export default QuestionModel;
+export default Question;
