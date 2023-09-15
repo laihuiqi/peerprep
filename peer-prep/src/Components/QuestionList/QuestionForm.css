@@ -1,3 +1,11 @@
+.form-container {
+  display: flex;
+  margin: auto;
+  width: 600px;
+  gap: 20px;
+  align-items: center;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -79,3 +87,8 @@
     font-size: 19px;
     cursor: pointer;
   }
+
+  .ghost-btn img {
+    width: 40px;
+    visibility: hidden;
+}

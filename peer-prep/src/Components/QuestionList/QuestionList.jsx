@@ -30,8 +30,10 @@ export const Questions = () => {
       {isAddQ === false ? <div></div> : <QuestionForm qId = {qId} addQuestion = {addQuestion}
       setAddQ = {setAddQ}/>}
       <div className="add-q-btn" onClick = {() => {
-      setQId(qId + 1);
-      setAddQ(true);
+        if (!isAddQ) {
+          setQId(qId + 1);
+          setAddQ(true);
+        }
     }}> Add question</div>
     </div>
     
