@@ -5,6 +5,10 @@ class QuestionDatabase {
         this.database = new Map();
     }
 
+    setDatabase(database) {
+        this.database = database;
+    }
+
     addQuestion(questionToAdd) {
         if (!this.isDuplicateQuestion(questionToAdd)) {
             this.database.set(questionToAdd.id, questionToAdd);
@@ -36,7 +40,7 @@ class QuestionDatabase {
             return true;
         }
 
-        questionList = this.getAllQuestions();
+        var questionList = this.getAllQuestions();
 
         for (var i = 0; i < questionList.length; i++) {
             if (questionToCheck.title === questionList[i].title) {

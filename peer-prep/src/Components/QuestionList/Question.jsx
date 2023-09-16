@@ -22,8 +22,8 @@ export const Question = ({question, i}) => {
         </div>
         <div className= {selected === i ? "q-content-show": "q-content"}>
             <div className="q-tags">
-                <div className="q-tag">{question.difficulty}</div>
-                <div className="q-tag">{question.topic}</div>
+                <div className="q-tag">{question.complexity}</div>
+                <div className="q-tag">{question.category}</div>
             </div>
             <div className="q-description">{question.description}</div>
         </div>

@@ -1,15 +1,23 @@
 import QuestionDatabase from "../DataModel/QuestionDatabase";
 
-function updateQuestionDatabase(updatedDatabase) {
-    localStorage.setItem("questions", updatedDatabase)
+function updateLocalQuestionDatabase(updatedDatabase) {
+    const data = JSON.stringify(Array.from(updatedDatabase.database.entries()));
+    localStorage.setItem("questions", data);
 }
 
 function retrieveQuestionDatabase() {
-    return localStorage.getItem("questions");
+    let questionDatabase = new QuestionDatabase();
+    questionDatabase.setDatabase(new Map(JSON.parse(localStorage.getItem("questions"))))
+
+    return questionDatabase;
 }
 
 function setupQuestionDatabase() {
-    localStorage.setItem("questions", QuestionDatabase());
+    var data = localStorage.getItem("questions");
+
+    if(!data) {
+        localStorage.setItem("questions", new QuestionDatabase())
+    };
 }
 
-export { setupQuestionDatabase, retrieveQuestionDatabase, updateQuestionDatabase };
+export { setupQuestionDatabase, retrieveQuestionDatabase, updateLocalQuestionDatabase };
