@@ -9,6 +9,10 @@ class QuestionDatabase {
         this.database = database;
     }
 
+    clearDatabase() {
+        this.database = new Map();
+    }
+
     addQuestion(questionToAdd) {
         if (!this.isDuplicateQuestion(questionToAdd)) {
             this.database.set(questionToAdd.id, questionToAdd);

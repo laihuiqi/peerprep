@@ -18,18 +18,45 @@ export const Questions = () => {
     return i
   }
 
+  // Add a new Question
   const addQuestion = (qTitle, qDifficulty, qTopic, qDescription) => {
     // Add in Database and Upload into Storage
     let newQuestion = new QuestionModel(qId, qTitle, qDescription, qDifficulty, qTopic);
     database.addQuestion(newQuestion);
-    updateLocalQuestionDatabase(database);
-
-    // Update States
-    setQs(Array.from(database.database));
-    setQId(Array.from(database.database).length);
+    
+    updateLocalDatabase();
+    updateStates();
 
     // setQs([...qs, {id: qId, title: qTitle, difficulty: qDifficulty,
     //   topic: qTopic, description: qDescription}]);
+  }
+
+  // Delete a Question
+  const deleteQuestion = (questionId) => {
+    database.deleteQuestion(questionId);
+
+    updateLocalDatabase();
+    updateStates();
+  }
+
+  // Update an existing Question
+  const updateQuestion = (qId, qTitle, qDescription, qDifficulty, qTopic) => {
+    let updatedQuestion = new QuestionModel(qId, qTitle, qDescription, qDifficulty, qTopic);
+    database.updateQuestion(updatedQuestion);
+
+    updateLocalDatabase();
+    updateStates();
+  }
+
+  const updateLocalDatabase = () => {
+    // Updating Database in Local Storageß
+    updateLocalQuestionDatabase(database);
+  }
+
+  const updateStates = () => {
+    // Update States
+    setQs(Array.from(database.database));
+    setQId(Array.from(database.database).length);
   }
 
   // To load data on mount
