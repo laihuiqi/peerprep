@@ -33,6 +33,7 @@ export const Question = ({question, i}) => {
            <span> {selected === i ? "-" : "+"}</span>
         </div>
         <div className= {selected === i ? "q-content-show": "q-content"}>
+<<<<<<< HEAD
             <div className="q-tag-container">
                 <div className="q-tags">
                     <div className= {tagClass}>{question.difficulty}</div>
@@ -41,6 +42,11 @@ export const Question = ({question, i}) => {
                 <div className="q-edit">
                     <img src = {edit_icon} alt=""/>
                 </div>
+=======
+            <div className="q-tags">
+                <div className="q-tag">{question.complexity}</div>
+                <div className="q-tag">{question.category}</div>
+>>>>>>> 2d10aa60338d872e3fe12c04076ef7f7dbda4179
             </div>
             
             <div className="q-description">{question.description}</div>
