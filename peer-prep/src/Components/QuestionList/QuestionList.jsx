@@ -3,7 +3,7 @@ import { QuestionForm } from './QuestionForm'
 import { Question } from './Question'
 import './QuestionList.css'
 
-import QuestionModel from '../../DataModel/Question'
+import QuestionModel from '../../DataModel/QuestionModel'
 import { setupQuestionDatabase, retrieveQuestionDatabase, updateLocalQuestionDatabase } from "../../Utility/localStorage"
 
 export const Questions = () => {
@@ -14,9 +14,7 @@ export const Questions = () => {
   const [qId, setQId] = useState(0);
   const [isAddQ, setAddQ] = useState(false);
   const [qs, setQs] = useState([])
-  const toggle = (i) => {
-    return i
-  }
+ 
 
   // Add a new Question
   const addQuestion = (qTitle, qDifficulty, qTopic, qDescription) => {
@@ -64,20 +62,18 @@ export const Questions = () => {
     setQs(Array.from(database.database));
     setQId(Array.from(database.database).length);
   }, [])
-  
-  useEffect(() => console.log(qs), [qs]);
 
   return (
     
     <div className="q-wrapper">
       <div className="accordion">
         {qs.map((q, i) => (
-          <Question key = {q[0]} question = {q[1]} i = {i}/>
+          <Question key = {q[0]} question = {q[1]} i = {i} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/>
         ))}
       </div>
 
       {isAddQ === false ? <div></div> : 
-                          <QuestionForm qId = {qId} addQuestion = {addQuestion} setAddQ = {setAddQ}/>}
+                          <QuestionForm qId = {qId} addQuestion = {addQuestion} setAddQ = {setAddQ} setQId = {setQId}/>}
       <div className="add-q-btn" onClick = {() => {
         if (!isAddQ) {
           setQId(qId + 1);

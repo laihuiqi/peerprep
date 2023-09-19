@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
 
-export const QuestionForm = ({qId, addQuestion, setAddQ}) => {
+export const QuestionForm = ({qId, addQuestion, setAddQ, setQId}) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [topic, setTopic] = useState("");
@@ -42,8 +42,11 @@ export const QuestionForm = ({qId, addQuestion, setAddQ}) => {
           onChange = {
             (e) => setDescription(e.target.value)
           }/>
-
-          <button type = "submit" className="submit-btn">Submit</button>
+          <div className="btn-container">
+            <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); setQId(qId - 1)}}>Cancel</button>
+            <button type = "submit" className="submit-btn">Submit</button>
+          </div>
+          
       </form>
       <div className="ghost-btn">
         <img src= {delete_icon} alt=""/>

@@ -1,6 +1,6 @@
 // Class that stores and encapsulates the Question and its related fields
 
-class Question {
+class QuestionModel {
     constructor(id, title, description, complexity, category) {
       this.id = id;
       this.title = title;
@@ -36,4 +36,4 @@ class Question {
     }
 }
   
-export default Question;
+export default QuestionModel;
