@@ -7,7 +7,7 @@ function updateLocalQuestionDatabase(updatedDatabase) {
 
 function retrieveQuestionDatabase() {
     let questionDatabase = new QuestionDatabase();
-    console.log(localStorage.getItem("questions"));
+
     questionDatabase.setDatabase(new Map(JSON.parse(localStorage.getItem("questions"))))
     return questionDatabase;
 }

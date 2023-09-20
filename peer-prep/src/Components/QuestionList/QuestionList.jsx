@@ -20,30 +20,39 @@ export const Questions = () => {
   const addQuestion = (qTitle, qDifficulty, qTopic, qDescription) => {
     // Add in Database and Upload into Storage
     let newQuestion = new QuestionModel(qId, qTitle, qDescription, qDifficulty, qTopic);
-    database.addQuestion(newQuestion);
+    let isAddedSuccessfully = database.addQuestion(newQuestion);
     
     updateLocalDatabase();
     updateStates();
 
-    // setQs([...qs, {id: qId, title: qTitle, difficulty: qDifficulty,
-    //   topic: qTopic, description: qDescription}]);
+    console.log("Is Additon Successful: " + isAddedSuccessfully);
+
+    return isAddedSuccessfully;
   }
 
   // Delete a Question
   const deleteQuestion = (questionId) => {
-    database.deleteQuestion(questionId);
+    let isDeletedSuccessfully = database.deleteQuestion(questionId);
 
     updateLocalDatabase();
     updateStates();
+
+    console.log("Is Deletion Successful: " + isDeletedSuccessfully);
+
+    return isDeletedSuccessfully;
   }
 
   // Update an existing Question
   const updateQuestion = (qId, qTitle, qDescription, qDifficulty, qTopic) => {
     let updatedQuestion = new QuestionModel(qId, qTitle, qDescription, qDifficulty, qTopic);
-    database.updateQuestion(updatedQuestion);
+    let isUpdateSuccessful = database.updateQuestion(updatedQuestion);
 
     updateLocalDatabase();
     updateStates();
+
+    console.log("Is Update Successful: " + isUpdateSuccessful);
+
+    return isUpdateSuccessful;
   }
 
   const updateLocalDatabase = () => {
@@ -54,7 +63,7 @@ export const Questions = () => {
   const updateStates = () => {
     // Update States
     setQs(Array.from(database.database));
-    setQId(Array.from(database.database).length == 0 ? 0 : Array.from(database.database).sort((a, b) => a[0] < b[0]).slice(-1)[0][0]);
+    setQId(Array.from(database.database).length === 0 ? 0 : Array.from(database.database).sort((a, b) => a[0] < b[0]).slice(-1)[0][0]);
   }
 
   // To load data on mount

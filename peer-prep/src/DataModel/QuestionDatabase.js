@@ -14,19 +14,32 @@ class QuestionDatabase {
     }
 
     addQuestion(questionToAdd) {
-        if (!this.isDuplicateQuestion(questionToAdd)) {
+        if (!this.isDuplicateQuestion(questionToAdd, true)) {
             this.database.set(questionToAdd.id, questionToAdd);
+
+            return true;
         }
+
+        return false
     }
 
     deleteQuestion(questionId) {
         if (this.database.has(questionId)) {
             this.database.delete(questionId);
+
+            return true;
         }
+
+        return false;
     }
 
     updateQuestion(questionToUpdate) {
-        this.database.set(questionToUpdate.id, questionToUpdate);
+        if (!this.isDuplicateQuestion(questionToUpdate, false)) {
+            this.database.set(questionToUpdate.id, questionToUpdate);
+            return true;
+        }
+
+        return false;
     }
 
     getAllQuestions() {
@@ -39,14 +52,19 @@ class QuestionDatabase {
         return questionList;
     }
 
-    isDuplicateQuestion(questionToCheck) {
-        if (this.database.has(questionToCheck.id)) {
+    isDuplicateQuestion(questionToCheck, toCheckId) {
+        // Ensure Unique ID when adding questions
+        if (this.database.has(questionToCheck.id) && toCheckId) {
             return true;
         }
 
         var questionList = this.getAllQuestions();
 
         for (var i = 0; i < questionList.length; i++) {
+            if (questionToCheck.id === questionList[i].id) {
+                continue;
+            }
+
             if (questionToCheck.title === questionList[i].title) {
                 return true;
             }
