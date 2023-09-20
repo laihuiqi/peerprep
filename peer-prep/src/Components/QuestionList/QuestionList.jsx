@@ -47,20 +47,19 @@ export const Questions = () => {
   }
 
   const updateLocalDatabase = () => {
-    // Updating Database in Local Storageß
+    // Updating Database in Local Storage
     updateLocalQuestionDatabase(database);
   }
 
   const updateStates = () => {
     // Update States
     setQs(Array.from(database.database));
-    setQId(Array.from(database.database).length);
+    setQId(Array.from(database.database).length == 0 ? 0 : Array.from(database.database).sort((a, b) => a[0] < b[0]).slice(-1)[0][0]);
   }
 
   // To load data on mount
   useEffect(() => {
-    setQs(Array.from(database.database));
-    setQId(Array.from(database.database).length);
+    updateStates();
   }, [])
 
   return (
@@ -68,7 +67,7 @@ export const Questions = () => {
     <div className="q-wrapper">
       <div className="accordion">
         {qs.map((q, i) => (
-          <Question key = {q[0]} question = {q[1]} i = {i} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/>
+          <Question key = {q[0]} question = {q[1]} i = {q[0]} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/>
         ))}
       </div>
 
