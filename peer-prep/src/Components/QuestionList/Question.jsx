@@ -38,7 +38,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                     <div className={isEdit ? "q-form-id": "q-id"}>#{question.id}</div>
                     {isEdit === true? <input type="text" className="q-form-title q-form-input" defaultValue = {question.title}
                     onChange = {(e) => {setTitle(e.target.value)}}/> : 
-                    <div className="q-title">{question.title}</div>}
+                    <div className={selected === i ? "q-title-show": "q-title"}>{question.title}</div>}
                 </div>
                 <span> {selected === i ? "-" : "+"}</span>
             </div>
