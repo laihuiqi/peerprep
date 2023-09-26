@@ -14,7 +14,12 @@
    ```
 3. A UI management site will be hosted on `http://localhost:15672/`.
 
-Start the microservice using `npm start`.
+Start the microservice by (In peerprep directory):
+```
+cd peer-prep\src\backend\matching-service
+npm install
+npm start
+```
 
 ### For backend testing:
 1. Finding a match:
