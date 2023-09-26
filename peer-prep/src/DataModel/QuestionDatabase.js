@@ -1,85 +1,100 @@
 // A Class that stores and encapsulates Database Features
 
 class QuestionDatabase {
-    constructor() {
-        this.database = new Map();
+  static DUPLICATE_QUESTION_MESSAGE = "The Entered Question Already Exists";
+
+  constructor() {
+    this.database = new Map();
+  }
+
+  setDatabase(database) {
+    this.database = database;
+  }
+
+  clearDatabase() {
+    this.database = new Map();
+  }
+
+  addQuestion(questionToAdd) {
+    const emptyFields = questionToAdd.isQuestionValid();
+
+    if (emptyFields.length !== 0) {
+      return emptyFields; // Question Has Empty Fields
     }
 
-    setDatabase(database) {
-        this.database = database;
+    if (!this.isDuplicateQuestion(questionToAdd, true)) {
+      this.database.set(questionToAdd.id, questionToAdd);
+
+      return []; // Implies Question Added Successfully
     }
 
-    clearDatabase() {
-        this.database = new Map();
+    return [QuestionDatabase.DUPLICATE_QUESTION_MESSAGE]; // Question is Duplicate
+  }
+
+  deleteQuestion(questionId) {
+    if (this.database.has(questionId)) {
+      this.database.delete(questionId);
+
+      return true;
     }
 
-    addQuestion(questionToAdd) {
-        if (!this.isDuplicateQuestion(questionToAdd, true)) {
-            this.database.set(questionToAdd.id, questionToAdd);
+    return false;
+  }
 
-            return true;
-        }
+  updateQuestion(questionToUpdate) {
+    const emptyFields = questionToUpdate.isQuestionValid();
 
-        return false
+    if (emptyFields.length !== 0) {
+      return emptyFields; // Question Has Empty Fields
     }
 
-    deleteQuestion(questionId) {
-        if (this.database.has(questionId)) {
-            this.database.delete(questionId);
+    if (!this.isDuplicateQuestion(questionToUpdate, false)) {
+      this.database.set(questionToUpdate.id, questionToUpdate);
 
-            return true;
-        }
-
-        return false;
+      return []; // Implies Question Updated Successfully
     }
 
-    updateQuestion(questionToUpdate) {
-        if (!this.isDuplicateQuestion(questionToUpdate, false)) {
-            this.database.set(questionToUpdate.id, questionToUpdate);
-            return true;
-        }
+    return [QuestionDatabase.DUPLICATE_QUESTION_MESSAGE]; // Question is Duplicate
+  }
 
-        return false;
+  getAllQuestions() {
+    var questionList = [];
+
+    for (const [key, value] of this.database) {
+      questionList.push(value);
     }
 
-    getAllQuestions() {
-        var questionList = [];
+    return questionList;
+  }
 
-        for (const [key, value] of this.database) {
-            questionList.push(value);
-        }
-
-        return questionList;
+  isDuplicateQuestion(questionToCheck, toCheckId) {
+    // Ensure Unique ID when adding questions
+    if (this.database.has(questionToCheck.id) && toCheckId) {
+      return true;
     }
 
-    isDuplicateQuestion(questionToCheck, toCheckId) {
-        // Ensure Unique ID when adding questions
-        if (this.database.has(questionToCheck.id) && toCheckId) {
-            return true;
-        }
+    var questionList = this.getAllQuestions();
 
-        var questionList = this.getAllQuestions();
+    for (var i = 0; i < questionList.length; i++) {
+      if (questionToCheck.id === questionList[i].id) {
+        continue;
+      }
 
-        for (var i = 0; i < questionList.length; i++) {
-            if (questionToCheck.id === questionList[i].id) {
-                continue;
-            }
+      if (questionToCheck.title === questionList[i].title) {
+        return true;
+      }
 
-            if (questionToCheck.title === questionList[i].title) {
-                return true;
-            }
-
-            if (questionToCheck.description === questionList[i].description) {
-                return true;
-            }
-        }
-
-        return false;
+      if (questionToCheck.description === questionList[i].description) {
+        return true;
+      }
     }
 
-    toJSON() {
-        return this.database;
-    }
+    return false;
+  }
+
+  toJSON() {
+    return this.database;
+  }
 }
 
 export default QuestionDatabase;

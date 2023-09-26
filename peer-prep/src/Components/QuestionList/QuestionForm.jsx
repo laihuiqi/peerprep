@@ -11,7 +11,9 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
   const handleSubmit = (toggleAddQ, addQ) => e => {
     e.preventDefault();
     toggleAddQ(false);
-    addQ(title, difficulty, topic, description)
+
+    const response = addQ(title, difficulty, topic, description);
+    return response; // If array length is 0, then successful, else can index through it for errors
   }
   return (
     <div className="form-container">
