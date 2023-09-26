@@ -1,9 +1,6 @@
-import {
-  getAuth,
-  updateEmail,
-  updatePassword,
-  deleteUser,
-} from "firebase/auth";
+import { updateEmail, updatePassword, deleteUser } from "firebase/auth";
+
+import { auth } from "./firebase";
 
 async function updateUserName() {}
 
@@ -12,8 +9,6 @@ async function updateUserPreferredLanguage() {}
 async function updateUserGithubId() {}
 
 async function updateUserEmail(updatedUserEmail) {
-  const auth = getAuth();
-
   updateEmail(auth.currentUser, updatedUserEmail)
     .then(() => {
       console.log("User Email Updated Successfully");
@@ -28,8 +23,6 @@ async function updateUserEmail(updatedUserEmail) {
 }
 
 async function updateUserPassword(updatedUserPassword) {
-  const auth = getAuth();
-
   updatePassword(auth.currentUser, updatedUserPassword)
     .then(() => {
       console.log("User Password Updated Successfully");
@@ -44,8 +37,6 @@ async function updateUserPassword(updatedUserPassword) {
 }
 
 async function deleteUserAccount() {
-  const auth = getAuth();
-
   deleteUser(auth.currentUser)
     .then(() => {
       console.log("User Deleted Successfully");

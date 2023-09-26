@@ -1,5 +1,4 @@
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -7,9 +6,9 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 
-async function registerUser(userEmail, userPassword) {
-  const auth = getAuth();
+import { auth } from "./firebase";
 
+async function registerUser(userEmail, userPassword) {
   createUserWithEmailAndPassword(auth, userEmail, userPassword)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -26,8 +25,6 @@ async function registerUser(userEmail, userPassword) {
 }
 
 async function loginUser(userEmail, userPassword) {
-  const auth = getAuth();
-
   signInWithEmailAndPassword(auth, userEmail, userPassword)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -44,8 +41,6 @@ async function loginUser(userEmail, userPassword) {
 }
 
 async function logoutUser() {
-  const auth = getAuth();
-
   signOut(auth)
     .then(() => {
       console.log("Signout Successful");
@@ -60,8 +55,6 @@ async function logoutUser() {
 }
 
 async function resetUserPassword(userEmail) {
-  const auth = getAuth();
-
   sendPasswordResetEmail(auth, userEmail)
     .then(() => {
       console.log("Password Reset Email Sent Successfully");
@@ -76,8 +69,6 @@ async function resetUserPassword(userEmail) {
 }
 
 function isUserLoggedIn() {
-  const auth = getAuth();
-
   onAuthStateChanged(auth, (user) => {
     if (user) {
       return true;
