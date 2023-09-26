@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
 
-export const QuestionForm = ({qId, addQuestion, setAddQ, setQId}) => {
+export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [topic, setTopic] = useState("");
@@ -17,7 +17,7 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId}) => {
     <div className="form-container">
       <form className = "container" onSubmit={handleSubmit(setAddQ, addQuestion)}>
         <div className="q-form-header">
-          <div className="q-form-id">#{qId}</div>
+          <div className="q-form-id">#{questionNumber}</div>
           <input type="text" className="q-form-title q-form-input" 
           placeholder='Question Title' onChange = {
             (e) => setTitle(e.target.value)

@@ -35,7 +35,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
         <div className={isEdit ? "container": "question"}>
             <div className="q-header" onClick = {() => toggle(i)}>
                 <div className="q-name">
-                    <div className={isEdit ? "q-form-id": "q-id"}>#{question.id}</div>
+                    <div className={isEdit ? "q-form-id": "q-id"}>#{i + 1}</div>
                     {isEdit === true? <input type="text" className="q-form-title q-form-input" defaultValue = {question.title}
                     onChange = {(e) => {setTitle(e.target.value)}}/> : 
                     <div className="q-title">{question.title}</div>}
@@ -94,7 +94,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                 }}>Submit</button> </div> : null}
             
         </div>
-        <div className="delete-btn" onClick = {(e) => deleteQuestion(i)}>
+        <div className="delete-btn" onClick = {(e) => deleteQuestion(question.id)}>
             <img src= {delete_icon} alt="" />
         </div>
     </div>

@@ -75,13 +75,13 @@ export const Questions = () => {
     
     <div className="q-wrapper">
       <div className="accordion">
-        {qs.map((q, i) => (
-          <Question key = {q[0]} question = {q[1]} i = {q[0]} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/>
+        {qs.map((q, index) => (
+          <Question key = {index} question = {q[1]} i = {index} deleteQuestion = {deleteQuestion} updateQuestion = {updateQuestion}/>
         ))}
       </div>
 
       {isAddQ === false ? <div></div> : 
-                          <QuestionForm qId = {qId} addQuestion = {addQuestion} setAddQ = {setAddQ} setQId = {setQId}/>}
+                          <QuestionForm questionNumber = {Array.from(database.database).length + 1} qId = {qId} addQuestion = {addQuestion} setAddQ = {setAddQ} setQId = {setQId}/>}
       <div className="add-q-btn" onClick = {() => {
         if (!isAddQ) {
           setQId(qId + 1);
