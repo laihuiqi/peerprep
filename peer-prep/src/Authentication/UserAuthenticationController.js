@@ -4,12 +4,13 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
-async function registerUser(email, password) {
+async function registerUser(userEmail, userPassword) {
   const auth = getAuth();
 
-  createUserWithEmailAndPassword(auth, email, password)
+  createUserWithEmailAndPassword(auth, userEmail, userPassword)
     .then((userCredential) => {
       const user = userCredential.user;
       console.log("User Created Successfully: " + user);
@@ -24,10 +25,10 @@ async function registerUser(email, password) {
     });
 }
 
-async function loginUser(email, password) {
+async function loginUser(userEmail, userPassword) {
   const auth = getAuth();
 
-  signInWithEmailAndPassword(auth, email, password)
+  signInWithEmailAndPassword(auth, userEmail, userPassword)
     .then((userCredential) => {
       const user = userCredential.user;
       console.log("User Logged In Successfully: " + user);
@@ -58,6 +59,22 @@ async function logoutUser() {
     });
 }
 
+async function resetUserPassword(userEmail) {
+  const auth = getAuth();
+
+  sendPasswordResetEmail(auth, userEmail)
+    .then(() => {
+      console.log("Password Reset Email Sent Successfully");
+
+      return true;
+    })
+    .catch((error) => {
+      console.log("Could Not Send Password Reset Email : " + error);
+
+      return false;
+    });
+}
+
 function isUserLoggedIn() {
   const auth = getAuth();
 
@@ -69,3 +86,11 @@ function isUserLoggedIn() {
     }
   });
 }
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  resetUserPassword,
+  isUserLoggedIn,
+};

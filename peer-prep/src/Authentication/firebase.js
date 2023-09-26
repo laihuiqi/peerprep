@@ -14,7 +14,7 @@ const firebaseConfig = {
   storageBucket: "peerprep-691a3.appspot.com",
   messagingSenderId: "725552918453",
   appId: "1:725552918453:web:ff04ce74913b92cecdb3fc",
-  measurementId: "G-W48GCE85G0"
+  measurementId: "G-W48GCE85G0",
 };
 
 // Initialize Firebase
@@ -22,4 +22,5 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-export default app
+export { analytics, auth };
+export default app;
