@@ -25,7 +25,8 @@ export const Questions = () => {
     updateLocalDatabase();
     updateStates();
 
-    console.log("Is Additon Successful: " + isAddedSuccessfully);
+    console.log("Is Additon Successful: " + (isAddedSuccessfully.length === 0));
+    console.log("Errors While Adding: " + (isAddedSuccessfully.length === 0 ? "None" : isAddedSuccessfully))
 
     return isAddedSuccessfully;
   }
@@ -50,7 +51,8 @@ export const Questions = () => {
     updateLocalDatabase();
     updateStates();
 
-    console.log("Is Update Successful: " + isUpdateSuccessful);
+    console.log("Is Update Successful: " + (isUpdateSuccessful.length === 0));
+    console.log("Errors While Updating: " + (isUpdateSuccessful.length === 0 ? "None" : isUpdateSuccessful))
 
     return isUpdateSuccessful;
   }
