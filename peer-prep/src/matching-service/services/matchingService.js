@@ -8,8 +8,6 @@ const refreshDuration = 3000; // 5 seconds
 const waitingDuration = 3000;
 const matchingDuration = 60000 - waitingDuration;
 const queueName = 'matchingQueue';
-const exchangeName = 'matchingExchange';
-const exchangeType = 'direct';
 
 let isCancelled = new Set();
 let availabilityCache = new Set();
@@ -95,12 +93,10 @@ async function findMatch(request) {
 // Add new request into the queue, 'topic' exchange type is used to route the message
 async function addRequestIntoQueue(channel, criteria, request) {
     try {
-        await channel.assertExchange(exchangeName, exchangeType, { durable: false });
         await channel.assertQueue(queueName, { durable: false });
-        await channel.bindQueue(queueName, exchangeName, criteria);
 
         const message = JSON.stringify({ criteria: criteria, request: request });
-        channel.publish(exchangeName, criteria, Buffer.from(message), { expiration: matchingDuration });
+        channel.sendToQueue(queueName, Buffer.from(message), { expiration: matchingDuration });
         availabilityCache.add(request.id);
         isCancelled.delete(parseInt(request.id));
 
@@ -112,41 +108,25 @@ async function addRequestIntoQueue(channel, criteria, request) {
     }
 }
 
-// Check if there exists a matched pair for the user
-async function getExistingMatchedPair(request) {
-    console.log(`Checking if user ${request.id} has an ongoing matched pair...`);
-
-    return new Promise(async(resolve) => {
-        const currentPair = await getCurrentMatchedPair(request.id);
-
-        if (currentPair) {
-            const collaboratorId = String(currentPair.id1) === String(request.id) ? currentPair.id2 : currentPair.id1;
-            return resolve({ stored: true, isMatched: true, id: request.id, collaboratorId: collaboratorId });
-
-        } else {
-            return resolve(null);
-        }
-    });
-}
-
 // Check if there exists a matched pair for the user, else, find a match from the queue
 async function getMatchFromQueue(channel, criteria, request) {
     console.log(`Checking if there is a match for user ${request.id} and find match from queue...`);
-    const existingMatch = await getExistingMatchedPair(request);
+    const currentPair = await getCurrentMatchedPair(request.id);
 
-    if (existingMatch) {
-        return existingMatch;
+    if (currentPair) {
+        const collaboratorId = String(currentPair.id1) === String(request.id) ? currentPair.id2 : currentPair.id1;
+        return { stored: true, isMatched: true, id: request.id, collaboratorId: collaboratorId };
+
+    } else {
+        return listenToMatchingQueue(channel, criteria, request);
     }
-    return listenToMatchingQueue(channel, criteria, request);
 }
 
 // Listen to the queue for a matching pair
 async function listenToMatchingQueue(channel, criteria, request) {
     try {
         console.log(`Start matching user ${request.id}`);
-        await channel.assertExchange(exchangeName, exchangeType, { durable: false });
         await channel.assertQueue(queueName, { durable: false });
-        await channel.bindQueue(queueName, exchangeName, criteria);
 
         let matched = false;
         return new Promise(async(resolve) => {
