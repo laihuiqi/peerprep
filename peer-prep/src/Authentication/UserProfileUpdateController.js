@@ -9,45 +9,45 @@ async function updateUserPreferredLanguage() {}
 async function updateUserGithubId() {}
 
 async function updateUserEmail(updatedUserEmail) {
-  updateEmail(auth.currentUser, updatedUserEmail)
-    .then(() => {
-      console.log("User Email Updated Successfully");
+  try {
+    await updateEmail(auth.currentUser, updatedUserEmail);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Email Could Not Be Updated: " + error);
+    console.log("User Email Updated Successfully");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("User Email Could Not Be Updated: " + error);
+
+    return false;
+  }
 }
 
 async function updateUserPassword(updatedUserPassword) {
-  updatePassword(auth.currentUser, updatedUserPassword)
-    .then(() => {
-      console.log("User Password Updated Successfully");
+  try {
+    await updatePassword(auth.currentUser, updatedUserPassword);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Password Could Not Be Updated: " + error);
+    console.log("User Password Updated Successfully");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("User Password Could Not Be Updated: " + error);
+
+    return false;
+  }
 }
 
 async function deleteUserAccount() {
-  deleteUser(auth.currentUser)
-    .then(() => {
-      console.log("User Deleted Successfully");
+  try {
+    await deleteUser(auth.currentUser);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Could Not Be Deleted: " + error);
+    console.log("User Deleted Successfully");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("User Could Not Be Deleted: " + error);
+
+    return false;
+  }
 }
 
 export {
