@@ -4,54 +4,48 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 
+const matchingDuration = 60000; // 60 seconds
 const refreshDuration = 5000; // 5 seconds
-const waitingDuration = 5000;
-const matchingDuration = 60000 - waitingDuration;
 const queueName = 'matchingQueue';
 const exchangeName = 'matchingExchange';
-const exchangeType = 'direct';
+const exchangeType = 'topic';
 
 let isCancelled = new Set();
 let availabilityCache = new Set();
 
 // Find matching pair based on the selected criteria : language, proficiency, difficulty, topic
-async function findMatch(request) {;
-    let connection;
-    let channel;
+async function findMatch(request) {
     try {
-        connection = await amqp.connect(config.rabbitmqUrl);
-        channel = await connection.createChannel();
+        const connection = await amqp.connect(config.rabbitmqUrl);
+        const channel = await connection.createChannel();
         console.log('Successfully connected to RabbitMQ');
 
         const criteria = `${request.language}.${request.proficiency}.${request.difficulty}.${request.topic}`;
 
-        const checkCancel = setInterval(async() => {
-            if (isCancelled.has(request.id)) {
-                clearInterval(checkCancel);
-                return { isMatched: false, collaboratorId: null, request: request };
-
-            } else {
-                const checkMatchedPair = await getCurrentMatchedPair(request.id);
-                if (checkMatchedPair) {
-                    clearInterval(checkCancel);
-                    return {
-                        isMatched: true,
-                        collaboratorId: String(checkMatchedPair.id1) === String(request.id) ? checkMatchedPair.id2 : checkMatchedPair.id1,
-                        request: request
-                    };
-                }
-            }
-        }, refreshDuration);
-
         await addRequestIntoQueue(channel, criteria, request);
-
-        await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 5 seconds to check if there is a prior object that matched
 
         const { stored, isMatched, id, collaboratorId } = await getMatchFromQueue(channel, criteria, request);
 
-        console.log(`Clean up tasks are completed for ${request.id}!`);
+        channel.close();
+        connection.close();
+        availabilityCache.delete(request.id);
 
-        if (!isMatched) {
+        console.log(`Clean up tasks are completed for this match!`);
+
+        const checkMatchedPair = await getCurrentMatchedPair(request.id);
+        if (checkMatchedPair) {
+            return {
+                isMatched: true,
+                collaboratorId: String(checkMatchedPair.id1) === String(request.id) ? checkMatchedPair.id2 : checkMatchedPair.id1,
+                request: request
+            };
+        }
+        if (isCancelled.has(request.id)) {
+            console.log(`Matching service is cancelled`);
+            isCancelled.delete(request.id);
+            return { isMatched: false, collaboratorId: null, request: request };
+
+        } else if (!isMatched) {
             console.log(`Matched pair could not be found for ${request.id}`);
             return { isMatched: false, collaboratorId: null, request: request };
 
@@ -77,18 +71,10 @@ async function findMatch(request) {;
         }
     } catch (error) {
         console.log('Error finding match: ', error);
-    } finally {
-        availabilityCache.delete(request.id);
-        if (channel) {
-            channel.close();
-        }
-        if (connection) {
-            connection.close();
-        }
     }
 }
 
-// Add new request into the queue, 'topic' exchange type is used to route the message
+// Add new request into the queue, 'topic' exchange type is used to route the message to the correct queue
 async function addRequestIntoQueue(channel, criteria, request) {
     try {
         await channel.assertExchange(exchangeName, exchangeType, { durable: false });
@@ -152,6 +138,25 @@ async function listenToMatchingQueue(channel, criteria, request) {
                 }
             }, matchingDuration);
 
+            const checkCancel = setInterval(async() => {
+                if (isCancelled.has(request.id)) {
+                    clearInterval(checkCancel);
+                    resolve({ stored: false, isMatched: false, id: request.id, collaboratorId: null });
+
+                } else {
+                    const checkCurrentPair = await getCurrentMatchedPair(request.id);
+                    if (checkCurrentPair) {
+                        clearInterval(checkCancel);
+                        resolve({
+                            stored: true,
+                            isMatched: true,
+                            id: request.id,
+                            collaboratorId: String(checkCurrentPair.id1) === String(request.id) ? checkCurrentPair.id2 : checkCurrentPair.id1
+                        });
+                    }
+                }
+            }, refreshDuration);
+
             console.log(`Start listening to matching queue for user ${request.id}`);
 
             channel.consume(queueName, async(message) => {
@@ -163,8 +168,7 @@ async function listenToMatchingQueue(channel, criteria, request) {
                     resolve({ stored: true, isMatched: true, id: request.id, collaboratorId: currentRequest.request.id });
 
                 } else if (checkActivePair || isCancelled.has(currentRequest.request.id)) {
-                    console.log(`Remove match ${currentRequest.request.id}`);
-                    availabilityCache.delete(currentRequest.request.id);
+                    console.log(`Cancel match ${currentRequest.request.id}`);
                     channel.ack(message);
 
                 } else if (!matched && currentRequest.request.id !== request.id &&
@@ -189,11 +193,10 @@ async function listenToMatchingQueue(channel, criteria, request) {
 }
 
 // Cancel matching service
-
 async function cancelMatch(requestId) {
     isCancelled.add(requestId);
     availabilityCache.delete(requestId);
-    console.log(`Matching service is cancelled for ${requestId}`);
+    console.log('Matching service is cancelled');
     return true;
 }
 
