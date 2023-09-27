@@ -4,77 +4,95 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 
-const matchingDuration = 60000; // 60 seconds
 const refreshDuration = 5000; // 5 seconds
+const waitingDuration = 5000;
+const matchingDuration = 60000 - waitingDuration;
 const queueName = 'matchingQueue';
 const exchangeName = 'matchingExchange';
-const exchangeType = 'topic';
+const exchangeType = 'direct';
 
 let isCancelled = new Set();
 let availabilityCache = new Set();
 
 // Find matching pair based on the selected criteria : language, proficiency, difficulty, topic
 async function findMatch(request) {
-    try {
-        const connection = await amqp.connect(config.rabbitmqUrl);
-        const channel = await connection.createChannel();
-        console.log('Successfully connected to RabbitMQ');
+    return new Promise(async(resolve) => {
+        let connection;
+        let channel;
+        let checkCancel;
+        try {
+            connection = await amqp.connect(config.rabbitmqUrl);
+            channel = await connection.createChannel();
+            console.log('Successfully connected to RabbitMQ');
 
-        const criteria = `${request.language}.${request.proficiency}.${request.difficulty}.${request.topic}`;
+            const criteria = `${request.language}.${request.proficiency}.${request.difficulty}.${request.topic}`;
 
-        await addRequestIntoQueue(channel, criteria, request);
+            checkCancel = setInterval(async() => {
+                if (isCancelled.has(parseInt(request.id))) {
+                    console.log(`Always checking`);
+                    clearInterval(checkCancel);
+                    resolve({ isMatched: false, collaboratorId: null, request: request });
 
-        const { stored, isMatched, id, collaboratorId } = await getMatchFromQueue(channel, criteria, request);
+                } else {
+                    const checkMatchedPair = await getCurrentMatchedPair(request.id);
+                    if (checkMatchedPair) {
+                        clearInterval(checkCancel);
+                        resolve({
+                            isMatched: true,
+                            collaboratorId: String(checkMatchedPair.id1) === String(request.id) ? parseInt(checkMatchedPair.id2) : parseInt(checkMatchedPair.id1),
+                            request: request
+                        });
+                    }
+                }
+            }, refreshDuration);
 
-        channel.close();
-        connection.close();
-        availabilityCache.delete(request.id);
+            await addRequestIntoQueue(channel, criteria, request);
 
-        console.log(`Clean up tasks are completed for this match!`);
+            await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 5 seconds to check if there is a prior object that matched
 
-        const checkMatchedPair = await getCurrentMatchedPair(request.id);
-        if (checkMatchedPair) {
-            return {
-                isMatched: true,
-                collaboratorId: String(checkMatchedPair.id1) === String(request.id) ? checkMatchedPair.id2 : checkMatchedPair.id1,
-                request: request
-            };
+            const { stored, isMatched, id, collaboratorId } = await getMatchFromQueue(channel, criteria, request);
+
+            console.log(`Clean up tasks are completed for ${request.id}!`);
+
+            if (!isMatched) {
+                console.log(`Matched pair could not be found for ${request.id}`);
+                resolve({ isMatched: false, collaboratorId: null, request: request });
+
+            } else if (stored) {
+                resolve({ isMatched: true, collaboratorId: parseInt(collaboratorId), request: request });
+
+            } else if (isMatched && !stored) {
+                const matchedPair = new MatchedPair({
+                    sessionId: uuidv4(),
+                    id1: parseInt(id),
+                    id2: parseInt(collaboratorId),
+                    isEnded: false,
+                    language: request.language,
+                    proficiency: request.proficiency,
+                    difficulty: request.difficulty,
+                    topic: request.topic
+
+                });
+
+                await addMatchedPair(matchedPair);
+
+                resolve({ isMatched: true, collaboratorId: parseInt(collaboratorId), request: request });
+            }
+        } catch (error) {
+            console.log('Error finding match: ', error);
+        } finally {
+            availabilityCache.delete(request.id);
+            if (channel) {
+                channel.close();
+            }
+            if (connection) {
+                connection.close();
+            }
         }
-        if (isCancelled.has(request.id)) {
-            console.log(`Matching service is cancelled`);
-            isCancelled.delete(request.id);
-            return { isMatched: false, collaboratorId: null, request: request };
-
-        } else if (!isMatched) {
-            console.log(`Matched pair could not be found for ${request.id}`);
-            return { isMatched: false, collaboratorId: null, request: request };
-
-        } else if (stored) {
-            return { isMatched: true, collaboratorId: collaboratorId, request: request };
-
-        } else if (isMatched && !stored) {
-            const matchedPair = new MatchedPair({
-                sessionId: uuidv4(),
-                id1: id,
-                id2: collaboratorId,
-                isEnded: false,
-                language: request.language,
-                proficiency: request.proficiency,
-                difficulty: request.difficulty,
-                topic: request.topic
-
-            });
-
-            await addMatchedPair(matchedPair);
-
-            return { isMatched: true, collaboratorId: collaboratorId, request: request };
-        }
-    } catch (error) {
-        console.log('Error finding match: ', error);
-    }
+    });
 }
 
-// Add new request into the queue, 'topic' exchange type is used to route the message to the correct queue
+// Add new request into the queue, 'topic' exchange type is used to route the message
 async function addRequestIntoQueue(channel, criteria, request) {
     try {
         await channel.assertExchange(exchangeName, exchangeType, { durable: false });
@@ -84,7 +102,7 @@ async function addRequestIntoQueue(channel, criteria, request) {
         const message = JSON.stringify({ criteria: criteria, request: request });
         channel.publish(exchangeName, criteria, Buffer.from(message), { expiration: matchingDuration });
         availabilityCache.add(request.id);
-        isCancelled.delete(request.id);
+        isCancelled.delete(parseInt(request.id));
 
         console.log(`Successfully added request into queue for user ${request.id}`);
 
@@ -138,25 +156,6 @@ async function listenToMatchingQueue(channel, criteria, request) {
                 }
             }, matchingDuration);
 
-            const checkCancel = setInterval(async() => {
-                if (isCancelled.has(request.id)) {
-                    clearInterval(checkCancel);
-                    resolve({ stored: false, isMatched: false, id: request.id, collaboratorId: null });
-
-                } else {
-                    const checkCurrentPair = await getCurrentMatchedPair(request.id);
-                    if (checkCurrentPair) {
-                        clearInterval(checkCancel);
-                        resolve({
-                            stored: true,
-                            isMatched: true,
-                            id: request.id,
-                            collaboratorId: String(checkCurrentPair.id1) === String(request.id) ? checkCurrentPair.id2 : checkCurrentPair.id1
-                        });
-                    }
-                }
-            }, refreshDuration);
-
             console.log(`Start listening to matching queue for user ${request.id}`);
 
             channel.consume(queueName, async(message) => {
@@ -167,8 +166,9 @@ async function listenToMatchingQueue(channel, criteria, request) {
                     (String(checkActivePair.id1) === String(request.id) || String(checkActivePair.id2) === String(request.id))) {
                     resolve({ stored: true, isMatched: true, id: request.id, collaboratorId: currentRequest.request.id });
 
-                } else if (checkActivePair || isCancelled.has(currentRequest.request.id)) {
-                    console.log(`Cancel match ${currentRequest.request.id}`);
+                } else if (checkActivePair || isCancelled.has(parseInt(currentRequest.request.id))) {
+                    console.log(`Remove match ${currentRequest.request.id}`);
+                    availabilityCache.delete(currentRequest.request.id);
                     channel.ack(message);
 
                 } else if (!matched && currentRequest.request.id !== request.id &&
@@ -193,10 +193,11 @@ async function listenToMatchingQueue(channel, criteria, request) {
 }
 
 // Cancel matching service
+
 async function cancelMatch(requestId) {
-    isCancelled.add(requestId);
+    isCancelled.add(parseInt(requestId));
     availabilityCache.delete(requestId);
-    console.log('Matching service is cancelled');
+    console.log(`Matching service is cancelled for ${requestId}`);
     return true;
 }
 
