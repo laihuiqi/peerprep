@@ -4,8 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 
-const refreshDuration = 5000; // 5 seconds
-const waitingDuration = 5000;
+const refreshDuration = 3000; // 5 seconds
+const waitingDuration = 3000;
 const matchingDuration = 60000 - waitingDuration;
 const queueName = 'matchingQueue';
 const exchangeName = 'matchingExchange';
