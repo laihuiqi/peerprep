@@ -9,72 +9,81 @@ import {
 import { auth } from "./firebase";
 
 async function registerUser(userEmail, userPassword) {
-  createUserWithEmailAndPassword(auth, userEmail, userPassword)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("User Created Successfully: " + user);
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Creation Unsuccessful: " + error);
+    console.log("User Created Successfully: " + userCredential.user);
 
-      // Error
-      return false;
-    });
+    return true;
+  } catch (error) {
+    // Error
+    console.log("User Creation Unsuccessful: " + error);
+
+    return false;
+  }
 }
 
 async function loginUser(userEmail, userPassword) {
-  signInWithEmailAndPassword(auth, userEmail, userPassword)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("User Logged In Successfully: " + user);
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Login Unsuccessful: " + error);
+    console.log("User Logged In Successfully: " + userCredential.user);
 
-      // Invalid Email/Password
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("User Login Unsuccessful: " + error);
+
+    // Invalid Email/Password
+    return false;
+  }
 }
 
 async function logoutUser() {
-  signOut(auth)
-    .then(() => {
-      console.log("Signout Successful");
+  try {
+    await signOut(auth);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("Could Not Signout: " + error);
+    console.log("Signout Successful");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("Could Not Signout: " + error);
+
+    return false;
+  }
 }
 
 async function resetUserPassword(userEmail) {
-  sendPasswordResetEmail(auth, userEmail)
-    .then(() => {
-      console.log("Password Reset Email Sent Successfully");
+  try {
+    await sendPasswordResetEmail(auth, userEmail);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("Could Not Send Password Reset Email : " + error);
+    console.log("Password Reset Email Sent Successfully");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("Could Not Send Password Reset Email : " + error);
+
+    return false;
+  }
 }
 
-function isUserLoggedIn() {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
+async function isUserLoggedIn() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe(); // Stop listening to further changes
+      if (user) {
+        resolve(true); // User is logged in
+      } else {
+        resolve(false); // User is not logged in
+      }
+    });
   });
 }
 
