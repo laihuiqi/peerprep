@@ -38,7 +38,12 @@ async function endSession(sessionId) {
     try {
         const filter = { sessionId: sessionId };
         const update = { $set: { isEnded: true } };
-        await MatchedPair.updateOne(filter, update);
+        const result = await MatchedPair.updateOne(filter, update);
+
+        if (result.nModified == 0) {
+            console.warn(`No session was updated for session ${sessionId}`);
+        }
+
         console.log(`Successfully update session state for session ${sessionId}`);
 
     } catch (error) {
