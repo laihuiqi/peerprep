@@ -15,50 +15,72 @@ const checkQuestionValidity = (question) => {
 
 const getAllQuestions = async (req, res) => {
     try {
-        const questions = await Question.find({}).sort({createdAt: -1})
-        res.status(200).json(questions)
+        const questions = await Question.find({}).sort({createdAt: -1});
+        res.status(200).json(questions);
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving questions'});
     }
-};
+}
   
 const createQuestion = async (req, res) => {
-    const {title, description, complexity, category} = req.body
-    try {
-      const question = await Question.create({title, description, complexity, category})
-      res.status(200).json(question)
-    } catch (error) {
-      res.status(400).json({error: 'Unable to create a new question'})
+    const {title, description, complexity, category} = req.body;
+    const currentSameDescriptionQuestion =  await Question.findOne({ description });
+    if (currentSameDescriptionQuestion) {
+      return res.status(400).json({ error: 'Question with an identical description already exists' });
     }
-    res.json({msg: 'Create a new question'})
-};
+    try {
+      const question = await Question.create({title, description, complexity, category});
+      res.status(200).json(question);
+    } catch (error) {
+      res.status(400).json({error: 'Unable to create a new question'});
+    }
+}
 
 const updateQuestion = async (req, res) => {
-    const { id } = req.params
-    checkIdValidity(id)
-    const question = await Question.findOneAndUpdate({_id: id}, {...req.body} , {
-        new: true,
-    })
-    checkQuestionValidity(question)
-    res.status(200).json(question)
-};
+  const { id } = req.params;
+  const { title, description, complexity, category } = req.body;
+  
+  try {
+      checkIdValidity(id);
+      const question = await Question.findById(id);
+      checkQuestionValidity(question);
+
+      if (description !== question.description) {
+          const currentSameDescriptionQuestion = await Question.findOne({ description });
+          if (currentSameDescriptionQuestion) {
+              return res.status(400).json({ error: 'Question with this description already exists.' });
+          }
+      }
+
+      question.title = title;
+      question.description = description;
+      question.complexity = complexity;
+      question.category = category;
+      
+      const updatedQuestion = await question.save();
+      res.status(200).json(updatedQuestion);
+  } catch (error) {
+      res.status(500).json({ error: 'Unable to update question' });
+  }
+}
+
 
 const deleteQuestion = async (req, res) => {
-    const { id } = req.params
-    checkIdValidity(id)
-    const question = await Question.findOneAndDelete({_id: id})
-    checkQuestionValidity(question)
-    res.status(200).json(question)
-};
+    const { id } = req.params;
+    checkIdValidity(id);
+    const question = await Question.findOneAndDelete({_id: id});
+    checkQuestionValidity(question);
+    res.status(200).json(question);
+}
 
 const addUserTag = async (req, res) => {
   const { id } = req.params;
   const { userId, tag } = req.body;
 
   try {
-    checkIdValidity(id)
+    checkIdValidity(id);
     const question = await Question.findById(id);
-    checkQuestionValidity(question)
+    checkQuestionValidity(question);
 
     const userIndex = question.userTags.findIndex((value) => value.userId === userId);
 
@@ -73,7 +95,7 @@ const addUserTag = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Unable to add tag' });
   }
-};
+}
 
 const deleteUserTag = async (req, res) => {
   const { id } = req.params;
@@ -84,7 +106,7 @@ const deleteUserTag = async (req, res) => {
     const question = await Question.findById(id);
     checkQuestionValidity(question);
 
-    const userIndex = question.userTags.findIndex((value) => value.userId === userId); 
+    const userIndex = question.userTags.findIndex((value) => value.userId === userId);
 
     if (userIndex == -1) {
       res.status(400).json({ error: 'Error with finding user for question' });
@@ -101,7 +123,7 @@ const deleteUserTag = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Unable to delete tag' });
   }
-};
+}
 
   module.exports = {
     getAllQuestions,
@@ -110,4 +132,4 @@ const deleteUserTag = async (req, res) => {
     deleteQuestion,
     addUserTag,
     deleteUserTag
-  };
+  }
