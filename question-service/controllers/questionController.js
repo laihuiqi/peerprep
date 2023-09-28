@@ -28,7 +28,7 @@ const createQuestion = async (req, res) => {
       const question = await Question.create({title, description, complexity, category})
       res.status(200).json(question)
     } catch (error) {
-      res.status(400).json({error: error.message})
+      res.status(400).json({error: 'Unable to create a new question'})
     }
     res.json({msg: 'Create a new question'})
 };
