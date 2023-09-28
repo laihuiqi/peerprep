@@ -3,20 +3,20 @@ const {
   createQuestion,
   getAllQuestions,
   deleteQuestion,
-  updateQuestion
+  updateQuestion,
+  addUserTag,
+  deleteUserTag
 } = require('../controllers/questionController')
 const router = express.Router()
 
-// GET all questions
+// GET, POST, DELETE, UPDATE questions
 router.get('/', getAllQuestions)
-
-// POST a new question
 router.post('/', createQuestion)
-
-// DELETE a question
 router.delete('/:id', deleteQuestion)
-
-// UPDATE a question
 router.patch('/:id', updateQuestion)
+
+// UPDATE, DELETE tags
+router.patch('/:id/tags', addUserTag)
+router.delete('/:id/tags', deleteUserTag)
 
 module.exports = router

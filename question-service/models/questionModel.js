@@ -7,6 +7,12 @@ const questionSchema = new Schema({
   description: String,
   complexity: String,
   category: String,
+  userTags: [
+    {
+      userId: String, 
+      tags: [String],
+    },
+  ],
 });
 
 module.exports =  mongoose.model('Question', questionSchema);;
