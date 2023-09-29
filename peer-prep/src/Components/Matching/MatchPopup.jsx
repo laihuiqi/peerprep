@@ -1,8 +1,19 @@
-import React from 'react';
+import { React, useState } from 'react';
 import './MatchPopup.css'; 
-import { useEffect, useState } from 'react';
+import { LoadPopup } from './LoadPopup';
 
-const MatchPopup = ({ isOpen, isClose, chosenDifficulty, onChosenDifficulty, onSubmission}) => {
+const MatchPopup = ({ isOpen, isClose, chosenDifficulty, onChosenDifficulty}) => {
+    const [goToLoadPopup, setGoToLoadPopup] = useState(false);
+
+    const handleMatchClick = () => {
+      isClose();
+      setGoToLoadPopup(true); 
+    };
+  
+    if (goToLoadPopup) {
+      return <LoadPopup isOpen={true} isClose={() => setGoToLoadPopup(false)} />;
+    }
+
     if (isOpen) {
         return (
             <div className="match-overlay">
@@ -11,7 +22,7 @@ const MatchPopup = ({ isOpen, isClose, chosenDifficulty, onChosenDifficulty, onS
 
                 <h3>Finding Your Match</h3>
                 <div className="dropdown-menu">
-                    <label>Difficulty Level of Questions: </label>
+                    <label>Question Difficulty: </label>
                     <select value={chosenDifficulty} onChange={onChosenDifficulty}>
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -20,8 +31,9 @@ const MatchPopup = ({ isOpen, isClose, chosenDifficulty, onChosenDifficulty, onS
                 </div>
 
                 <div >
-                    <button onClick={onSubmission} className="submit-match">Match</button>
+                    <button onClick={handleMatchClick} className="submit-match">Match</button>
                 </div>
+
                 </div>
             </div>
         );
