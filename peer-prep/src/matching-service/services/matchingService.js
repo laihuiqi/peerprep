@@ -36,7 +36,7 @@ async function findMatch(request) {
             checkCancel = setInterval(async() => {
                 if (isCancelled.has(parseInt(request.id))) {
                     clearInterval(checkCancel);
-                    resolve({ isMatched: false, collaboratorId: null, request: request });
+                    resolve({status: 'cancel', isMatched: false, collaboratorId: null, request: request });
 
                 } else {
                     const checkMatchedPair = await getCurrentMatchedPair(request.id);
@@ -44,6 +44,7 @@ async function findMatch(request) {
                     if (checkMatchedPair) {
                         clearInterval(checkCancel);
                         resolve({
+                            status: 'success',
                             isMatched: true,
                             collaboratorId: String(checkMatchedPair.id1) === String(request.id) ?
                                 parseInt(checkMatchedPair.id2) : parseInt(checkMatchedPair.id1),
@@ -66,10 +67,11 @@ async function findMatch(request) {
             if (!isMatched) {
                 console.log(`Matched pair could not be found for ${request.id}`);
 
-                resolve({ isMatched: false, collaboratorId: null, request: request });
+                resolve({status: 'error', isMatched: false, collaboratorId: null, request: request });
 
             } else if (stored) {
                 resolve({
+                    status: 'success',
                     isMatched: true,
                     collaboratorId: parseInt(collaboratorId),
                     request: request
@@ -90,6 +92,7 @@ async function findMatch(request) {
                 await addMatchedPair(matchedPair);
 
                 resolve({
+                    status: 'success',
                     isMatched: true,
                     collaboratorId: parseInt(collaboratorId),
                     request: request
@@ -97,7 +100,7 @@ async function findMatch(request) {
             }
         } catch (error) {
             console.log('Error finding match: ', error);
-            throw error;
+            resolve({ status: 'error', message: error.message, isMatched: false, collaboratorId: null, request: request });
 
         } finally {
             availabilityCache.delete(request.id);
