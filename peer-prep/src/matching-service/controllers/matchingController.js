@@ -13,14 +13,14 @@ async function findMatch(req, res, next) {
             case 'success':
                 res.status(200).json(matchResult);
                 break;
-            case 'failed': 
-                res.status(400).json(matchResult);
+            case 'error': 
+                res.status(500).json(matchResult);
                 break;
             case 'cancel':
                 res.status(200).json(matchResult);
                 break;
             default:
-                res.status(500).json({message:'Failed to find a match. Please try again!'});
+                res.status(500).json({message:'Unknown error. Please try again!'});
         }
 
     } catch (error) {
