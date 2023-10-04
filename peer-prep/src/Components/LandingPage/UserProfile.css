@@ -1,0 +1,29 @@
+.profile-container {
+    background: white;
+    border-radius: 10px;
+    display:flex;
+    flex-direction: column;
+    padding: 30px;
+    gap: 20px;
+}
+
+.edit-container {
+    display:flex;
+    justify-content: flex-end
+}
+.profile-edit {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.profile-info {
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.profile-field {
+    font-size: 20px;
+    font-weight: 600;
+}
