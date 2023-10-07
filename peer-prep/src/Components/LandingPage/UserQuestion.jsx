@@ -2,7 +2,7 @@ import React from 'react'
 import './UserQuestion.css'
 import {useState} from 'react'
 
-export const UserQuestion = (q, i) => {
+export const UserQuestion = ({question, i}) => {
     const [selected, setSelected] = useState(null);
     const toggle = (i) => {
         selected === i ? setSelected(null) : setSelected(i)
@@ -11,40 +11,41 @@ export const UserQuestion = (q, i) => {
     
     let tagClass = "q-tag"; 
     
-    if(q.difficulty.toLowerCase() === "easy") {
-        tagClass += " q-tag-green"
-    } else if (q.difficulty.toLowerCase() === "medium") {
-        tagClass += " q-tag-orange"
-    } else if (q.difficulty.toLowerCase() === "hard") {
-        tagClass += " q-tag-red"
-    } else {
-        tagClass += " q-tag-white"
+    if(question.complexity) {
+        if(question.complexity.toLowerCase() === "easy") {
+            tagClass += " q-tag-green"
+        } else if (question.complexity.toLowerCase() === "medium") {
+            tagClass += " q-tag-orange"
+        } else if (question.complexity.toLowerCase() === "hard") {
+            tagClass += " q-tag-red"
+        } else {
+            tagClass += " q-tag-white"
+        }
     }
-   
-
+    
   return (
     <div className="q-container">
         <div className="q-info">
             <div className="q-header" onClick = {() => toggle(i)}>
                 <div className="q-name">
                     <div className="q-id">
-                        #{q.id}
+                        #{i + 1}
                     </div>
                     <div className= {selected === i? "q-title-show" : "q-title"}>
-                        {q.title}
+                        {question.title}
                     </div>
                 </div>
                 <span> {selected === i? "-" : "+"} </span>
             </div>
             <div className= {selected === i? "q-show-content" : "q-content"}>
-                {q.description} 
+                {question.description} 
             </div>
         </div>
-        <div className= "q-tag q-tag-green">
-            {q.difficulty}
+        <div className= {tagClass}>
+            {question.complexity}
         </div>
         <div className="q-tag">
-            {q.topic}
+            {question.category}
         </div>
     </div>
   )
