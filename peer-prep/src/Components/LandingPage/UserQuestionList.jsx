@@ -23,7 +23,7 @@ export const UserQuestionList = () => {
   return (
     <div className = "q-list-container">
         {qs.map((q, index) => (
-          <UserQuestion key ={index} question ={q} i ={index} />
+          <UserQuestion key = {index} question = {q} i = {index}/>
         ))}
     </div>
   )

@@ -12,10 +12,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
 
     const toggle = (i) => {
         if (!isEdit) {
-            if(selected === i) {
-                setSelected(null)
-            }
-            setSelected(i)
+            selected === i ? setSelected(null) : setSelected(i)
         }
     };
     const [isEdit, setEdit] = useState(false);
