@@ -1,7 +1,7 @@
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    gap: 20px;
 }
 
 .dashboard-header {
@@ -24,4 +24,10 @@
 .header-column-title {
     font-size: 20px;
     font-weight: 600;
+}
+
+.question-list {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
 }

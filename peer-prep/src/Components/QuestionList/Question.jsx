@@ -13,7 +13,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
     const toggle = (i) => {
         if (!isEdit) {
             if(selected === i) {
-                return setSelected(null)
+                setSelected(null)
             }
             setSelected(i)
         }

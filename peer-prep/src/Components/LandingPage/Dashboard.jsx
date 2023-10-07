@@ -1,5 +1,6 @@
 import React from 'react'
 import {MatchButton} from '../../frontend/Components/Matching/MatchButton'
+import {UserQuestionList} from "../LandingPage/UserQuestionList"
 
 import './Dashboard.css'
 
@@ -13,6 +14,9 @@ export const Dashboard = () => {
                 </div>
                 <MatchButton/>
             </div>
+        </div>
+        <div className="question-list">
+            <UserQuestionList/>
         </div>
         
     </div>
