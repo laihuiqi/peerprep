@@ -21,14 +21,16 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
     const [isEdit, setEdit] = useState(false);
     let tagClass = "q-tag";
 
-    if(question.complexity.toLowerCase() === "easy") {
-        tagClass += " q-tag-green"
-    } else if (question.complexity.toLowerCase() === "medium") {
-        tagClass += " q-tag-orange"
-    } else if (question.complexity.toLowerCase() === "hard"){
-        tagClass += " q-tag-red"
-    } else {
-        tagClass += " q-tag-white"
+    if (question.complexity) {
+        if(question.complexity.toLowerCase() === "easy") {
+            tagClass += " q-tag-green"
+        } else if (question.complexity.toLowerCase() === "medium") {
+            tagClass += " q-tag-orange"
+        } else if (question.complexity.toLowerCase() === "hard"){
+            tagClass += " q-tag-red"
+        } else {
+            tagClass += " q-tag-white"
+        }
     }
   return (
     <div className= {isEdit ? "form-container": "question-container"}>
@@ -67,7 +69,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                     {isEdit === true? <button className="submit-btn" 
                     onClick = {(e) => {
                         setEdit(false);
-                        updateQuestion(question.id, title, description, difficulty, topic)
+                        updateQuestion(question._id, title, description, difficulty, topic)
                         }}>Submit</button> : <div></div>}
                 </div>
                 : 
@@ -90,11 +92,11 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                 <button className="submit-btn" 
             onClick = {(e) => {
                 setEdit(false);
-                updateQuestion(question.id, title, description, difficulty, topic)
+                updateQuestion(question._id, title, description, difficulty, topic)
                 }}>Submit</button> </div> : null}
             
         </div>
-        <div className="delete-btn" onClick = {(e) => deleteQuestion(question.id)}>
+        <div className="delete-btn" onClick = {(e) => deleteQuestion(question._id)}>
             <img src= {delete_icon} alt="" />
         </div>
     </div>
