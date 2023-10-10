@@ -1,0 +1,18 @@
+{
+  "name": "userservice",
+  "version": "1.0.0",
+  "description": "User Service For PeerPrep. Provides Authentication and User Storage Capabilities",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "User",
+    "Service",
+    "UserService",
+    "Authentication",
+    "Database"
+  ],
+  "author": "Jai Lulla",
+  "license": "ISC"
+}
