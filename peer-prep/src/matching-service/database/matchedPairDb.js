@@ -8,7 +8,7 @@ async function getMatchedPairBySessionId(sessionId) {
         return matchedPair;
 
     } catch (error) {
-        console.error(`Error getting matched pair with session id ${sessionId}:`, error);
+        console.log(`Error getting matched pair with session id ${sessionId}:`, error);
     }
 }
 
@@ -19,7 +19,7 @@ async function getCurrentMatchedPair(id) {
         return matchedPair;
 
     } catch (error) {
-        console.error(`Error getting live matched pair for ${id}:`, error);
+        console.log(`Error getting live matched pair for ${id}:`, error);
         return null;
     }
 }
@@ -30,7 +30,7 @@ async function addMatchedPair(matchedPair) {
         console.log(`Successfully added:`, matchedPair);
 
     } catch (error) {
-        console.error(`Failed to add matched pair ${matchedPair}:`, error);
+        console.log(`Failed to add matched pair ${matchedPair}:`, error);
     }
 }
 
@@ -47,7 +47,7 @@ async function endSession(sessionId) {
         console.log(`Successfully update session state for session ${sessionId}`);
 
     } catch (error) {
-        console.error(`Failed to update session state for session ${sessionId}:`, error);
+        console.log(`Failed to update session state for session ${sessionId}:`, error);
     }
 }
 
@@ -63,7 +63,7 @@ async function modifyMatchedPair(sessionId, key, value) {
         console.log(`Successfully update ${key} state for session ${sessionId}: ${value}`);
 
     } catch (error) {
-        console.error(`Failed to update ${key} state for session ${sessionId}:`, error);
+        console.log(`Failed to update ${key} state for session ${sessionId}:`, error);
     }
 }
 
@@ -73,7 +73,17 @@ async function deleteMatchedPair(sessionId) {
         console.log(`Successfully delete session ${sessionId} from database.`);
 
     } catch (error) {
-        console.error(`Failed to delete session ${sessionId}:`, error);
+        console.log(`Failed to delete session ${sessionId}:`, error);
+    }
+}
+
+async function deleteAllMatchedPairs() {
+    try {
+        await MatchedPair.deleteMany({});
+        console.log(`Successfully delete all sessions from database.`);
+
+    } catch (error) {
+        console.log(`Failed to delete all sessions:`, error);
     }
 }
 
@@ -83,5 +93,6 @@ module.exports = {
     addMatchedPair,
     endSession,
     modifyMatchedPair,
-    deleteMatchedPair
+    deleteMatchedPair,
+    deleteAllMatchedPairs
 };
