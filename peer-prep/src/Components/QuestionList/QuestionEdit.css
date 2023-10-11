@@ -39,6 +39,7 @@
 }
 
 .edit-q-name {
+    width: 100%;
     display: flex;
     align-items: center;
     min-height: 60px;
@@ -51,6 +52,7 @@
 }
 
 .edit-q-title {
+    width: 100%;
     min-height: 30px;
     overflow: hidden;
     font-size: 22px;
@@ -75,7 +77,8 @@
 }
 
 .edit-q-tag {
-    width: 50px;
+    min-width: 50px;
+    width: fit-content;
     height: 20px;
     padding: 0.5rem 0.5rem;
     display: flex;
