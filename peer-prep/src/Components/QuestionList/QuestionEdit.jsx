@@ -10,34 +10,34 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
     const [description, setDescription] = useState(q.description)
   
   return (
-    <div className= "edit-container">
-        <div className="edit-q-container">
-            <div className="edit-q-header">
-                <div className="edit-q-name">
-                    <div className="edit-q-id">#{index + 1}</div>
-                    <input type="text" className="edit-q-title edit-q-input" defaultValue = {q.title}
+    <div className= "form-container">
+        <div className="container">
+            <div className="q-form-header">
+                <div className="q-form-name">
+                    <div className="q-form-id">#{index + 1}</div>
+                    <input type="text" className="q-form-title q-form-input" defaultValue = {q.title}
                     onChange = {(e) => {setTitle(e.target.value)}}/> 
                 </div>
                 <span> - </span>
             </div>
             
-            <div className="edit-q-content">
-                <div className="edit-q-tags-container">
-                    <div className= "edit-q-tags">
-                        <input type="text" className="edit-q-tag edit-q-input" defaultValue = {q.complexity} 
+            <div className="q-form-content">
+                <div className="q-form-tags-container">
+                    <div className= "q-form-tags">
+                        <input type="text" className="q-form-tag q-form-input" defaultValue = {q.complexity} 
                         onChange = {(e) => {setDifficulty(e.target.value)}}/> 
-                        <input type="text" className="edit-q-tag edit-q-input" defaultValue = {q.category}
+                        <input type="text" className="q-form-tag q-form-input" defaultValue = {q.category}
                         onChange = {(e) => {setTopic(e.target.value)}}/> 
                     </div>
                 </div>
                
             
-                <textarea type="text" className="edit-q-description edit-q-input" defaultValue = {q.description}
+                <textarea type="text" className="q-form-description q-form-input" defaultValue = {q.description}
                 onChange = {(e) => {setDescription(e.target.value)}}/> 
                 
-                <div className="edit-btn-container">
-                    <button type = "cancel" className="edit-cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
-                    <button className="edit-submit-btn" onClick = {(e) => {
+                <div className="btn-container">
+                    <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
+                    <button className="submit-btn" onClick = {(e) => {
                     setEdit(false);
                     updateQ(q._id, title, description, difficulty, topic)
                     }}>Submit
@@ -47,7 +47,7 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
             
             
         </div>
-        <div className="edit-delete-btn">
+        <div className="delete-btn">
                 <img src= {delete_icon} alt="" />
         </div>
     </div>

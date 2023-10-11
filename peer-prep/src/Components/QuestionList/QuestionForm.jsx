@@ -26,31 +26,33 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
           }/>
         </div>
         
+        <div className="q-form-content">
           <div className="q-form-tags">
-            <input type="text" className="q-form-tag q-form-input" 
-            placeholder = 'Difficulty'
+              <input type="text" className="q-form-tag q-form-input" 
+              placeholder = 'Difficulty'
+              onChange = {
+                (e) => setDifficulty(e.target.value)
+              }/>
+              <input type="text" className="q-form-tag q-form-input" 
+              placeholder = 'Topic'
+              onChange = {
+                (e) => setTopic(e.target.value)
+              }
+              />
+            </div>
+            <textarea type="text" className="q-form-description q-form-input" 
+            placeholder = "Question description"
             onChange = {
-              (e) => setDifficulty(e.target.value)
+              (e) => setDescription(e.target.value)
             }/>
-            <input type="text" className="q-form-tag q-form-input" 
-            placeholder = 'Topic'
-            onChange = {
-              (e) => setTopic(e.target.value)
-            }
-            />
-          </div>
-          <textarea type="text" className="q-form-description q-form-input" 
-          placeholder = "Question description"
-          onChange = {
-            (e) => setDescription(e.target.value)
-          }/>
-          <div className="btn-container">
-            <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); 
-              setQId(qId - 1)}}>Cancel</button>
-            <button type = "submit" className="submit-btn">Submit</button>
-          </div>
-          
+            <div className="btn-container">
+              <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); 
+                setQId(qId - 1)}}>Cancel</button>
+              <button type = "submit" className="submit-btn">Submit</button>
+            </div>
+        </div>
       </form>
+      
       <div className="ghost-btn">
         <img src= {delete_icon} alt=""/>
       </div>
