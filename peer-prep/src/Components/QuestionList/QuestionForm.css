@@ -4,6 +4,14 @@
   width: 600px;
   gap: 20px;
   align-items: center;
+  animation: fadeIn 0.5s;
+  -webkit-transition-duration: 0.2s; /* Safari */
+  transition-duration: 0.2s;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .container {
@@ -88,6 +96,13 @@
     border-radius: 5px;
     font-size: 17px;
     cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+  }
+
+  .submit-btn:hover{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #4cbd5d;
   }
 
   .cancel-btn {
@@ -100,6 +115,13 @@
     border-radius: 5px;
     font-size: 17px;
     cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+  }
+
+  .cancel-btn:hover{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #868383;
   }
 
   .ghost-btn img {

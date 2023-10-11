@@ -9,6 +9,13 @@
     padding: 0.1rem 0.1rem;
     border-radius: 5px;
     align-items: center;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
+
+.q-info:hover{
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    background: #e9e9e9;
 }
 
 .q-header {
@@ -48,7 +55,8 @@
 }
 
 .q-tag {
-    width: 50px;
+    min-width: 50px;
+    width: fit-content;
     height: 20px;
     border-radius: 10px;
     background: #A98CD8;

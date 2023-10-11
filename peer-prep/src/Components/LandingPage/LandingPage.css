@@ -25,7 +25,7 @@
     display: flex;
     flex-direction: column;
     margin-top: 40px;
-    gap: 30px;
+    gap: 10px;
 }
 
 .nav-tab {
@@ -33,6 +33,17 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
+    border-radius: 5px;
+    height: 50px;
+    padding: 5px;
+    width: 200px;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
+
+.nav-tab:hover{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #fbfbfb;
 }
 
 .nav-icon {

@@ -19,9 +19,18 @@
 }
 
 .profile-edit {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+    box-shadow: none;
+}
+
+.profile-edit:hover {
+    -webkit-filter: drop-shadow(3px 3px 1px rgba(100, 100, 111, 0.3));
+    
+    filter: drop-shadow(3px 3px 1px rgba(100, 100, 111, 0.3));
 }
 
 .profile-info {
@@ -36,18 +45,22 @@
 }
 
 .profile-input {
-    width: fit-content;
+    width: 35%;
     border:none;
     outline: none;
     border-bottom: 3px solid;
     font-size: 17px;
 }
 
-.submit-btn {
+.profile-submit-container{
     display: flex;
-    margin: auto;
     justify-content: center;
     align-items: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.submit-btn {
     width: 90px;
     height: 50px;
     color: #fff;
@@ -56,4 +69,30 @@
     border-radius: 5px;
     font-size: 19px;
     cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
+
+.submit-btn:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #4cbd5d;
+}
+
+.cancel-btn {
+    width: 90px;
+    height: 50px;
+    color: #fff;
+    background: #bebaba;
+    border: none;
+    border-radius: 5px;
+    font-size: 19px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+    box-shadow: none;
+}
+
+.cancel-btn:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #868383;
 }

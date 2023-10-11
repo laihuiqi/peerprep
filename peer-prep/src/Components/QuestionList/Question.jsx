@@ -38,19 +38,22 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                     <span> {selected === i ? "-" : "+"}</span>
                 </div>
                 
-                <div className= {selected === i ? "q-content-show": "q-content"}>
-                        <div className="q-tag-container">
-                            <div className="q-tags">
-                                <div className= {tagClass}>{question.complexity}</div>
-                                <div className="q-tag">{question.category}</div>
+                <div className="q-content">
+                    <div className= {selected === i ? "q-content-expand": "q-content-contract"}>
+                            <div className="q-tag-container">
+                                <div className="q-tags">
+                                    <div className= {tagClass}>{question.complexity}</div>
+                                    <div className="q-tag">{question.category}</div>
+                                </div>
+                                <div className="q-edit" onClick = {()=> setEdit(true)}>
+                                    <img src = {edit_icon} alt=""/>
+                                </div>
                             </div>
-                            <div className="q-edit" onClick = {()=> setEdit(true)}>
-                                <img src = {edit_icon} alt=""/>
-                            </div>
-                        </div>
 
-                        <div className="q-description">{question.description}</div>
+                            <div className="q-description">{question.description}</div>
+                    </div>
                 </div>
+                
             </div>
             <div className="delete-btn" onClick = {(e) => deleteQuestion(question._id)}>
                 <img src= {delete_icon} alt="" />

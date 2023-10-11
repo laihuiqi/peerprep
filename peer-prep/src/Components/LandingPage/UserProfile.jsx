@@ -56,6 +56,12 @@ export const UserProfile = (user) => {
 
         {isEdit?
         <div className="profile-submit-container">
+            <button className = "cancel-btn"
+            onClick = {(e) => {
+                setEdit(false);
+            }}>
+                Cancel
+            </button>
              <button className="submit-btn" 
             onClick = {(e) => {
                 setEdit(false);
