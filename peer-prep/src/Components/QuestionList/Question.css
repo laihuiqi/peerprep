@@ -14,6 +14,12 @@
     padding: 0.5rem 1rem;
     border-radius: 5px;
     align-items: center;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
+
+.question:hover{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .q-header {
@@ -64,11 +70,17 @@
 .q-edit {
     float: right;
     margin-right: 10px;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
 }
 
 .q-edit img {
     width: 23px;
     height: 23px;
+   
+}
+.q-edit:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .q-tag {
@@ -105,10 +117,21 @@
     gap: 20px;
 }
 
+
+.delete-btn {
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+    box-shadow: none;
+}
+
 .delete-btn img {
     width: 40px;
     height: 40px;
     cursor: pointer;
+}
+
+.delete-btn:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .q-tag-green {
