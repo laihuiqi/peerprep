@@ -37,9 +37,12 @@ export const UserQuestion = ({question, i}) => {
                 </div>
                 <span> {selected === i? "-" : "+"} </span>
             </div>
-            <div className= {selected === i? "q-show-content" : "q-content"}>
-                {question.description} 
+            <div className="q-content">
+                <div className= {selected === i? "q-content-expand" : "q-content-contract"}>
+                    <div className="q-description"> {question.description} </div>
+                </div>
             </div>
+            
         </div>
         <div className= {tagClass}>
             {question.complexity}
