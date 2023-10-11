@@ -67,14 +67,15 @@
 }
 
 .q-edit img {
-    width: 25px;
-    height: 25px;
+    width: 23px;
+    height: 23px;
 }
 
 .q-tag {
-    width: 80px;
-    height: 25px;
-    border-radius: 5px;
+    min-width: 50px;
+    width: fit-content;
+    height: 20px;
+    border-radius: 10px;
     background: #A98CD8;
     padding: 0.5rem 0.5rem;
     color: #fff;

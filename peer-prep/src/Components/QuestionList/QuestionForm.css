@@ -44,7 +44,6 @@
     width: 80px;
     height: 25px;
     border-radius: 5px;
-  
 }
 
 .q-form-id {
@@ -75,40 +74,31 @@
 
   .btn-container {
     display: flex;
-    gap: 40px;
-    height: fit-content;
-    width: fit-content;
-    margin: auto;
-    justify-self: center;
+    gap: 20px;
+    justify-content: center;
   }
   
   .submit-btn {
-    display: flex;
-    margin: auto;
     justify-content: center;
-    align-items: center;
-    width: 90px;
+    width: 80px;
     height: 50px;
     color: #fff;
     background: #52CC65;
     border: none;
     border-radius: 5px;
-    font-size: 19px;
+    font-size: 17px;
     cursor: pointer;
   }
 
   .cancel-btn {
-    display: flex;
-    margin: auto;
     justify-content: center;
-    align-items: center;
-    width: 90px;
+    width: 80px;
     height: 50px;
     color: #fff;
     background: #bebaba;
     border: none;
     border-radius: 5px;
-    font-size: 19px;
+    font-size: 17px;
     cursor: pointer;
   }
 

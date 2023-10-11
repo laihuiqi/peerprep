@@ -45,7 +45,8 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
             (e) => setDescription(e.target.value)
           }/>
           <div className="btn-container">
-            <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); setQId(qId - 1)}}>Cancel</button>
+            <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); 
+              setQId(qId - 1)}}>Cancel</button>
             <button type = "submit" className="submit-btn">Submit</button>
           </div>
           

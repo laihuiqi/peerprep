@@ -93,7 +93,8 @@ export const Questions = () => {
   return (
     <div className="q-wrapper">
         {qs.map((q, index) => (
-          <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />
+          <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} 
+          updateQuestion={updateQuestion} />
         ))}
 
       {isAddQ === false ? <div></div> : (

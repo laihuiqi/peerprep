@@ -1,8 +1,8 @@
 import './App.css';
 // import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
 import { Navbar } from './Components/Navbar/Navbar';
-// import { Questions } from './Components/QuestionList/QuestionList';
-import {LandingPage} from './Components/LandingPage/LandingPage'
+import { Questions } from './Components/QuestionList/QuestionList';
+// import {LandingPage} from './Components/LandingPage/LandingPage'
 
 
 function App() {
@@ -10,8 +10,8 @@ function App() {
     <div>
       <Navbar/>
       {/* <LoginSignUp/> */}
-      {/* <Questions/> */}
-      <LandingPage/>
+      <Questions/>
+      {/* <LandingPage/> */}
 
     </div>
   );
