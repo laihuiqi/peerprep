@@ -1,13 +1,8 @@
-const express = require("express");
+const http = require("http");
+const app = require("./app");
 
-const app = express();
+const port = 3000;
 
-app.get("/health", (req, res, next) => {
-  res.json({
-    message: "API HEALTH 100%",
-  });
-});
+const server = http.createServer(app);
 
-app.listen(3000, () => {
-  console.log("Listening On 3000");
-});
+server.listen(port);
