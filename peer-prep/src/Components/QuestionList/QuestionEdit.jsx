@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import './QuestionEdit.css'
+import { QDifficultyDropdown } from './QDifficultyDropdown'
 
 import delete_icon from '../Assets/bin.png'
 
@@ -8,7 +9,11 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
     const [difficulty, setDifficulty] = useState(q.complexity);
     const [topic, setTopic] = useState(q.category);
     const [description, setDescription] = useState(q.description)
-  
+
+    function handleChosenDifficulty(e) {
+        return setDifficulty(e.target.value)
+    }
+
   return (
     <div className= "form-container">
         <div className="container">
@@ -24,8 +29,9 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
             <div className="q-form-content">
                 <div className="q-form-tags-container">
                     <div className= "q-form-tags">
-                        <input type="text" className="q-form-tag q-form-input" defaultValue = {q.complexity} 
-                        onChange = {(e) => {setDifficulty(e.target.value)}}/> 
+                        {/* <input type="text" className="q-form-tag q-form-input" defaultValue = {q.complexity} 
+                        onChange = {(e) => {setDifficulty(e.target.value)}}/>  */}
+                        <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
                         <input type="text" className="q-form-tag q-form-input" defaultValue = {q.category}
                         onChange = {(e) => {setTopic(e.target.value)}}/> 
                     </div>

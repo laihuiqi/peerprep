@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
+import { QDifficultyDropdown } from './QDifficultyDropdown'
 
 export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
@@ -15,6 +16,11 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
     const response = addQ(title, difficulty, topic, description);
     return response; // If array length is 0, then successful, else can index through it for errors
   }
+
+  function handleChosenDifficulty(e) {
+    return setDifficulty(e.target.value)
+  }
+
   return (
     <div className="form-container">
       <form className = "container" onSubmit={handleSubmit(setAddQ, addQuestion)}>
@@ -28,11 +34,12 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
         
         <div className="q-form-content">
           <div className="q-form-tags">
-              <input type="text" className="q-form-tag q-form-input" 
+              {/* <input type="text" className="q-form-tag q-form-input" 
               placeholder = 'Difficulty'
               onChange = {
                 (e) => setDifficulty(e.target.value)
-              }/>
+              }/> */}
+              <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
               <input type="text" className="q-form-tag q-form-input" 
               placeholder = 'Topic'
               onChange = {
@@ -52,7 +59,7 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
             </div>
         </div>
       </form>
-      
+
       <div className="ghost-btn">
         <img src= {delete_icon} alt=""/>
       </div>
