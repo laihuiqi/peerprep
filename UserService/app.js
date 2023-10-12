@@ -5,8 +5,16 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
+// MongoDB Database using Mongoose as Client
+const mongoose = require("mongoose");
+
 // Importing Routes
 const userRoutes = require("./routes/users");
+
+// Connecting to MongoDB Database
+mongoose.connect("", {
+  useMongoClient: true,
+});
 
 // Middleware to help in parsing, loggiong
 app.use(morgan("dev"));
