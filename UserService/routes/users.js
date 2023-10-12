@@ -25,9 +25,15 @@ router.get("/:userId", (req, res, next) => {
 router.post("/:userId", (req, res, next) => {
   const id = req.params.userId;
 
+  const user = {
+    userId: id,
+    name: req.body.name,
+    email: req.body.email,
+  };
+
   res.status(201).json({
     message: "POST USER",
-    userId: id,
+    userData: user,
   });
 });
 
