@@ -29,8 +29,6 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
             <div className="q-form-content">
                 <div className="q-form-tags-container">
                     <div className= "q-form-tags">
-                        {/* <input type="text" className="q-form-tag q-form-input" defaultValue = {q.complexity} 
-                        onChange = {(e) => {setDifficulty(e.target.value)}}/>  */}
                         <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
                         <input type="text" className="q-form-tag q-form-input" defaultValue = {q.category}
                         onChange = {(e) => {setTopic(e.target.value)}}/> 

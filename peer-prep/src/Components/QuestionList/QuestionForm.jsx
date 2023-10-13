@@ -34,11 +34,6 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
         
         <div className="q-form-content">
           <div className="q-form-tags">
-              {/* <input type="text" className="q-form-tag q-form-input" 
-              placeholder = 'Difficulty'
-              onChange = {
-                (e) => setDifficulty(e.target.value)
-              }/> */}
               <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
               <input type="text" className="q-form-tag q-form-input" 
               placeholder = 'Topic'
