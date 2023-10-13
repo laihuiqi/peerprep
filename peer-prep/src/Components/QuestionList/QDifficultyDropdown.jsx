@@ -4,7 +4,7 @@ import "./QDifficultyDropdown.css";
 export const QDifficultyDropdown = ({chosenDifficulty, setDifficulty}) => {
   return (
     <div className="dropdown-menu">
-      <select value={chosenDifficulty} onChange={setDifficulty}>
+      <select defaultValue={chosenDifficulty} onChange={setDifficulty}>
         <option value="easy">Easy</option>
         <option value="medium">Medium</option>
         <option value="hard">Hard</option>

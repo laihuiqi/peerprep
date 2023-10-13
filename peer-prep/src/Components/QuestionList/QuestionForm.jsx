@@ -5,7 +5,7 @@ import { QDifficultyDropdown } from './QDifficultyDropdown'
 
 export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
-  const [difficulty, setDifficulty] = useState("");
+  const [difficulty, setDifficulty] = useState("easy");
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("")
 
