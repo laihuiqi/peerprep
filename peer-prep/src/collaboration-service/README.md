@@ -6,3 +6,9 @@
 
 ### Listening port
 http://localhost:3002/
+
+>**Note**
+>
+> client-side folder is just for self-testing on socket connection
+> please change the query payload in index.html accordingly
+> Test folder is not ready
