@@ -24,6 +24,17 @@ async function getCurrentMatchedPair(id) {
     }
 }
 
+async function getCurrentActiveSession(id) {
+    try {
+        const matchedPair = await getCurrentMatchedPair(id);
+        console.log('Get live session for', id, ':', matchedPair.sessionId);
+        return matchedPair.sessionId;
+    } catch (error) {
+        console.error(`Error getting live session for ${id}:`, error);
+        return null;
+    }
+}
+
 async function addMatchedPair(matchedPair) {
     try {
         await matchedPair.save();
@@ -40,7 +51,7 @@ async function endSession(sessionId) {
         const update = { $set: { isEnded: true } };
         const result = await MatchedPair.updateOne(filter, update);
 
-        if (result.nModified == 0) {
+        if (result.nModified === 0) {
             console.warn(`No session was updated for session ${sessionId}`);
         }
 
@@ -77,11 +88,25 @@ async function deleteMatchedPair(sessionId) {
     }
 }
 
+async function getSession(sessionId) {
+    try {
+        const matchedPair = await MatchedPair.findOne({ sessionId: sessionId });
+        console.log(`Get session details for ${sessionId}:`, matchedPair);
+        return matchedPair;
+
+    } catch (error) {
+        console.error(`Error getting session difficulty for ${sessionId}:`, error);
+        return null;
+    }
+}
+
 module.exports = {
     getMatchedPairBySessionId,
     getCurrentMatchedPair,
+    getCurrentActiveSession,
     addMatchedPair,
     endSession,
     modifyMatchedPair,
-    deleteMatchedPair
+    deleteMatchedPair,
+    getSession
 };

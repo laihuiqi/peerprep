@@ -8,14 +8,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16.git#assignment5"
+        "url": "git+https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/issues"
     },
-    "homepage": "https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/tree/assignment5#readme",
+    "homepage": "https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/blob/master/peer-prep/src/matching-service/README.md",
     "dependencies": {
         "amqplib": "^0.10.3",
         "choco": "^0.2.1",

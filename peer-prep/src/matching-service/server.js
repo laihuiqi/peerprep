@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const config = require('./config/config');
-const routes = require('./routes/routes');
+const routes = require('./routes/matchingRoute');
 
 
 mongoose.connect(config.mongodbUri, {
@@ -20,6 +20,6 @@ app.use((err, req, res, next) => {
     res.status(500).send({ error: err.message });
 });
 
-app.listen(3000, () => {
-    console.log('Matching service listening on port 3000');
+app.listen(3001, () => {
+    console.log('Matching service listening on port 3001');
 });
