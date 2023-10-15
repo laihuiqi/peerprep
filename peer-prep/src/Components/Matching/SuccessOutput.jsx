@@ -20,3 +20,5 @@ export const SuccessOutput= ({isOpen, isClose}) => {
   }
   return null;
 };
+
+

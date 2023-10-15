@@ -94,9 +94,6 @@ const MatchPopup = ({ isOpen, isClose }) => {
                             <option value = "No Preference">No Preference</option>
                         </select>
                         </div>
-
-
-
                 </div>
                 <button className="match-button" onClick={initiateMatching}>Match</button>
                 </div>
