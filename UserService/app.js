@@ -8,13 +8,18 @@ const bodyParser = require("body-parser");
 // MongoDB Database using Mongoose as Client
 const mongoose = require("mongoose");
 
+// Connecting to MongoDB Database
+mongoose
+  .connect("mongodb://user-service-database:27017/userData")
+  .then((result) => {
+    console.log("Connected To MongoDB");
+  })
+  .catch((error) => {
+    console.log("Could not connect: " + error);
+  });
+
 // Importing Routes
 const userRoutes = require("./routes/users");
-
-// Connecting to MongoDB Database
-mongoose.connect("", {
-  useMongoClient: true,
-});
 
 // Middleware to help in parsing, loggiong
 app.use(morgan("dev"));
