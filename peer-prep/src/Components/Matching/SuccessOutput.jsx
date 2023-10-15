@@ -18,4 +18,5 @@ export const SuccessOutput= ({isOpen, isClose}) => {
       </div>
     );
   }
+  return null;
 };
