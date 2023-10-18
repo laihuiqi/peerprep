@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
 const questionSchema = new Schema({
-  title: String,
-  description: String,
-  complexity: String,
-  category: String,
+  title: {type: String, required: true},
+  description: {type: String, required: true},
+  complexity: {type: String, required: true},
+  category: {type: String, required: true},
   userTags: [{ userId: String, tags: [String]}],
 });
 

@@ -25,9 +25,18 @@ const getAllQuestions = async (req, res) => {
 const createQuestion = async (req, res) => {
     const {title, description, complexity, category} = req.body;
     const currentSameDescriptionQuestion =  await Question.findOne({ description });
+    const currentSameTitleQuestion =  await Question.findOne({ title });
+
+    if (currentSameDescriptionQuestion && currentSameTitleQuestion) {
+      return res.status(400).json({ error: 'Question with an identical title and description already exists' });
+    }  
     if (currentSameDescriptionQuestion) {
       return res.status(400).json({ error: 'Question with an identical description already exists' });
-    }
+    }  
+    if (currentSameTitleQuestion) {
+      return res.status(400).json({ error: 'Question with an identical title already exists' });
+    }  
+    
     try {
       const question = await Question.create({title, description, complexity, category});
       res.status(200).json(question);
@@ -44,13 +53,22 @@ const updateQuestion = async (req, res) => {
       checkIdValidity(id);
       const question = await Question.findById(id);
       checkQuestionValidity(question);
+      
+      if (title !== question.title) {
+        const currentSameTitleQuestion = await Question.findOne({ title });
+
+        if (currentSameTitleQuestion) {
+          return res.status(400).json({ error: 'Question with this title already exists.' });
+        }
+    }
 
       if (description !== question.description) {
           const currentSameDescriptionQuestion = await Question.findOne({ description });
+
           if (currentSameDescriptionQuestion) {
-              return res.status(400).json({ error: 'Question with this description already exists.' });
+            return res.status(400).json({ error: 'Question with this description already exists.' });
           }
-      }
+      }  
 
       question.title = title;
       question.description = description;
