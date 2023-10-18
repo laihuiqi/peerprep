@@ -23,13 +23,13 @@ const getAllQuestions = async (req, res) => {
 }
   
 const createQuestion = async (req, res) => {
-    const {title, description, complexity, category} = req.body;
+    const {title, description, complexity, category, topic, language} = req.body;
     const currentSameDescriptionQuestion =  await Question.findOne({ description });
     if (currentSameDescriptionQuestion) {
       return res.status(400).json({ error: 'Question with an identical description already exists' });
     }
     try {
-      const question = await Question.create({title, description, complexity, category});
+      const question = await Question.create({title, description, complexity, category, topic, language});
       res.status(200).json(question);
     } catch (error) {
       res.status(400).json({error: 'Unable to create a new question'});
@@ -38,7 +38,7 @@ const createQuestion = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
-  const { title, description, complexity, category } = req.body;
+  const { title, description, complexity, category, topic, language } = req.body;
   
   try {
       checkIdValidity(id);
@@ -56,6 +56,8 @@ const updateQuestion = async (req, res) => {
       question.description = description;
       question.complexity = complexity;
       question.category = category;
+      question.topic = topic;
+      question.language = language;
       
       const updatedQuestion = await question.save();
       res.status(200).json(updatedQuestion);

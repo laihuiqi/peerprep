@@ -7,6 +7,8 @@ const questionSchema = new Schema({
   description: String,
   complexity: String,
   category: String,
+  topic: {type: String, required: true},
+  language:{type: String, required: true},
   userTags: [{ userId: String, tags: [String]}],
 });
 
