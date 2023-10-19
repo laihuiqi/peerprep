@@ -9,6 +9,22 @@ function setUserState(obtainedUser) {
   currentLoggedInUser.updateUser(obtainedUser);
 }
 
+function updateUserState(
+  updatedUserName,
+  updatedUserEmail,
+  updatedUserGithubId,
+  updatedUserPreferredLanguage
+) {
+  if (currentLoggedInUser === null) {
+    return;
+  }
+
+  currentLoggedInUser.updateName(updatedUserName);
+  currentLoggedInUser.updateEmail(updatedUserEmail);
+  currentLoggedInUser.updateGithubId(updatedUserGithubId);
+  currentLoggedInUser.updatePreferredLanguage(updatedUserPreferredLanguage);
+}
+
 function isUserLoggedIn() {
   return currentLoggedInUser === null ? false : true;
 }
@@ -70,4 +86,5 @@ export {
   getUserGithubId,
   getUserAdminStatus,
   setUserState,
+  updateUserState,
 };
