@@ -19,7 +19,7 @@ mongoose
   });
 
 // Importing Routes
-const userRoutes = require("./routes/users");
+const userRoutes = require("./routes/Users");
 
 // Middleware to help in parsing, loggiong
 app.use(morgan("dev"));
