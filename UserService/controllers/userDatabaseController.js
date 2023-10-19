@@ -167,10 +167,50 @@ const deleteUserFromDatabase = (req, res, next) => {
     });
 };
 
+const updateUserPrivilege = (req, res, next) => {
+  User.updateOne(
+    { email: req.body.email },
+    {
+      $set: {
+        isAdmin: req.body.isAdmin,
+      },
+    }
+  )
+    .exec()
+    .then((docs) => {
+      if (docs.matchedCount === 0) {
+        console.log("PRIVILEGE UPDATE: USER NOT FOUND: " + req.body.email);
+
+        res.status(404).json({
+          message: "PRIVILEGE UPDATE: USER NOT FOUND",
+          status: docs,
+        });
+
+        return;
+      }
+
+      console.log("PRIVILEGE UPDATE USER: " + req.body.email);
+
+      res.status(200).json({
+        message: "PRIVILEGE UPDATE USER",
+        status: docs,
+      });
+    })
+    .catch((error) => {
+      console.log("Unable to PRIVILEGE UPDATE User: " + req.body.email);
+
+      res.status(500).json({
+        message: "PRIVILEGE UPDATE USER",
+        error: error,
+      });
+    });
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   addUserToDatabase,
   updateUserData,
   deleteUserFromDatabase,
+  updateUserPrivilege,
 };
