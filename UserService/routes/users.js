@@ -8,7 +8,7 @@ const {
   updateUserData,
   deleteUserFromDatabase,
   updateUserPrivilege,
-} = require("../controllers/userDatabaseController");
+} = require("../controllers/UserDatabaseController");
 
 router.get("/", getAllUsers);
 
