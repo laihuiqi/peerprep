@@ -18,21 +18,21 @@ let availabilityCache = new Map();
 async function findMatch(request) {
 
     return new Promise(async(resolve) => {
-        let connection;
+        let rabbitmqConnection;
         let channel;
         let checkCancel;
         let matchId = null;
 
         try {
-            connection = await amqp.connect(config.rabbitmqUrl);
-            channel = await connection.createChannel();
+            rabbitmqConnection = await amqp.connect(config.rabbitmqUrl);
+            channel = await rabbitmqConnection.createChannel();
 
             console.log('Successfully connected to RabbitMQ');
 
-            const criteria = `${request.language || 'None'}
-                            .${request.proficiency || 'None'}
-                            .${request.difficulty || 'None'}
-                            .${request.topic || 'None'}`;
+            const criteria = `${request.language}
+                            .${request.proficiency}
+                            .${request.difficulty}
+                            .${request.topic}`;
 
             checkCancel = setInterval(async() => {
                 if (matchId && isCancelled.has(parseInt(matchId))) {
@@ -110,10 +110,10 @@ async function findMatch(request) {
             clearInterval(checkCancel);
 
             if (channel) {
-                channel.close();
+                await channel.close();
             }
-            if (connection) {
-                connection.close();
+            if (rabbitmqConnection) {
+                await rabbitmqConnection.close();
             }
         }
     });
@@ -122,9 +122,7 @@ async function findMatch(request) {
 function criteriaMatches(requestCriteria, currentCriteria) {
     const fields = ['language', 'proficiency', 'difficulty', 'topic'];
     for (let field of fields) {
-        if (requestCriteria[field] !== "None" &&
-            currentCriteria[field] !== "None" &&
-            requestCriteria[field] !== currentCriteria[field]) {
+        if (requestCriteria[field] !== currentCriteria[field]) {
             return false;
         }
     }
