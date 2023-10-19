@@ -8,7 +8,11 @@ import {
 
 import { auth } from "./firebase";
 
-async function registerUser(userEmail, userPassword) {
+import setFirebaseUserCredentials from "./AuthenticationState";
+
+var unsubscribeAuthenticationStateObserver = null;
+
+async function registerUserUsingFirebase(userEmail, userPassword) {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -27,7 +31,7 @@ async function registerUser(userEmail, userPassword) {
   }
 }
 
-async function loginUser(userEmail, userPassword) {
+async function loginUserUsingFirebase(userEmail, userPassword) {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -46,7 +50,7 @@ async function loginUser(userEmail, userPassword) {
   }
 }
 
-async function logoutUser() {
+async function logoutUserUsingFirebase() {
   try {
     await signOut(auth);
 
@@ -60,7 +64,7 @@ async function logoutUser() {
   }
 }
 
-async function resetUserPassword(userEmail) {
+async function resetUserPasswordUsingFirebase(userEmail) {
   try {
     await sendPasswordResetEmail(auth, userEmail);
 
@@ -87,10 +91,22 @@ async function isUserLoggedIn() {
   });
 }
 
+function observeAuthState() {
+  if (unsubscribeAuthenticationStateObserver !== null) {
+    unsubscribeAuthenticationStateObserver();
+  }
+
+  unsubscribeAuthenticationStateObserver = onAuthStateChanged(auth, (user) => {
+    setFirebaseUserCredentials(user);
+  });
+}
+
+observeAuthState();
+
 export {
-  registerUser,
-  loginUser,
-  logoutUser,
-  resetUserPassword,
+  registerUserUsingFirebase,
+  loginUserUsingFirebase,
+  logoutUserUsingFirebase,
+  resetUserPasswordUsingFirebase,
   isUserLoggedIn,
 };
