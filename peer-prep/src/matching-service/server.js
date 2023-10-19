@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const config = require('./config/config');
-const routes = require('./routes/routes');
+const routes = require('./routes/matchingRoute');
 
 
 mongoose.connect(config.mongodbUri, {
