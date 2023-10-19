@@ -12,7 +12,7 @@ const matchingDuration = 60000 - waitingDuration;
 const queueName = 'matchingQueue';
 
 let isCancelled = new Set();
-let availabilityCache = new Set();
+let availabilityCache = new Map();
 
 // Find matching pair based on the selected criteria : language, proficiency, difficulty, topic
 async function findMatch(request) {
@@ -21,6 +21,7 @@ async function findMatch(request) {
         let connection;
         let channel;
         let checkCancel;
+        let matchId = null;
 
         try {
             connection = await amqp.connect(config.rabbitmqUrl);
@@ -34,9 +35,9 @@ async function findMatch(request) {
                             .${request.topic || 'None'}`;
 
             checkCancel = setInterval(async() => {
-                if (isCancelled.has(parseInt(request.id))) {
+                if (matchId && isCancelled.has(parseInt(matchId))) {
                     clearInterval(checkCancel);
-                    resolve({status: 'cancel', isMatched: false, collaboratorId: null, request: request });
+                    resolve({ status: 'cancel', isMatched: false, collaboratorId: null, request: request });
 
                 } else {
                     const checkMatchedPair = await getCurrentMatchedPair(request.id);
@@ -54,20 +55,22 @@ async function findMatch(request) {
                 }
             }, refreshDuration);
 
-            await addRequestIntoQueue(channel, criteria, request);
+            await new Promise(resolve => setTimeout(resolve, waitingDuration));
+
+            matchId = await addRequestIntoQueue(channel, criteria, request);
 
             await new Promise(resolve => setTimeout(resolve, waitingDuration));
             // wait for 5 seconds to check if there is a prior object that matched
 
             const { stored, isMatched, id, collaboratorId } =
-            await getMatchFromQueue(channel, criteria, request);
+            await getMatchFromQueue(channel, matchId, request);
 
             console.log(`Clean up tasks are completed for ${request.id}!`);
 
-            if (!isMatched) {
+            if (!isMatched && !stored) {
                 console.log(`Matched pair could not be found for ${request.id}`);
 
-                resolve({status: 'error', isMatched: false, collaboratorId: null, request: request });
+                resolve({ status: 'error', isMatched: false, collaboratorId: null, request: request });
 
             } else if (stored) {
                 resolve({
@@ -104,6 +107,7 @@ async function findMatch(request) {
 
         } finally {
             availabilityCache.delete(request.id);
+            clearInterval(checkCancel);
 
             if (channel) {
                 channel.close();
@@ -132,12 +136,14 @@ async function addRequestIntoQueue(channel, criteria, request) {
     try {
         await channel.assertQueue(queueName, { durable: false });
 
-        const message = JSON.stringify({ criteria: criteria, request: request });
+        const matchId = uuidv4();
+        const message = JSON.stringify({ matchId: matchId, criteria: criteria, request: request });
         channel.sendToQueue(queueName, Buffer.from(message), { expiration: matchingDuration });
-        availabilityCache.add(request.id);
-        isCancelled.delete(parseInt(request.id));
+        availabilityCache.set(request.id, matchId);
 
         console.log(`Successfully added request into queue for user ${request.id}`);
+
+        return matchId;
 
     } catch (error) {
         console.log('Error adding request into queue: ', error);
@@ -146,7 +152,7 @@ async function addRequestIntoQueue(channel, criteria, request) {
 }
 
 // Check if there exists a matched pair for the user, else, find a match from the queue
-async function getMatchFromQueue(channel, criteria, request) {
+async function getMatchFromQueue(channel, matchId, request) {
     console.log(`Checking if there is a match for user ${request.id} and find match from queue...`);
 
     const currentPair = await getCurrentMatchedPair(request.id);
@@ -158,12 +164,12 @@ async function getMatchFromQueue(channel, criteria, request) {
         return { stored: true, isMatched: true, id: request.id, collaboratorId: collaboratorId };
 
     } else {
-        return listenToMatchingQueue(channel, criteria, request);
+        return listenToMatchingQueue(channel, matchId, request);
     }
 }
 
 // Listen to the queue for a matching pair
-async function listenToMatchingQueue(channel, criteria, request) {
+async function listenToMatchingQueue(channel, matchId, request) {
     try {
         console.log(`Start matching user ${request.id}`);
 
@@ -187,35 +193,29 @@ async function listenToMatchingQueue(channel, criteria, request) {
             channel.consume(queueName, async(message) => {
                 const currentRequest = JSON.parse(message.content.toString());
                 const checkActivePair = await getCurrentMatchedPair(currentRequest.request.id);
-                
-                // Check if there is an active pair and if the criteria still match
-                if (checkActivePair && criteriaMatches(request, currentRequest.request)) {
-                    const collaboratorId = String(checkActivePair.id1) === String(request.id) ? checkActivePair.id2 : checkActivePair.id1;
-                    resolve({
-                        stored: true,
-                        isMatched: true,
-                        id: request.id,
-                        collaboratorId: collaboratorId
-                    });
 
-                } else if (checkActivePair ||
-                    isCancelled.has(parseInt(currentRequest.request.id))) {
+                // Check if there is an active pair and if the criteria still match
+                if (checkActivePair ||
+                    isCancelled.has(parseInt(currentRequest.matchId) ||
+                        availabilityCache.get(currentRequest.request.id) !== currentRequest.matchId)) {
 
                     console.log(`Remove match ${currentRequest.request.id}`);
                     availabilityCache.delete(currentRequest.request.id);
                     channel.ack(message);
 
                 } else if (!matched &&
-                    currentRequest.request.id !== request.id && criteriaMatches(request, currentRequest.request) &&
-                    availabilityCache.has(currentRequest.request.id)) {
+                    currentRequest.request.id !== request.id &&
+                    criteriaMatches(request, currentRequest.request) &&
+                    availabilityCache.has(currentRequest.request.id) &&
+                    availabilityCache.get(request.id) === matchId &&
+                    !isCancelled.has(parseInt(matchId))) {
 
                     console.log(`Found a match for ${request.id}`);
 
                     channel.ack(message);
                     availabilityCache.delete(currentRequest.request.id);
                     availabilityCache.delete(request.id);
-                    console.log(`${request.id} has been matched with
-                                 ${currentRequest.request.id}`);
+                    console.log(`${request.id} has been matched with ${currentRequest.request.id}`);
 
                     matched = true;
                     console.log(`Successfully matched user ${request.id}`);
@@ -247,8 +247,8 @@ async function listenToMatchingQueue(channel, criteria, request) {
 
 async function cancelMatch(requestId) {
     // Adding the requestId to the cancelled set
-    isCancelled.add(parseInt(requestId));
-    
+    isCancelled.add(parseInt(availabilityCache.get(requestId)));
+
     // Removing the requestId from the availability cache
     availabilityCache.delete(requestId);
 
