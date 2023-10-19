@@ -2,12 +2,11 @@
 
 import UserModel from "../DataModel/UserModel";
 
-var firebaseUserCredentials = null;
-
 var currentLoggedInUser = null;
 
-function setFirebaseUserCredentials(obtainedUser) {
-  firebaseUserCredentials = obtainedUser;
+function setUserState(obtainedUser) {
+  currentLoggedInUser = new UserModel("", "", "");
+  currentLoggedInUser.updateUser(obtainedUser);
 }
 
 function isUserLoggedIn() {
@@ -70,6 +69,5 @@ export {
   getUserPreferredLanguage,
   getUserGithubId,
   getUserAdminStatus,
+  setUserState,
 };
-
-export default setFirebaseUserCredentials;
