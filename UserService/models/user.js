@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   email: { type: String, required: true },
   githubId: { type: String, required: true },
   preferredLanguage: { type: String, required: true },
-  isAdmin: Boolean,
+  isAdmin: { type: Boolean, required: true },
 });
 
 module.exports = mongoose.model("User", userSchema);
