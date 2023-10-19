@@ -7,9 +7,12 @@ const {
   addUserToDatabase,
   updateUserData,
   deleteUserFromDatabase,
+  updateUserPrivilege,
 } = require("../controllers/userDatabaseController");
 
 router.get("/", getAllUsers);
+
+router.patch("/update-privilege", updateUserPrivilege);
 
 router.get("/:userId", getUserById);
 
