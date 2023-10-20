@@ -6,6 +6,19 @@ const {
   isUserLoggedIn,
 } = require("../UserAuthenticationController");
 
+const {
+  deleteUserAccountInFirebase,
+} = require("../UserProfileUpdateController");
+
+afterAll(() => {
+  return loginUserUsingFirebase(
+    "project548@yahoo.com",
+    "Sample1234Password"
+  ).then((data) => {
+    deleteUserAccountInFirebase();
+  });
+});
+
 test("Test User Registration With Correct Credentials", () => {
   return registerUserUsingFirebase(
     "project548@yahoo.com",
