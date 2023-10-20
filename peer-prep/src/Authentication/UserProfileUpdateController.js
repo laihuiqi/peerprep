@@ -2,13 +2,17 @@ import { updateEmail, updatePassword, deleteUser } from "firebase/auth";
 
 import { auth } from "./firebase";
 
-async function updateUserName() {}
-
-async function updateUserPreferredLanguage() {}
-
-async function updateUserGithubId() {}
-
-async function updateUserEmail(updatedUserEmail) {
+/**
+ * BUG ALERT: https://stackoverflow.com/questions/77147854/firebase-please-verify-the-new-email-before-changing-email-auth-operation-not
+ * !! This function should not be used until a workaround from Firebase is provided
+ * !! or User Email Update Field can be disabled while editing
+ *
+ * Updates the Email of the currently logged in User on Firebase Authentication Service.
+ *
+ * @param {String} updatedUserEmail
+ * @returns Promise<Boolean> True, if the email change operation was successful. False otherwise.
+ */
+async function updateUserEmailInFirebase(updatedUserEmail) {
   try {
     await updateEmail(auth.currentUser, updatedUserEmail);
 
@@ -22,7 +26,7 @@ async function updateUserEmail(updatedUserEmail) {
   }
 }
 
-async function updateUserPassword(updatedUserPassword) {
+async function updateUserPasswordInFirebase(updatedUserPassword) {
   try {
     await updatePassword(auth.currentUser, updatedUserPassword);
 
@@ -36,7 +40,7 @@ async function updateUserPassword(updatedUserPassword) {
   }
 }
 
-async function deleteUserAccount() {
+async function deleteUserAccountInFirebase() {
   try {
     await deleteUser(auth.currentUser);
 
@@ -51,10 +55,7 @@ async function deleteUserAccount() {
 }
 
 export {
-  updateUserName,
-  updateUserPreferredLanguage,
-  updateUserGithubId,
-  updateUserEmail,
-  updateUserPassword,
-  deleteUserAccount,
+  updateUserEmailInFirebase,
+  updateUserPasswordInFirebase,
+  deleteUserAccountInFirebase,
 };
