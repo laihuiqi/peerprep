@@ -1,11 +1,11 @@
 const {
-  updateUserEmail,
-  updateUserPassword,
-  deleteUserAccount,
+  updateUserEmailInFirebase,
+  updateUserPasswordInFirebase,
+  deleteUserAccountInFirebase,
 } = require("../UserProfileUpdateController");
 
 test("Test User Email Update With Properly Formatted Email When User Is Loggen In", () => {
-  return updateUserEmail("updated@yahoo.com").then((data) => {
+  return updateUserEmailInFirebase("updated@yahoo.com").then((data) => {
     console.log(
       "> Update With Correctly Formatted Email When User Is Loggen In: " + data
     );
@@ -15,7 +15,7 @@ test("Test User Email Update With Properly Formatted Email When User Is Loggen I
 });
 
 test("Test User Email Update With Incorrectly Formatted Email When User Is Loggen In", () => {
-  return updateUserEmail("updated.com").then((data) => {
+  return updateUserEmailInFirebase("updated.com").then((data) => {
     console.log(
       "> Update With Incorrectly Formatted Email When User Is Loggen In: " +
         data
@@ -26,7 +26,7 @@ test("Test User Email Update With Incorrectly Formatted Email When User Is Logge
 });
 
 test("Test User Password Update When Logged In", () => {
-  return updateUserPassword("NewToughPa55word").then((data) => {
+  return updateUserPasswordInFirebase("NewToughPa55word").then((data) => {
     console.log("> Update Password When Logged In: " + data);
 
     expect(data).toBe(true);
@@ -35,7 +35,7 @@ test("Test User Password Update When Logged In", () => {
 
 // Also need to test if user is logged out on deletion
 test("Test User Account Deletion When User Is Logged In", () => {
-  return deleteUserAccount().then((data) => {
+  return deleteUserAccountInFirebase().then((data) => {
     console.log("> User Account Deletion When User Is Logged In: " + data);
 
     expect(data).toBe(true);
@@ -43,7 +43,7 @@ test("Test User Account Deletion When User Is Logged In", () => {
 });
 
 test("Test User Email Update When User Is Not Logged In", () => {
-  return updateUserEmail("logged_out@yahoo.com").then((data) => {
+  return updateUserEmailInFirebase("logged_out@yahoo.com").then((data) => {
     console.log("> Update Email When User Is Not Logged In: " + data);
 
     expect(data).toBe(false);
@@ -51,7 +51,7 @@ test("Test User Email Update When User Is Not Logged In", () => {
 });
 
 test("Test User Password Update When Not Logged In", () => {
-  return updateUserPassword("NewToughPa55word").then((data) => {
+  return updateUserPasswordInFirebase("NewToughPa55word").then((data) => {
     console.log("> Update Password When Not Logged In: " + data);
 
     expect(data).toBe(false);
@@ -59,7 +59,7 @@ test("Test User Password Update When Not Logged In", () => {
 });
 
 test("Test User Account Deletion When User Is Not Logged In", () => {
-  return deleteUserAccount().then((data) => {
+  return deleteUserAccountInFirebase().then((data) => {
     console.log("> User Account Deletion When User Is Not Logged In: " + data);
 
     expect(data).toBe(false);

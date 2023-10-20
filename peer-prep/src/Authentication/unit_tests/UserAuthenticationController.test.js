@@ -1,63 +1,72 @@
 const {
-  registerUser,
-  loginUser,
-  logoutUser,
-  resetUserPassword,
+  registerUserUsingFirebase,
+  loginUserUsingFirebase,
+  logoutUserUsingFirebase,
+  resetUserPasswordUsingFirebase,
   isUserLoggedIn,
 } = require("../UserAuthenticationController");
 
 test("Test User Registration With Correct Credentials", () => {
-  return registerUser("project548@yahoo.com", "Sample1234Password").then(
-    (data) => {
-      console.log("> Register With Correct Credentials: " + data);
+  return registerUserUsingFirebase(
+    "project548@yahoo.com",
+    "Sample1234Password"
+  ).then((data) => {
+    console.log("> Register With Correct Credentials: " + data);
 
-      expect(data).toBe(true);
-    }
-  );
-});
-
-test("Test User Registration With Incorrect Credentials", () => {
-  return registerUser("project548@", "Sample1234Password").then((data) => {
-    console.log("> Register With Incorrect Credentials: " + data);
-
-    expect(data).toBe(false);
+    expect(data).toBe(true);
   });
 });
 
-test("Test User Registration With Same Duplicate Email", () => {
-  return registerUser("project548@yahoo.com", "Sample1234Password*2").then(
+test("Test User Registration With Incorrect Credentials", () => {
+  return registerUserUsingFirebase("project548@", "Sample1234Password").then(
     (data) => {
-      console.log("> Register With Duplicate Email: " + data);
+      console.log("> Register With Incorrect Credentials: " + data);
 
       expect(data).toBe(false);
     }
   );
 });
 
-test("Test User Login With Correct Credentials", () => {
-  return loginUser("project548@yahoo.com", "Sample1234Password").then(
-    (data) => {
-      console.log("> Login With Correct Credentials: " + data);
+test("Test User Registration With Same Duplicate Email", () => {
+  return registerUserUsingFirebase(
+    "project548@yahoo.com",
+    "Sample1234Password*2"
+  ).then((data) => {
+    console.log("> Register With Duplicate Email: " + data);
 
-      expect(data).toBe(true);
+    expect(data).toBe(false);
+  });
+});
+
+test("Test User Login With Correct Credentials", () => {
+  return loginUserUsingFirebase(
+    "project548@yahoo.com",
+    "Sample1234Password"
+  ).then((data) => {
+    console.log("> Login With Correct Credentials: " + data);
+
+    expect(data).toBe(true);
+  });
+});
+
+test("Test User Login With Incorrect Email", () => {
+  return loginUserUsingFirebase("project548@", "Sample1234Password").then(
+    (data) => {
+      console.log("> Login With Incorrect Email: " + data);
+
+      expect(data).toBe(false);
     }
   );
 });
 
-test("Test User Login With Incorrect Email", () => {
-  return loginUser("project548@", "Sample1234Password").then((data) => {
-    console.log("> Login With Incorrect Email: " + data);
-
-    expect(data).toBe(false);
-  });
-});
-
 test("Test User Login With Incorrect Password", () => {
-  return loginUser("project548@yahoo.com", "WrongPassword").then((data) => {
-    console.log("> Login With Incorrect Password: " + data);
+  return loginUserUsingFirebase("project548@yahoo.com", "WrongPassword").then(
+    (data) => {
+      console.log("> Login With Incorrect Password: " + data);
 
-    expect(data).toBe(false);
-  });
+      expect(data).toBe(false);
+    }
+  );
 });
 
 test("Test User Authentication State When Logged In", () => {
@@ -69,7 +78,7 @@ test("Test User Authentication State When Logged In", () => {
 });
 
 test("Test User Logout When User Logged In", () => {
-  return logoutUser().then((data) => {
+  return logoutUserUsingFirebase().then((data) => {
     console.log("> Logout When User Logged In: " + data);
 
     expect(data).toBe(true);
@@ -85,7 +94,7 @@ test("Test User Authentication State When Logged Out", () => {
 });
 
 test("Test Reset Password Email Being Sent With Correct Credentials", () => {
-  return resetUserPassword("project548@yahoo.com").then((data) => {
+  return resetUserPasswordUsingFirebase("project548@yahoo.com").then((data) => {
     console.log("> Reset Password Email To Correct Credentials: " + data);
 
     expect(data).toBe(true);
@@ -93,7 +102,7 @@ test("Test Reset Password Email Being Sent With Correct Credentials", () => {
 });
 
 test("Test Reset Password Email Being Sent With Incorrect Credentials", () => {
-  return resetUserPassword("project548@").then((data) => {
+  return resetUserPasswordUsingFirebase("project548@").then((data) => {
     console.log("> Reset Password Email To Incorrect Credentials: " + data);
 
     expect(data).toBe(false);

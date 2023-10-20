@@ -98,6 +98,7 @@ function observeAuthState() {
 
   unsubscribeAuthenticationStateObserver = onAuthStateChanged(auth, (user) => {
     setFirebaseUserCredentials(user);
+    // Possible to add setUserState Here (Issue: Higher Coupling)
   });
 }
 
