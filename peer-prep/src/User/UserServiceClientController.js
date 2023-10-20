@@ -77,10 +77,13 @@ async function deleteUserData(userId) {
 
 async function updateUserPrivilege(userEmail, adminStatus) {
   try {
-    const result = await axios.patch(USER_SERVICE_HOST + "update-privilege", {
-      email: userEmail,
-      isAdmin: adminStatus,
-    });
+    const result = await axios.patch(
+      USER_SERVICE_HOST + "users/update-privilege",
+      {
+        email: userEmail,
+        isAdmin: adminStatus,
+      }
+    );
 
     return result;
   } catch (error) {
