@@ -32,6 +32,9 @@ const createQuestion = async (req, res) => {
       const question = await Question.create({title, description, complexity, category, topic, language});
       res.status(200).json(question);
     } catch (error) {
+      if (!title || !description || !complexity || !category || !topic || !language) {
+        return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+      }
       res.status(400).json({error: 'Unable to create a new question'});
     }
 }
@@ -58,10 +61,12 @@ const updateQuestion = async (req, res) => {
       question.category = category;
       question.topic = topic;
       question.language = language;
-      
       const updatedQuestion = await question.save();
       res.status(200).json(updatedQuestion);
   } catch (error) {
+      if (!title || !description || !complexity || !category || !topic || !language) {
+        return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+      }
       res.status(500).json({ error: 'Unable to update question' });
   }
 }
