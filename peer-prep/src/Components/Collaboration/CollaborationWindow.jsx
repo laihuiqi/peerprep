@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import './CollaborationWindow.css'; 
 import Timer from './Timer';
+import { useNavigate } from 'react-router-dom';
 
 const CollaborationWindow = () => {
-    const [isSessionActive, setIsSessionActive] = useState(true);
     const [timeRemaining, setTimeRemaining] = useState('1800000');
-    const [toast, setToast] = useState ( {visible: false, message: ''} );
+    const [toast, setToast] = useState({ visible: false, message: '' });
+    const navigate = useNavigate();
 
     const handleEndSession = () => {
-        setIsSessionActive(false);
+        navigate('/'); // navigating to home or any other path after the session ends
     };
 
     const showToast = (message) => {
-        setToast({visible: true, message });
+        setToast({ visible: true, message });
         setTimeout(() => {
-            setToast({visible: false, message: ''});
+            setToast({ visible: false, message: '' });
         }, 1500);
     };
 
@@ -31,14 +32,8 @@ const CollaborationWindow = () => {
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-
-    if (!isSessionActive) {
-        return null;
-    }
-    
-    return (
-    <div className='collaboration-overlay'>
-      <div className="collaboration-window"> {/* Changed from <CollaborationWindow /> to a div */}
+    return (      
+      <div className="collaboration-window"> 
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
@@ -60,10 +55,9 @@ const CollaborationWindow = () => {
         </div>
         <button className="submit-button">Submit</button>
         <Timer setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession} />
+        {toast.visible && <div className="toast">{toast.message}</div>}
       </div>
-      {toast.visible && <div className="toast">{toast.message}</div>}
-    </div>
-  );
+    );
 };
 
 export default CollaborationWindow;
