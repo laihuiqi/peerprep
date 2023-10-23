@@ -10,15 +10,29 @@ const config = require('./config/config');
 const server = createServer(app);
 const io = new Server(server, {
     cors:{
-      origin:'*',
+      origin:'http://localhost:3002',
+      optionsSuccessStatus:200
     }
   });
-const collaborationService = require('./services/collaborationService');
+const { startCollaboration } = require('./services/collaborationService');
 
-mongoose.connect(config.mongodbUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+const connectDB = async() => {
+    try {
+        const conn = await mongoose.connect(config.mongodbUri, { 
+            useNewUrlParser: true,
+            useUnifiedTopology: true 
+        });
+
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
+
+    } catch (err) {
+        console.log(`MongoDB Error: ${err.message}`);
+
+        process.exit(1);
+    }
+};
+
+connectDB();
 
 app.use(cors());
 app.use(express.static('public'));
@@ -30,9 +44,12 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', async(socket) => {
+
+    console.log('mongoose connected: ', mongoose.connection.readyState, mongoose.connection.host);
+
     console.log('socket connected: ', socket.id);
 
-    await collaborationService.startCollaboration(socket);
+    await startCollaboration(socket);
 
 });
 
@@ -45,4 +62,4 @@ server.listen(3002, () => {
     console.log('Collaboration service listening on port 3002');
 });
 
-module.exports = { io };
+module.exports = { io, connectDB };

@@ -5,10 +5,10 @@ const getCollaborativeInput = async(sessionId) => {
     try {
         const dataOutput = await CollaborativeInput.findOne({ sessionId: sessionId });
         console.log(`Get collaborative input for session ${sessionId}`);
-        return (dataOutput.language, dataOutput.codes);
+        return [dataOutput.language, dataOutput.codes];
     } catch (error) {
-        console.error(`Error getting collaborative input for session ${sessionId}:`, error);
-        return ("None", "");
+        console.log(`Error getting collaborative input for session ${sessionId}:`, error);
+        return ["None", ""];
     }
 }
 
@@ -16,17 +16,19 @@ const getCollaborativeInputByLine = async(sessionId, line) => {
     try {
         const dataOutput = await CollaborativeInput.findOne({ sessionId: sessionId, 'codes.line': line });
         console.log(`Get collaborative input for session ${sessionId} line {line}}`);
-        return (dataOutput.language, line, dataOutput.codes[line].code);
+        return [dataOutput.language, line, dataOutput.codes[line].code];
     } catch (error) {
         console.error(`Error getting collaborative input for session ${sessionId}:`, error);
-        return ("None", line, "");
+        return ["None", line, ""];
     }
 }
 
 const initCollaborativeCode = async(sessionId, language) => {
     try {
+        const input = await getCollaborativeInput(sessionId);
         const collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, codes: [] });
-        if (!collaborativeInput) {
+
+        if (input[0] === "None") {
             await collaborativeInput.save();
             console.log(`Successfully added:`, collaborativeInput);
         } else {

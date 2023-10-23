@@ -1,43 +1,53 @@
 const io = require('../server');
-const matchedPairDB = require('../../matching-service/database/matchedPairDb');
+const { getSession, endSession, getCurrentActiveSession } = require('../database/matchedPairDb');
 const collaborativeInputDB = require('../database/collaborativeInputDb');
 const config = require('../config/config');
+
+let initSession = [];
 
 const startCollaboration = async(socket) => {
 
     const collaborationSessionExist = await verifyCurrentSession(
         socket.handshake.query.sessionId, socket.handshake.query.userId);
 
+    console.log(`Collaboration session exist: ${collaborationSessionExist}`);
+
     if (collaborationSessionExist) {
         console.log(`Socket starts: ${socket.id}`);
 
         const sessionId = socket.handshake.query.sessionId;
-        const userId = socket.handshake.socket.handshake.query.userId;
+        const userId = socket.handshake.query.userId;
         const startTime = new Date().getTime();
-        const sessionDifficulty = await matchedPairDB.getSession(sessionId).difficulty;
+        const session = await getSession(sessionId);
+        const sessionDifficulty = session.difficulty;
+        const sessionLanguage = session.language;
 
         let sessionTimer = setTimeout(async() => {
-            await systemTerminate(sessionId, userId, socket);
+           await systemTerminate(sessionId, userId, socket);
 
         }, config.DEFAULT_TIME_LIMIT[sessionDifficulty]);
 
         socket.join(sessionId);
         socket.emit('join', sessionId);
 
-        await collaborativeInputDB.initCollaborativeCode(sessionId);
+        if (initSession.includes(sessionId)) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        initSession.push(sessionId);
+        await collaborativeInputDB.initCollaborativeCode(sessionId, sessionLanguage);
 
         console.log('user joined: ', userId);
         console.log(`init code input storage for session ${sessionId}`);
-        io.to(sessionId).broadcast('user-joined', userId);
+        socket.to(sessionId).emit('user-joined', userId);
 
         socket.on('code-change', (line, code) => {
-            io.to(sessionId).broadcast('code-changed', line, code);
+            socket.to(sessionId).emit('code-changed', line, code);
         });
 
         socket.on('clear', async() => {
             console.log(`Clearing code input storage for session ${sessionId}`);
 
-            io.to(sessionId).broadcast('cleared');
+            socket.to(sessionId).emit('cleared', sessionId);
             await collaborativeInputDB.updateCollaborativeInput(sessionId, []);
         });
 
@@ -82,10 +92,10 @@ const startCollaboration = async(socket) => {
 
             clearTimeout(sessionTimer);
 
-            io.to(sessionId).broadcast('notify-terminate', sessionId);
+            socket.to(sessionId).emit('notify-terminate', sessionId);
 
             await collaborativeInputDB.updateCollaborativeLineInput(sessionId, line, code, userId);
-            await matchedPairDB.endSession(sessionId);
+            await endSession(sessionId);
             socket.disconnect();
         });
 
@@ -104,7 +114,7 @@ const startCollaboration = async(socket) => {
         socket.on('disconnect', () => {
             console.log('user disconnected: ', userId);
 
-            io.to(sessionId).broadcast('user-disconnected', userId);
+            socket.to(sessionId).emit('user-disconnected', userId);
 
             terminateTimeout = setTimeout(() => {
                 systemTerminate(sessionId, userId, socket);
@@ -117,7 +127,7 @@ const startCollaboration = async(socket) => {
 
             socket.emit('success-reconnected', restoreCodeEditor(sessionId));
 
-            io.to(sessionId).broadcast('user-reconnected', userId);
+            socket.to(sessionId).emit('user-reconnected', userId);
 
             clearTimeout(terminateTimeout);
         });
@@ -125,7 +135,7 @@ const startCollaboration = async(socket) => {
     } else {
         console.log('Collaboration session does not exist');
 
-        await matchedPairDB.endSession(socket.handshake.query.sessionId);
+        await endSession(socket.handshake.query.sessionId);
         socket.disconnect();
     }
 }
@@ -134,14 +144,14 @@ const systemTerminate = async(sessionId, userId, socket) => {
     console.log(`system terminated: ${sessionId} for user ${userId}`);
 
     io.to(sessionId).broadcast('system-terminate', sessionId);
-    await matchedPairDB.endSession(sessionId);
+    await endSession(sessionId);
     socket.disconnect();
 }
 
 const verifyCurrentSession = async(sessionId, userId) => {
     console.log(`Verifying current session ${sessionId} for user ${userId}`);
 
-    const currentSessionId = await matchedPairDB.getCurrentActiveSession(userId);
+    const currentSessionId = await getCurrentActiveSession(userId);
     return sessionId === currentSessionId;
 }
 

@@ -1,167 +1,146 @@
-const { expect } = require('chai');
-const { createServer } = require('http');
-const ioClient = require('socket.io-client');
-const { Server } = require('socket.io');
-const { v4: uuidv4 } = require('uuid');
+const { io } = require('socket.io-client');
 const { EXTENSION_TIME } = require('../config/config');
+const { connectDB } = require('../server');
 
 const socketURL = 'http://localhost:3002';
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe('Collaboration Service', () => {
-    let io, user1, user2, serverSocket, sessionId;
+    let user1, user2, sessionId;
 
-    beforeEach((done) => {
-        sessionId = uuidv4();
-        const httpServer = createServer();
-        io = new Server(httpServer);
+    beforeAll(async() => {
+        await connectDB();
 
-        httpServer.listen(() => {
-            user1 = ioClient(socketURL, {
-                query: {
-                    userId: 1,
-                    sessionId: sessionId
-                }
-            });
+        sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
 
-            user2 = ioClient(socketURL, {
-                query: {
-                    userId: 2,
-                    sessionId: sessionId
-                }
-            });
-
-            io.on('connection', (socket) => {
-                console.log(1);
-                serverSocket = socket;
-
-            });
-
-            user1.on('connect', done);
-            user2.on('connect', done);
-
-            done();
-        });
-    });
-
-
-    afterEach(() => {
-        io.close();
-        user1.disconnect();
-        user2.disconnect();
-    });
-    /*
-        test('users should join room with the correct sessionId', (done) => {
-            user1.on('join', (recvSessionId) => {
-                expect(recvSessionId).equal(sessionId);
-                expect(user1.rooms[sessionId]).equal(sessionId);
-                done();
-            });
-
-            user2.on('join', (recvSessionId) => {
-                expect(recvSessionId).equal(sessionId);
-                expect(user1.rooms[sessionId]).equal(sessionId);
-                done();
-            });
+        user1 = io(socketURL, {
+            query: {
+                userId: 1,
+                sessionId: sessionId
+            }
         });
 
+        user2 = io(socketURL, {
+            query: {
+                userId: 2,
+                sessionId: sessionId
+            }
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 10000));
+
+    });
+
+    afterAll(async() => {
+        //await user1.disconnect();
+        //await user2.disconnect();
+    });
+
+    
+    test('users should join room with the correct sessionId', async() => {
+        await user1.on('join', (recvSessionId) => {
+            expect(recvSessionId).toStrictEqual(sessionId);
+            expect(user1.rooms[sessionId]).toStrictEqual(sessionId);
+            console.log("0 ", recvSessionId);
+        });
+
+        await user2.on('join', (recvSessionId) => {
+            expect(recvSessionId).toStrictEqual(sessionId);
+            expect(user1.rooms[sessionId]).toStrictEqual(sessionId);
+            console.log("1 ", recvSessionId);
+        });
+    });
         
-    test('code change should be detected and broadcasted to all users in the same room', (done) => {
-        serverSocket.on('code-changed', (line, code) => {
-            expect(line).equal(1);
-            expect(code).equal('console.log("hello world");');
-            done();
+    test('code change should be detected and broadcasted to all users in the same room', async() => {
+
+        await user1.emit('code-change', 1, 'console.log("hello world");');
+        await user2.emit('code-change', 2, 'console.log("bye world");');
+
+        await user1.on('code-changed', (line, code) => {
+            expect(line).toStrictEqual("2");
+            expect(code).toStrictEqual('console.log("bye world");');
         });
 
-        user1.emit('code-change', 1, 'console.log("hello world");');
-        user2.emit('code-change', 2, 'console.log("bye world");');
-
-        user1.on('code-changed', (line, code) => {
-            expect(line).equal(2);
-            expect(code).equal('console.log("bye world");');
-            done();
-        });
-
-        user2.on('code-changed', (line, code) => {
-            expect(line).equal(1);
-            expect(code).equal('console.log("hello world");');
-            done();
+        await user2.on('code-changed', (line, code) => {
+            expect(line).toStrictEqual("1");
+            expect(code).toStrictEqual('console.log("hello world");');
+            console.log("2 ", line, code);
         });
     });
     
-        test('code editor should be cleared after the cleaning request', (done) => {
-            user1.emit('clear');
+        test('code editor should be cleared after the cleaning request', async() => {
+            await user1.emit('clear');
 
-            user2.on('cleared', () => {
-                done();
+            await user2.on('cleared', (recvSessionId) => {
+                expect(recvSessionId).toStrictEqual(sessionId);
+                console.log("3 ", recvSessionId);
             });
         });
 
-        test('line change should be detected and last change to previous line should be saved', (done) => {
-            user1.emit('change-line', 1, 'console.log("python god");');
+        test('line change should be detected and last change to previous line should be saved', async() => {
+            await user1.emit('change-line', 1, 'console.log("python god");');
         });
 
-        test('time extension should be successful when time is sufficient', (done) => {
-            user1.emit('extend-time');
+        test('time extension should be successful when time is sufficient', async() => {
+            await user1.emit('extend-time');
 
-            user1.on('time-extended', (time) => {
-                expect(time).equal(EXTENSION_TIME);
-                done();
+            await user1.on('time-extended', (time) => {
+                expect(time).toStrictEqual(EXTENSION_TIME);
             });
 
-            user2.on('time-extended', (time) => {
-                expect(time).equal(EXTENSION_TIME);
-                done();
-            });
-        });
-
-        test('session should start to terminate once user requests', (done) => {
-            user1.emit('user-terminate', 2, 'console.log("java is good");');
-
-            user2.on('notify-terminate', (session) => {
-                expect(session).equal(sessionId);
-                done();
-            });
-
-            user2.on('user-disconnected', (userId) => {
-                expect(userId).equal(1);
-                done();
+            await user2.on('time-extended', (time) => {
+                expect(time).toStrictEqual(EXTENSION_TIME);
+                console.log("5 ", time);
             });
         });
 
-        test('session should terminate once notification is received', (done) => {
-            user1.emit('ack-terminate', 3, 'console.log("do an easy unit test");');
+        test('session should start to terminate once user requests', async() => {
+            await user1.emit('user-terminate', 2, 'console.log("java is good");');
 
-            user2.on('user-disconnected', (userId) => {
-                expect(userId).equal(1);
-                done();
+            await user2.on('notify-terminate', (session) => {
+                expect(session).toStrictEqual(sessionId);
+                console.log("6 ", session);
+            });
+
+            await user2.on('user-disconnected', (userId) => {
+                expect(userId).toStrictEqual("1");
+                console.log("6 ", userId);
             });
         });
 
-        test('user should be disconnected once session is terminated', (done) => {
-            user1.disconnect();
+        test('session should terminate once notification is received', async() => {
+            await user1.emit('ack-terminate', 3, 'console.log("do an easy unit test");');
 
-            user2.on('user-disconnected', (userId) => {
-                expect(userId).equal(1);
-                done();
+            await user2.on('user-disconnected', (userId) => {
+                expect(userId).toStrictEqual("1");
+                console.log("7 ", userId);
             });
         });
 
-        test('user\'s reconnection could be received by collaborator', (done) => {
-            user1.emit('reconnect');
+        test('user should be disconnected once session is terminated', async() => {
+            await user1.disconnect();
 
-            user1.on('success-reconnected', (collaborativeInput) => {
+            await user2.on('user-disconnected', (userId) => {
+                expect(userId).toStrictEqual("1");
+                console.log("8 ", userId);
+            });
+        });
+
+        test('user\'s reconnection could be received by collaborator', async() => {
+            await user1.emit('reconnect');
+
+            await user1.on('success-reconnected', (collaborativeInput) => {
                 let language, codes = collaborativeInput;
-                expect(language).equal('None');
-                expect(codes).equal("");
-                done();
+                expect(language).toStrictEqual('None');
+                expect(codes).toStrictEqual("");
+                console.log("9 ", language, codes);
             });
 
-            user2.on('user-reconnected', (userId) => {
-                expect(userId).equal(1);
-                done();
+            await user2.on('user-reconnected', (userId) => {
+                expect(userId).toStrictEqual("1");
+                console.log("9 ", userId);
             });
         });
-        */
+        
 });
