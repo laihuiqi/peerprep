@@ -1,21 +1,22 @@
 const CollaborativeInput = require('../models/collaborationCodeModel');
 const MatchedPair = require('../../matching-service/models/matchedPairModel');
+const { getMatchQuestion } = require('../../../../question-service/controllers/questionController');
 
 const getCollaborativeInput = async(sessionId) => {
     try {
         const dataOutput = await CollaborativeInput.findOne({ sessionId: sessionId });
         console.log(`Get collaborative input for session ${sessionId}`);
-        return [dataOutput.language, dataOutput.codes];
+        return [dataOutput.language, dataOutput.question, dataOutput.codes];
     } catch (error) {
         console.log(`Error getting collaborative input for session ${sessionId}:`, error);
-        return ["None", ""];
+        return ["None", "", ""];
     }
 }
 
 const getCollaborativeInputByLine = async(sessionId, line) => {
     try {
         const dataOutput = await CollaborativeInput.findOne({ sessionId: sessionId, 'codes.line': line });
-        console.log(`Get collaborative input for session ${sessionId} line {line}}`);
+        console.log(`Get collaborative input for session ${sessionId} line ${line}`);
         return [dataOutput.language, line, dataOutput.codes[line].code];
     } catch (error) {
         console.error(`Error getting collaborative input for session ${sessionId}:`, error);
@@ -23,16 +24,21 @@ const getCollaborativeInputByLine = async(sessionId, line) => {
     }
 }
 
-const initCollaborativeCode = async(sessionId, language) => {
+const initCollaborativeCode = async(sessionId, language, difficulty, topic) => {
     try {
         const input = await getCollaborativeInput(sessionId);
-        const collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, codes: [] });
 
         if (input[0] === "None") {
+            const matchingQuestion = getMatchQuestion(language, difficulty, topic);
+            const collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, 
+                question: matchingQuestion, codes: [] });
             await collaborativeInput.save();
             console.log(`Successfully added:`, collaborativeInput);
+
+            return [language, matchingQuestion, []];
         } else {
             console.log(`Collaborative input already exists for ${sessionId}`);
+            return input;
         }
 
     } catch (error) {
@@ -59,12 +65,12 @@ const updateCollaborativeLineInput = async(sessionId, line, code, lastModifier) 
 const updateCollaborativeInput = async(sessionId, codes) => {
     try {
         let collaborativeInput = await CollaborativeInput.findOne({ sessionId: sessionId });
-        const language = await MatchedPair.getSession(sessionId).language;
+        const session = await MatchedPair.getSession(sessionId);
         if (collaborativeInput) {
-            collaborativeInput.language = language;
             collaborativeInput.codes = codes;
         } else {
-            collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, codes: codes });
+            const matchingQuestion = getMatchQuestion(session.language, session.difficulty, session.topic);
+            collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: session.language, question: matchingQuestion, codes: codes });
         }
         await collaborativeInput.save();
         console.log(`Successfully updated:`, collaborativeInput);

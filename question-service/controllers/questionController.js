@@ -21,6 +21,15 @@ const getAllQuestions = async (req, res) => {
         res.status(500).json({ error: 'Error retrieving questions'});
     }
 }
+
+const getMatchQuestion = async (language, difficulty, topic) => {
+  const questions = await Question.findOne({ complexity: difficulty, topic: topic, language: language });
+  if (questions) {
+    return questions;
+  } else {
+    return null;
+  }
+}
   
 const createQuestion = async (req, res) => {
     const {title, description, complexity, category, topic, language} = req.body;
@@ -134,6 +143,7 @@ const deleteUserTag = async (req, res) => {
 
   module.exports = {
     getAllQuestions,
+    getMatchQuestion,
     createQuestion,
     updateQuestion,
     deleteQuestion,

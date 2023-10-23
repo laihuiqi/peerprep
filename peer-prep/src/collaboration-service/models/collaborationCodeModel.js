@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { questionSchema } = require('./questionModel');
 
 const lineInputSchema = new mongoose.Schema({
     line: Number,
@@ -9,7 +10,9 @@ const lineInputSchema = new mongoose.Schema({
 const collaborativeInputSchema = new mongoose.Schema({
     sessionId: String,
     language: String,
+    question: [questionSchema],
     codes: [lineInputSchema]
 });
+
 
 module.exports = mongoose.model('CollaborativeInput', collaborativeInputSchema);

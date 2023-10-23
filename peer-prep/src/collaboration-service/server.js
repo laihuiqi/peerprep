@@ -35,13 +35,19 @@ const connectDB = async() => {
 connectDB();
 
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
 app.get('/', (req, res) => {
     res.sendFile(join(__dirname, 'client-side', 'index.html'));
 });
+
+app.get('/client.js', (req, res) => {
+    console.log("getting client.js", join(__dirname, 'client-side', 'client.js'));
+    res.setHeader('Content-Type', 'application/javascript');
+    res.sendFile(join(__dirname, 'client-side', 'client.js'));
+  });
 
 io.on('connection', async(socket) => {
 
