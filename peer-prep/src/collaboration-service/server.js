@@ -55,7 +55,7 @@ io.on('connection', async(socket) => {
 
     console.log('socket connected: ', socket.id);
 
-    await startCollaboration(socket);
+    await startCollaboration(socket, io);
 
 });
 

@@ -1,78 +1,102 @@
 const socketURL = 'http://localhost:3002';
+const changeLine = document.getElementById('changeLine');
+const clear = document.getElementById('clear');
+const extend = document.getElementById('extendTime');
+const terminate = document.getElementById('terminate');
+const acknowledge = document.getElementById('ack');
 
-const clientSocket = (userId, sessionId) => io(socketURL, { query: { userId: userId, sessionId: sessionId }});
 
-clientSocket(1, "123c44c9-9bc3-402f-ba56-689eb0d2774d");
+let userId;
+let sessionId;
 
-io.on('connection', async(clientSocket) => {
-    console.log(clientSocket, clientSocket.id);
-    clientSocket.on('connect', () => {
-    console.log('Connected to the server with socketId:', clientSocket.id);
-    });
+userId = 1;
+sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
 
-    clientSocket.on('disconnect', () => {
-        console.log('Disconnected from the server');
-    });
+// eslint-disable-next-line no-undef
+var clientSocket = io(socketURL, { retries: 3, query: { userId: userId, sessionId: sessionId }});
 
-    clientSocket.io.on('reconnect', () => {
-        console.log('Reconnected to the server');
-    });
+changeLine.addEventListener('click', () => {
+    clientSocket.emit('change-line', 1, 'console.log("hello world");');
+});
 
-    clientSocket.on('join', (recvSessionId) => {
-        console.log('Joined session:', recvSessionId);
-        return recvSessionId;
-    });
+clear.addEventListener('click', () => {
+    clientSocket.emit('clear');
+});
 
-    clientSocket.on('user-joined', (userId) => {
-        console.log(`Collaborator ${userId} has joined:`);
-        return userId;
-    });
+extend.addEventListener('click', () => {
+    clientSocket.emit('extend-time', 1000 * 60 * 10);
+});
 
-    clientSocket.on('init-code', (question, codes) => {
-        console.log('Question fetched');
-        return { question, codes };
-    });
+terminate.addEventListener('click', () => {
+    clientSocket.emit('user-terminate', 2, 'console.log("goodBye");');
+});
 
-    clientSocket.on('code-changed', (line, code) => {
-        console.log(`Code changed on line ${line}`);
-        return { line, code };
-    });
+acknowledge.addEventListener('click', () => {
+    clientSocket.emit('ack-terminate', 1, 'console.log("okeii bye");');
+});
 
-    clientSocket.on('cleared', (sessionId) => {
-        console.log(`Code cleared for session ${sessionId}`);
-        return sessionId;
-    });
+clientSocket.on('disconnect', () => {
+    console.log('Disconnected from the server');
+});
 
-    clientSocket.on('time-extended', (totalTimeLeft) => {
-        console.log(`Timer ends after ${totalTimeLeft}`);
-        return totalTimeLeft;
-    });
+clientSocket.io.on('reconnect', () => {
+    console.log('Reconnected to the server');
+});
 
-    clientSocket.on('notify-terminate', (sessionId) => {
-        console.log(`Session ${sessionId} terminated`);
-        return sessionId;
-    });
+clientSocket.on('join', (recvSessionId) => {
+    console.log('Joined session:', recvSessionId);
+    return recvSessionId;
+});
 
-    clientSocket.on('user-disconnected', (userId) => {
-        console.log(`Collaborator ${userId} has disconnected`);
-        return userId;
-    });
+clientSocket.on('user-joined', (userId) => {
+    console.log(`Collaborator ${userId} has joined:`);
+    return userId;
+});
 
-    clientSocket.on('user-reconnected', (userId) => {
-        console.log(`Collaborator ${userId} has reconnected`);
-        return userId;
-    });
+clientSocket.on('init-code', (question, codes) => {
+    console.log('Question fetched');
+    return [question, codes];
+});
 
-    clientSocket.on('success-reconnected', (collaborativeInput) => {
-        console.log(`Successfully reconnected`);
-        console.log(collaborativeInput);
-        return collaborativeInput;
-    });
+clientSocket.on('code-changed', (line, code) => {
+    console.log(`Code changed on line ${line}`);
+    return [line, code];
+});
 
-    clientSocket.on('system-terminated', (sessionId) => {
-        console.log(`Session ${sessionId} terminated`);
-        return sessionId;
-    });
+clientSocket.on('cleared', (sessionId) => {
+    console.log(`Code cleared for session ${sessionId}`);
+    return sessionId;
+});
+
+clientSocket.on('time-extended', (totalTimeLeft) => {
+    console.log(`Timer ends after ${totalTimeLeft}`);
+    return totalTimeLeft;
+});
+
+clientSocket.on('notify-terminate', (sessionId) => {
+    console.log(`Session ${sessionId} terminated`);
+    return sessionId;
+});
+
+clientSocket.on('user-disconnected', (userId) => {
+    console.log(`Collaborator ${userId} has disconnected`);
+    return userId;
+});
+
+clientSocket.on('user-reconnected', (userId) => {
+    console.log(`Collaborator ${userId} has reconnected`);
+    return userId;
+});
+
+clientSocket.on('success-reconnected', (collaborativeInput) => {
+    console.log(`Successfully reconnected`);
+    console.log(collaborativeInput);
+    return collaborativeInput;
+});
+
+clientSocket.on('system-terminated', (sessionId) => {
+    console.log(`Session ${sessionId} terminated`);
+    return sessionId;
 });
 
 const updateLineCode = async(line, code) => {
@@ -95,6 +119,7 @@ const acknowledgeTerminate = async(currentLine, currentCode) => {
     await clientSocket.emit('ack-terminate', currentLine, currentCode);
 }
 
+/*
 module.exports = {
     clientSocket,
     updateLineCode,
@@ -103,3 +128,4 @@ module.exports = {
     terminateSession,
     acknowledgeTerminate
 }
+*/

@@ -1,11 +1,10 @@
-const io = require('../server');
 const { getSession, endSession, getCurrentActiveSession } = require('../database/matchedPairDb');
 const { initCollaborativeCode, updateCollaborativeInput, updateCollaborativeLineInput, getCollaborativeInput } = require('../database/collaborativeInputDb');
 const config = require('../config/config');
 
 let initSession = [];
 
-const startCollaboration = async(socket) => {
+const startCollaboration = async(socket, io) => {
 
     const collaborationSessionExist = await verifyCurrentSession(
         socket.handshake.query.sessionId, socket.handshake.query.userId);
@@ -32,23 +31,23 @@ const startCollaboration = async(socket) => {
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
         initSession.push(sessionId);
-        const { language, question, codes } = await initCollaborativeCode(sessionId, session.language, session.difficulty, session.topic);
+        const { language, codes } = await initCollaborativeCode(sessionId, session.language);
 
         console.log('user joined: ', userId);
         socket.to(sessionId).emit('user-joined', userId);
         console.log(`init code input storage for session ${sessionId}`);
-        socket.emit('init-code', question, codes);
-        
+        socket.emit('init-code', language, codes);
+
         socket.on('clear', async() => {
             console.log(`Clearing code input storage for session ${sessionId}`);
 
-            socket.to(sessionId).emit('cleared', sessionId);
+            socket.broadcast.to(sessionId).emit('cleared', sessionId);
             await updateCollaborativeInput(sessionId, []);
         });
 
         socket.on('change-line', async(line, code) => {
             await updateCollaborativeLineInput(sessionId, line, code, userId);
-            socket.to(sessionId).emit('code-changed', line, code);
+            socket.broadcast.to(sessionId).emit('code-changed', line, code);
         });
 
         socket.on('extend-time', (timeLeft) => {
@@ -62,9 +61,10 @@ const startCollaboration = async(socket) => {
 
                 clearTimeout(sessionTimer);
 
-                io.to(sessionId).emit('time-extended', newSessionDuration - (currTime - startTime) + timeLeft);
+                io.emit('time-extended', newSessionDuration - (currTime - startTime) + timeLeft);
 
                 sessionTimer = setTimeout(async() => {
+                    io.emit('system-terminate', sessionId);
                     await systemTerminate(sessionId, userId, socket);
 
                 }, newSessionDuration - (currTime - startTime) + timeLeft);
@@ -74,9 +74,10 @@ const startCollaboration = async(socket) => {
 
                 clearTimeout(sessionTimer);
 
-                io.to(sessionId).emit('time-extended', config.MAX_TIME_LIMIT - (currTime - startTime));
+                io.emit('time-extended', config.MAX_TIME_LIMIT - (currTime - startTime));
 
                 sessionTimer = setTimeout(async() => {
+                    io.to(sessionId).emit('system-terminate', sessionId);
                     await systemTerminate(sessionId, userId, socket);
 
                 }, config.MAX_TIME_LIMIT - (currTime - startTime));
@@ -88,7 +89,7 @@ const startCollaboration = async(socket) => {
 
             clearTimeout(sessionTimer);
 
-            socket.to(sessionId).emit('notify-terminate', sessionId);
+            socket.broadcast.to(sessionId).emit('notify-terminate', sessionId);
 
             await updateCollaborativeLineInput(sessionId, line, code, userId);
             await endSession(sessionId);
@@ -110,7 +111,7 @@ const startCollaboration = async(socket) => {
         socket.on('disconnect', () => {
             console.log('user disconnected: ', userId);
 
-            socket.to(sessionId).emit('user-disconnected', userId);
+            socket.broadcast.to(sessionId).emit('user-disconnected', userId);
 
             terminateTimeout = setTimeout(() => {
                 systemTerminate(sessionId, userId, socket);
@@ -123,7 +124,7 @@ const startCollaboration = async(socket) => {
 
             socket.emit('success-reconnected', restoreCodeEditor(sessionId));
 
-            socket.to(sessionId).emit('user-reconnected', userId);
+            socket.broadcast.to(sessionId).emit('user-reconnected', userId);
 
             clearTimeout(terminateTimeout);
         });
@@ -139,7 +140,6 @@ const startCollaboration = async(socket) => {
 const systemTerminate = async(sessionId, userId, socket) => {
     console.log(`system terminated: ${sessionId} for user ${userId}`);
 
-    io.to(sessionId).broadcast('system-terminate', sessionId);
     await endSession(sessionId);
     socket.disconnect();
 }

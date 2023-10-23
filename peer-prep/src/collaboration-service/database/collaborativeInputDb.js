@@ -1,15 +1,14 @@
 const CollaborativeInput = require('../models/collaborationCodeModel');
-const MatchedPair = require('../../matching-service/models/matchedPairModel');
-const { getMatchQuestion } = require('../../../../question-service/controllers/questionController');
+const { getSession } = require('./matchedPairDb');
 
 const getCollaborativeInput = async(sessionId) => {
     try {
         const dataOutput = await CollaborativeInput.findOne({ sessionId: sessionId });
         console.log(`Get collaborative input for session ${sessionId}`);
-        return [dataOutput.language, dataOutput.question, dataOutput.codes];
+        return [dataOutput.language, dataOutput.codes];
     } catch (error) {
         console.log(`Error getting collaborative input for session ${sessionId}:`, error);
-        return ["None", "", ""];
+        return ["None", ""];
     }
 }
 
@@ -24,18 +23,16 @@ const getCollaborativeInputByLine = async(sessionId, line) => {
     }
 }
 
-const initCollaborativeCode = async(sessionId, language, difficulty, topic) => {
+const initCollaborativeCode = async(sessionId, language) => {
     try {
         const input = await getCollaborativeInput(sessionId);
 
         if (input[0] === "None") {
-            const matchingQuestion = getMatchQuestion(language, difficulty, topic);
-            const collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, 
-                question: matchingQuestion, codes: [] });
+            const collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: language, codes: [] });
             await collaborativeInput.save();
             console.log(`Successfully added:`, collaborativeInput);
 
-            return [language, matchingQuestion, []];
+            return [language, []];
         } else {
             console.log(`Collaborative input already exists for ${sessionId}`);
             return input;
@@ -48,15 +45,19 @@ const initCollaborativeCode = async(sessionId, language, difficulty, topic) => {
 
 const updateCollaborativeLineInput = async(sessionId, line, code, lastModifier) => {
     try {
-        let collaborativeInput = await CollaborativeInput.findOne({ sessionId: sessionId });
-        if (collaborativeInput.codes.has(line)) {
-            collaborativeInput.codes[line].code = code;
-            collaborativeInput.codes[line].lastModifier = lastModifier;
+        let collaborativeInput = await CollaborativeInput.findOne({ sessionId: sessionId, 'codes.line': line });
+        if (collaborativeInput) {
+            await CollaborativeInput.updateOne(
+                { sessionId: sessionId, 'codes.line': line },
+                { $set: { 'codes.$.code': code, 'codes.$.lastModifier': lastModifier } }
+            );
         } else {
-            collaborativeInput.codes.push({ line: line, code: code, lastModifier: lastModifier });
+            await CollaborativeInput.updateOne(
+                { sessionId: sessionId },
+                { $push: { codes: { line: line, code: code, lastModifier: lastModifier } } }
+            );
         }
-        await collaborativeInput.save();
-        console.log(`Successfully updated:`, collaborativeInput);
+        console.log(`Successfully updated line:`, line);
     } catch (error) {
         console.error(`Failed to update collaborative input for ${sessionId} line ${line}:`, error);
     }
@@ -65,12 +66,11 @@ const updateCollaborativeLineInput = async(sessionId, line, code, lastModifier) 
 const updateCollaborativeInput = async(sessionId, codes) => {
     try {
         let collaborativeInput = await CollaborativeInput.findOne({ sessionId: sessionId });
-        const session = await MatchedPair.getSession(sessionId);
-        if (collaborativeInput) {
+        const session = await getSession(sessionId);
+        if (collaborativeInput.codes !== null) {
             collaborativeInput.codes = codes;
         } else {
-            const matchingQuestion = getMatchQuestion(session.language, session.difficulty, session.topic);
-            collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: session.language, question: matchingQuestion, codes: codes });
+            collaborativeInput = new CollaborativeInput({ sessionId: sessionId, language: session.language, codes: codes });
         }
         await collaborativeInput.save();
         console.log(`Successfully updated:`, collaborativeInput);
