@@ -153,10 +153,12 @@ const startCollaboration = async(socket, io) => {
             socket.broadcast.to(sessionId).emit('user-disconnected', userId);
         });
 
-        socket.on('reconnect', () => {
+        socket.on('reconnect', async() => {
             console.log('user reconnected: ', userId);
-
-            socket.emit('success-reconnected', restoreCodeEditor(sessionId));
+            
+            const collaborativeInput =  await restoreCodeEditor(sessionId);
+            
+            socket.emit('success-reconnected', collaborativeInput);
 
             socket.broadcast.to(sessionId).emit('user-reconnected', userId);
         });
@@ -191,7 +193,6 @@ const restoreCodeEditor = async(sessionId) => {
     console.log(`Restoring code editor for session ${sessionId}`);
 
     const collaborativeInput = await getCollaborativeInput(sessionId);
-
     return collaborativeInput;
 }
 

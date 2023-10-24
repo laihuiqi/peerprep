@@ -61,4 +61,4 @@ server.listen(3002, () => {
     console.log('Collaboration service listening on port 3002');
 });
 
-module.exports = { io, connectDB };
+module.exports = { io };

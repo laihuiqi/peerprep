@@ -37,6 +37,15 @@ describe('Matching Service', () => {
         await mongod.stop();
     });
 
+    beforeEach(async() => {
+        await deleteAllMatchedPairs();
+        await addQuestion(questionJava);
+    });
+
+    afterEach(async() => {
+        await deleteAllMatchedPairs();
+    });
+
     const javaRequest1 = {
         id: 1,
         language: 'java',
@@ -124,15 +133,6 @@ describe('Matching Service', () => {
         difficulty: 'easy',
         topic: 'arrays'
     };
-
-    beforeEach(async() => {
-        await deleteAllMatchedPairs();
-        await addQuestion(questionJava);
-    });
-
-    afterEach(async() => {
-        await deleteAllMatchedPairs();
-    });
 
     function assertObjectsEqual(actual, expected) {
         for (const key in expected) {
