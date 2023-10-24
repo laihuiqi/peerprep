@@ -5,7 +5,6 @@ const config = require('../config/config');
 let initSession = new Map();
 
 const startCollaboration = async(socket, io) => {
-
     const collaborationSessionExist = await verifyCurrentSession(
         socket.handshake.query.sessionId, socket.handshake.query.userId);
 
@@ -19,7 +18,7 @@ const startCollaboration = async(socket, io) => {
         const session = await getSession(sessionId);
 
         let sessionTimer = setTimeout(async() => {
-            io.emit('system-terminate', sessionId);
+            io.to(sessionId).emit('system-terminate', sessionId);
             console.log("terminate here");
             await systemTerminate(sessionId, userId, socket);
 
@@ -40,6 +39,7 @@ const startCollaboration = async(socket, io) => {
         socket.emit('init-code', language, codes);
 
         socket.on('update-code', (line, code) => {
+            console.log(`Code changed on line ${line}`);
             socket.broadcast.to(sessionId).emit('code-changed', line, code);
         });
 
@@ -66,10 +66,10 @@ const startCollaboration = async(socket, io) => {
 
                 clearTimeout(sessionTimer);
 
-                io.emit('time-extended', config.EXTENSION_TIME);
+                io.to(sessionId).emit('time-extended', config.EXTENSION_TIME);
 
                 sessionTimer = setTimeout(async() => {
-                    io.emit('system-terminate', sessionId);
+                    io.to(sessionId).emit('system-terminate', sessionId);
                     await systemTerminate(sessionId, userId, socket);
 
                 }, config.EXTENSION_TIME);
@@ -79,7 +79,7 @@ const startCollaboration = async(socket, io) => {
 
                 clearTimeout(sessionTimer);
 
-                io.emit('time-extended', config.MAX_TIME_LIMIT - sessionLength);
+                io.to(sessionId).emit('time-extended', config.MAX_TIME_LIMIT - sessionLength);
 
                 sessionTimer = setTimeout(async() => {
                     io.to(sessionId).emit('system-terminate', sessionId);
@@ -119,7 +119,7 @@ const startCollaboration = async(socket, io) => {
             socket.broadcast.to(sessionId).emit('user-disconnected', userId);
 
             terminateTimeout = setTimeout(async() => {
-                console.log("terminate diconn");
+                console.log("terminate disconnected");
                 await systemTerminate(sessionId, userId, socket);
 
             }, config.DISCONNECTION_TIMEOUT);

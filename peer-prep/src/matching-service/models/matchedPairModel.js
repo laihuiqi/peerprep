@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const Question = require('./questionModel');
+const { questionSchema } = require('./questionModel');
 
 const matchedPairSchema = new mongoose.Schema({
     sessionId: String,
     id1: Number,
     id2: Number,
     isEnded: Boolean,
-    question: [Question],
+    question: [questionSchema],
     language: String,
     proficiency: String,
     difficulty: String,

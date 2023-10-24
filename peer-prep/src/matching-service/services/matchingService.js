@@ -4,8 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 const matchedPairDb = require('../database/matchedPairDb');
-const { getMatchQuestion } = require('../../../../question-service/controllers/questionController');
-
+//const { getMatchQuestion } = require('../../../../question-service/controllers/questionController');
+const { getMatchQuestion } = require('../database/questionDb');
 
 const refreshDuration = 3000; // 3 seconds
 const waitingDuration = 3000;
@@ -89,7 +89,7 @@ async function findMatch(request) {
                     id1: parseInt(id),
                     id2: parseInt(collaboratorId),
                     isEnded: false,
-                    question: await getMatchQuestion(request.language, request.proficiency, request.difficulty, request.topic),
+                    question: await getMatchQuestion(request.language, request.difficulty, request.topic),
                     language: request.language,
                     proficiency: request.proficiency,
                     difficulty: request.difficulty,
