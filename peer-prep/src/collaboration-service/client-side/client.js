@@ -11,7 +11,14 @@ let userId;
 let sessionId;
 
 // eslint-disable-next-line no-undef
-var clientSocket = io(socketURL, { retries: 3, query: { userId: userId, sessionId: sessionId }});
+var clientSocket = io(socketURL, { 
+                    retries: 3, 
+                    reconnection: true,
+                    reconnectionAttempts: 3,    
+                    reconnectionDelay: 1000,    
+                    reconnectionDelayMax: 5000, 
+                    query: { userId: userId, sessionId: sessionId }
+                    });
 
 changeLine.addEventListener('click', () => {
     clientSocket.emit('change-line', 1, 'console.log("hello world");');
