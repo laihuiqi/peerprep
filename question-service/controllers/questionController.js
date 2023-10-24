@@ -23,9 +23,29 @@ const getAllQuestions = async (req, res) => {
 }
 
 const getMatchQuestion = async (language, difficulty, topic) => {
-  const questions = await Question.findOne({ complexity: difficulty, topic: topic, language: language });
-  if (questions) {
-    return questions;
+  let aggregationPipeline = [];
+
+  if (language !== "None") {
+    aggregationPipeline.push({ $match: { language: language } });
+  }
+
+  if (difficulty !== "None") {
+    aggregationPipeline.push({ $match: { complexity: difficulty } });
+  }
+
+  if (topic !== "None") {
+    aggregationPipeline.push({ $match: { topic: topic } });
+  }
+
+  aggregationPipeline.push({ $sample: { size: 1 } });
+
+  const question = await Question.aggregate(aggregationPipeline);
+
+  question = question[0];
+    
+  if (question) {
+    return question;
+
   } else {
     return null;
   }

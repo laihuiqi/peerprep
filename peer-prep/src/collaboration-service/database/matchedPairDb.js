@@ -1,5 +1,4 @@
 const MatchedPair = require('../models/matchedPairModel');
-const mongoose = require('mongoose');
 
 // Some database utility function for the MatchedPair Schema
 async function getMatchedPairBySessionId(sessionId) {
@@ -9,19 +8,19 @@ async function getMatchedPairBySessionId(sessionId) {
         return matchedPair;
 
     } catch (error) {
-        console.log(`Error getting matched pair with session id ${sessionId}:`, error);
+        console.log(`Error getting matched pair with session id ${sessionId}`);
+        return null;
     }
 }
 
 async function getCurrentMatchedPair(id) {
     try {
-        console.log(`Connection: ${mongoose.connection.readyState} ${mongoose.connection.host}`);
         const matchedPair = await MatchedPair.findOne({ $and: [{ isEnded: false }, { $or: [{ id1: id }, { id2: id }] }] });
         console.log(`Get live matched pair for ${id}:`, matchedPair);
         return matchedPair;
 
     } catch (error) {
-        console.log(`Error getting live matched pair for ${id}:`, error);
+        console.log(`Error getting live matched pair for ${id}`);
         return null;
     }
 }
@@ -32,7 +31,7 @@ async function getCurrentActiveSession(id) {
         console.log('Get live session for', id, ':', matchedPair.sessionId);
         return matchedPair.sessionId;
     } catch (error) {
-        console.error(`Error getting live session for ${id}:`, error);
+        console.log(`Error getting live session for ${id}`);
         return null;
     }
 }
@@ -43,7 +42,7 @@ async function addMatchedPair(matchedPair) {
         console.log(`Successfully added:`, matchedPair);
 
     } catch (error) {
-        console.log(`Failed to add matched pair ${matchedPair}:`, error);
+        console.log(`Failed to add matched pair ${matchedPair}`);
     }
 }
 
@@ -60,7 +59,7 @@ async function endSession(sessionId) {
         console.log(`Successfully update session state for session ${sessionId}`);
 
     } catch (error) {
-        console.log(`Failed to update session state for session ${sessionId}:`, error);
+        console.log(`Failed to update session state for session ${sessionId}`);
     }
 }
 
@@ -76,7 +75,7 @@ async function modifyMatchedPair(sessionId, key, value) {
         console.log(`Successfully update ${key} state for session ${sessionId}: ${value}`);
 
     } catch (error) {
-        console.log(`Failed to update ${key} state for session ${sessionId}:`, error);
+        console.log(`Failed to update ${key} state for session ${sessionId}`);
     }
 }
 
@@ -86,7 +85,7 @@ async function getQuestion(sessionId) {
         console.log(`Get question for session ${sessionId}:`, matchedPair.question);
         return matchedPair.question;
     } catch (error) {
-        console.error(`Error getting question for session ${sessionId}:`, error);
+        console.log(`Error getting question for session ${sessionId}`);
         return null;
     }
 }
@@ -97,7 +96,7 @@ async function deleteMatchedPair(sessionId) {
         console.log(`Successfully delete session ${sessionId} from database.`);
 
     } catch (error) {
-        console.log(`Failed to delete session ${sessionId}:`, error);
+        console.log(`Failed to delete session ${sessionId}`);
     }
 }
 
@@ -107,7 +106,7 @@ async function deleteAllMatchedPairs() {
         console.log(`Successfully delete all sessions from database.`);
 
     } catch (error) {
-        console.log(`Failed to delete all sessions:`, error);
+        console.log(`Failed to delete all sessions`);
     }
 }
 
@@ -118,7 +117,7 @@ async function getSession(sessionId) {
         return matchedPair;
 
     } catch (error) {
-        console.error(`Error getting session difficulty for ${sessionId}:`, error);
+        console.log(`Error getting session difficulty for ${sessionId}`);
         return null;
     }
 }
