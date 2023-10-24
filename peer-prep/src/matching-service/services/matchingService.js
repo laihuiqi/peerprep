@@ -4,7 +4,6 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 const matchedPairDb = require('../database/matchedPairDb');
-//const { getMatchQuestion } = require('../../../../question-service/controllers/questionController');
 const { getMatchQuestion } = require('../database/questionDb');
 
 const refreshDuration = 3000; // 3 seconds

@@ -1,18 +1,5 @@
 const MatchedPair = require('../models/matchedPairModel');
 
-// Some database utility function for the MatchedPair Schema
-async function getMatchedPairBySessionId(sessionId) {
-    try {
-        const matchedPair = await MatchedPair.findOne({ sessionId: sessionId });
-        console.log(`Get matched pair with session id ${sessionId}:`, matchedPair);
-        return matchedPair;
-
-    } catch (error) {
-        console.log(`Error getting matched pair with session id ${sessionId}`);
-        return null;
-    }
-}
-
 async function getCurrentMatchedPair(id) {
     try {
         const matchedPair = await MatchedPair.findOne({ $and: [{ isEnded: false }, { $or: [{ id1: id }, { id2: id }] }] });
@@ -36,16 +23,6 @@ async function getCurrentActiveSession(id) {
     }
 }
 
-async function addMatchedPair(matchedPair) {
-    try {
-        await matchedPair.save();
-        console.log(`Successfully added:`, matchedPair);
-
-    } catch (error) {
-        console.log(`Failed to add matched pair ${matchedPair}`);
-    }
-}
-
 async function endSession(sessionId) {
     try {
         const filter = { sessionId: sessionId };
@@ -63,53 +40,6 @@ async function endSession(sessionId) {
     }
 }
 
-async function modifyMatchedPair(sessionId, key, value) {
-    try {
-        const filter = { sessionId: sessionId };
-        const update = {
-            $set: {
-                [key]: value
-            }
-        };
-        await MatchedPair.updateOne(filter, update);
-        console.log(`Successfully update ${key} state for session ${sessionId}: ${value}`);
-
-    } catch (error) {
-        console.log(`Failed to update ${key} state for session ${sessionId}`);
-    }
-}
-
-async function getQuestion(sessionId) {
-    try {
-        const matchedPair = await MatchedPair.findOne({ sessionId: sessionId });
-        console.log(`Get question for session ${sessionId}:`, matchedPair.question);
-        return matchedPair.question;
-    } catch (error) {
-        console.log(`Error getting question for session ${sessionId}`);
-        return null;
-    }
-}
-
-async function deleteMatchedPair(sessionId) {
-    try {
-        await MatchedPair.deleteOne({ sessionId: sessionId });
-        console.log(`Successfully delete session ${sessionId} from database.`);
-
-    } catch (error) {
-        console.log(`Failed to delete session ${sessionId}`);
-    }
-}
-
-async function deleteAllMatchedPairs() {
-    try {
-        await MatchedPair.deleteMany({});
-        console.log(`Successfully delete all sessions from database.`);
-
-    } catch (error) {
-        console.log(`Failed to delete all sessions`);
-    }
-}
-
 async function getSession(sessionId) {
     try {
         const matchedPair = await MatchedPair.findOne({ sessionId: sessionId });
@@ -123,14 +53,8 @@ async function getSession(sessionId) {
 }
 
 module.exports = {
-    getMatchedPairBySessionId,
     getCurrentMatchedPair,
     getCurrentActiveSession,
-    addMatchedPair,
     endSession,
-    modifyMatchedPair,
-    getQuestion,
-    deleteMatchedPair,
-    deleteAllMatchedPairs,
     getSession
 };
