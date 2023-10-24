@@ -39,6 +39,10 @@ const startCollaboration = async(socket, io) => {
         console.log(`init code input storage for session ${sessionId}`);
         socket.emit('init-code', language, codes);
 
+        socket.on('update-code', (line, code) => {
+            socket.broadcast.to(sessionId).emit('code-changed', line, code);
+        });
+
         socket.on('clear', async() => {
             console.log(`Clearing code input storage for session ${sessionId}`);
 

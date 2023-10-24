@@ -109,6 +109,10 @@ clientSocket.on('system-terminated', (sessionId) => {
     return sessionId;
 });
 
+const updateCode = (line, code) => {
+    clientSocket.emit('update-code', line, code);
+}
+
 const updateLineCode = async(line, code) => {
     await clientSocket.emit('change-line', line, code);
 }
