@@ -1,5 +1,4 @@
 const MatchedPair = require('../models/matchedPairModel');
-const mongoose = require('mongoose');
 
 // Some database utility function for the MatchedPair Schema
 async function getMatchedPairBySessionId(sessionId) {
@@ -15,7 +14,6 @@ async function getMatchedPairBySessionId(sessionId) {
 
 async function getCurrentMatchedPair(id) {
     try {
-        console.log(`Connection: ${mongoose.connection.readyState} ${mongoose.connection.host}`);
         const matchedPair = await MatchedPair.findOne({ $and: [{ isEnded: false }, { $or: [{ id1: id }, { id2: id }] }] });
         console.log(`Get live matched pair for ${id}:`, matchedPair);
         return matchedPair;

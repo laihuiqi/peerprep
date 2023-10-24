@@ -6,7 +6,7 @@ const matchedPairSchema = new mongoose.Schema({
     id1: Number,
     id2: Number,
     isEnded: Boolean,
-    question: [questionSchema],
+    question: questionSchema,
     language: String,
     proficiency: String,
     difficulty: String,

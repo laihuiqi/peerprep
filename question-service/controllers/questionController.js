@@ -39,7 +39,7 @@ const getMatchQuestion = async (language, difficulty, topic) => {
 
   aggregationPipeline.push({ $sample: { size: 1 } });
 
-  const question = await Question.aggregate(aggregationPipeline);
+  let question = await Question.aggregate(aggregationPipeline);
 
   question = question[0];
     

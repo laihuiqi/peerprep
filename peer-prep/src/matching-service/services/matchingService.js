@@ -70,7 +70,7 @@ async function findMatch(request) {
             if (!isMatched && !stored) {
                 console.log(`Matched pair could not be found for ${request.id}`);
 
-                resolve({ status: 'error', isMatched: false, sessionId: null, collaboratorId: null, request: request });
+                resolve({ status: 'error', isMatched: false, sessionId: null, question: null, collaboratorId: null, request: request });
 
             } else if (stored) {
                 resolve({
