@@ -1,7 +1,8 @@
 const DEFAULT_TIME_LIMIT = {
     'Easy': 20 * 60 * 1000,
     'Intermediate': 40 * 60 * 1000,
-    'Hard': 60 * 60 * 1000
+    'Hard': 60 * 60 * 1000,
+    'None': 30 * 60 * 1000
 }
 
 const MAX_TIME_LIMIT = 2 * 60 * 60 * 1000;

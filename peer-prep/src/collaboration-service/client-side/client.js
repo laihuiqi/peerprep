@@ -16,23 +16,33 @@ sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
 var clientSocket = io(socketURL, { retries: 3, query: { userId: userId, sessionId: sessionId }});
 
 changeLine.addEventListener('click', () => {
+    console.log("start change");
     clientSocket.emit('change-line', 1, 'console.log("hello world");');
+    console.log("change successful");
 });
 
 clear.addEventListener('click', () => {
+    console.log("start clear");
     clientSocket.emit('clear');
+    console.log("clear successful");
 });
 
 extend.addEventListener('click', () => {
-    clientSocket.emit('extend-time', 1000 * 60 * 10);
+    console.log("start extend");
+    clientSocket.emit('extend-time');
+    console.log("time extended successful");
 });
 
 terminate.addEventListener('click', () => {
+    console.log("start terminate");
     clientSocket.emit('user-terminate', 2, 'console.log("goodBye");');
+    console.log("terminate successful");
 });
 
 acknowledge.addEventListener('click', () => {
+    console.log("start acknowledge");
     clientSocket.emit('ack-terminate', 1, 'console.log("okeii bye");');
+    console.log("acknowledge successful");
 });
 
 clientSocket.on('disconnect', () => {

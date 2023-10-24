@@ -80,6 +80,17 @@ async function modifyMatchedPair(sessionId, key, value) {
     }
 }
 
+async function getQuestion(sessionId) {
+    try {
+        const matchedPair = await MatchedPair.findOne({ sessionId: sessionId });
+        console.log(`Get question for session ${sessionId}:`, matchedPair.question);
+        return matchedPair.question;
+    } catch (error) {
+        console.error(`Error getting question for session ${sessionId}:`, error);
+        return null;
+    }
+}
+
 async function deleteMatchedPair(sessionId) {
     try {
         await MatchedPair.deleteOne({ sessionId: sessionId });
@@ -119,6 +130,7 @@ module.exports = {
     addMatchedPair,
     endSession,
     modifyMatchedPair,
+    getQuestion,
     deleteMatchedPair,
     deleteAllMatchedPairs,
     getSession

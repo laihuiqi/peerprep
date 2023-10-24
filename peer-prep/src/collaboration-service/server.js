@@ -9,8 +9,9 @@ const mongoose = require('mongoose');
 const config = require('./config/config');
 const server = createServer(app);
 const io = new Server(server, {
+    pingTimeout: 2 * 3600 * 1000,
     cors:{
-      origin:'http://localhost:3002',
+      origin:'*',
       optionsSuccessStatus:200
     }
   });
