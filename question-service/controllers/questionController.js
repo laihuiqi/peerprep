@@ -23,7 +23,7 @@ const getAllQuestions = async (req, res) => {
 }
   
 const createQuestion = async (req, res) => {
-  const { title, description, complexity, category, topic, language } = req.body;
+  const { title, description, complexity, category, language } = req.body;
   const currentSameDescriptionQuestion = await Question.findOne({ description });
 
   if (currentSameDescriptionQuestion) {
@@ -37,14 +37,13 @@ const createQuestion = async (req, res) => {
       description,
       complexity,
       category,
-      topic,
       language,
     });
 
     const newQuestion = await question.save();
     res.status(200).json(newQuestion);
   } catch (error) {
-    if (!title || !description || !complexity || !category || !topic || !language) {
+    if (!title || !description || !complexity || !category || !language) {
       return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
     }
     res.status(400).json({ error: 'Unable to create a new question' });
@@ -53,7 +52,7 @@ const createQuestion = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
-  const { title, description, complexity, category, topic, language } = req.body;
+  const { title, description, complexity, category, language } = req.body;
   
   try {
       checkIdValidity(id);
@@ -71,12 +70,11 @@ const updateQuestion = async (req, res) => {
       question.description = description;
       question.complexity = complexity;
       question.category = category;
-      question.topic = topic;
       question.language = language;
       const updatedQuestion = await question.save();
       res.status(200).json(updatedQuestion);
   } catch (error) {
-      if (!title || !description || !complexity || !category || !topic || !language) {
+      if (!title || !description || !complexity || !category || !language) {
         return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
       }
       res.status(500).json({ error: 'Unable to update question' });
