@@ -30,3 +30,5 @@ mongoose.connect(config.mongodbUri)
     .catch((err) => {
         console.log(err)
     }) 
+
+module.exports = app;

@@ -23,7 +23,7 @@ const getAllQuestions = async (req, res) => {
 }
   
 const createQuestion = async (req, res) => {
-  let { title, description, complexity, category } = req.body;
+  let { title, description, complexity, category, language } = req.body;
 
   title = title.trim();
   description = description.trim();
@@ -47,10 +47,19 @@ const createQuestion = async (req, res) => {
   }
 
   try {
-    const question = await Question.create({ title, description, complexity, category });
-    res.status(200).json(question);
+    const question = new Question({
+      _id: new mongoose.Types.ObjectId(),
+      title,
+      description,
+      complexity,
+      category,
+      language,
+    });
+
+    const newQuestion = await question.save();
+    res.status(200).json(newQuestion);
   } catch (error) {
-    if (!title || !description || !complexity || !category) {
+    if (!title || !description || !complexity || !category || !language) {
       return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.'});
     }
     res.status(400).json({ error: 'Unable to create a new question' });
@@ -59,8 +68,7 @@ const createQuestion = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
-  let { title, description, complexity, category } = req.body;
-  
+  let { title, description, complexity, category, language } = req.body;
   
   checkIdValidity(id);
   const question = await Question.findById(id);
@@ -93,11 +101,11 @@ const updateQuestion = async (req, res) => {
     question.description = description;
     question.complexity = complexity;
     question.category = category;
-    
+    question.language = language;
     const updatedQuestion = await question.save();
     res.status(200).json(updatedQuestion);
   } catch (error) {
-    if (!title || !description || !complexity || !category) {
+    if (!title || !description || !complexity || !category || !language) {
       return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
     }
     res.status(500).json({ error: 'Unable to update question' });
