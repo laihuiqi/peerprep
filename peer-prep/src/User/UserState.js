@@ -5,7 +5,7 @@ import UserModel from "../DataModel/UserModel";
 var currentLoggedInUser = null;
 
 function setUserState(obtainedUser) {
-  if (obtainedUser !== null) {
+  if (obtainedUser === null) {
     currentLoggedInUser = null;
 
     return;

@@ -1,7 +1,7 @@
 // Interface Between User Service and Client
 
-// import axios from "axios";
-const axios = require("axios").default; // Supports Testing
+import axios from "axios";
+// const axios = require("axios").default; // Supports Testing
 
 const USER_SERVICE_HOST = "http://localhost:3000/";
 
