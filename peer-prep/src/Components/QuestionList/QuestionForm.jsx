@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
-import './QuestionForm.css'
-import delete_icon from '../Assets/bin.png'
-import { QDifficultyDropdown } from './QDifficultyDropdown'
+import React, { useState } from 'react';
+import './QuestionForm.css';
+import delete_icon from '../Assets/bin.png';
+import { QDifficultyDropdown } from './QDifficultyDropdown';
+import { QLanguageDropdown } from './QLanguageDropdown'; 
 
-export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
+export const QuestionForm = ({ qId, addQuestion, setAddQ, setQId, questionNumber }) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
   const [topic, setTopic] = useState("");
-  const [description, setDescription] = useState("")
+  const [description, setDescription] = useState("");
+  const [language, setLanguage] = useState("SQL");
 
   const handleSubmit = (toggleAddQ, addQ) => e => {
     e.preventDefault();
     toggleAddQ(false);
 
-    const response = addQ(title, difficulty, topic, description);
+    const response = addQ(title, difficulty, topic, description, language);
     return response; // If array length is 0, then successful, else can index through it for errors
   }
 
@@ -31,7 +33,7 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
             (e) => setTitle(e.target.value)
           }/>
         </div>
-        
+
         <div className="q-form-content">
           <div className="q-form-tags">
               <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
@@ -41,6 +43,7 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
                 (e) => setTopic(e.target.value)
               }
               />
+            <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
             </div>
             <textarea type="text" className="q-form-description q-form-input" 
             placeholder = "Question description"
