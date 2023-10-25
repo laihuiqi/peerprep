@@ -136,7 +136,7 @@ function criteriaMatches(requestCriteria, currentCriteria) {
     return true;
 }
 
-// Add new request into the queue, 'topic' exchange type is used to route the message
+// Add new request into the queue
 async function addRequestIntoQueue(channel, criteria, request) {
     try {
         await channel.assertQueue(queueName, { durable: false });

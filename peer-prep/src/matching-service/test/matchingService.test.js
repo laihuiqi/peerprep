@@ -11,11 +11,11 @@ describe('Matching Service', () => {
     let mongod;
 
     const questionJava = {
+        _id: new mongoose.Types.ObjectId(1),
         title: 'Java Question',
         description: 'Java Question Description',
         complexity: 'easy',
         category: 'arrays',
-        topic: 'arrays',
         language: 'java',
         userTags: []
     };
@@ -30,6 +30,7 @@ describe('Matching Service', () => {
         });
 
         console.log("testDB connected");
+        await addQuestion(questionJava);
     });
 
     afterAll(async () => {
@@ -39,7 +40,6 @@ describe('Matching Service', () => {
 
     beforeEach(async() => {
         await deleteAllMatchedPairs();
-        await addQuestion(questionJava);
     });
 
     afterEach(async() => {

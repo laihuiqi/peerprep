@@ -1,7 +1,7 @@
 const Question = require('../models/questionModel');
 
-const getMatchQuestion = async (language, difficulty, topic) => {
-    console.log('getMatchQuestion', language, difficulty, topic);
+const getMatchQuestion = async (language, difficulty, category) => {
+    console.log('getMatchQuestion', language, difficulty, category);
     let aggregationPipeline = [];
   
     if (language !== "None") {
@@ -14,9 +14,9 @@ const getMatchQuestion = async (language, difficulty, topic) => {
         aggregationPipeline.push({ $match: { complexity: difficulty } });
     }
   
-    if (topic !== "None") {
-        console.log('topic', topic);
-        aggregationPipeline.push({ $match: { topic: topic } });
+    if (category !== "None") {
+        console.log('category', category);
+        aggregationPipeline.push({ $match: { category: category } });
     }
   
     aggregationPipeline.push({ $sample: { size: 1 } });
