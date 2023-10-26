@@ -2,7 +2,6 @@ import React from 'react';
 import './Output.css'; 
 import tick_icon from '../Assets/tick.png'
 
-
 export const SuccessOutput= ({isOpen, isClose}) => {
   if (isOpen) {
     return (
@@ -20,5 +19,3 @@ export const SuccessOutput= ({isOpen, isClose}) => {
   }
   return null;
 };
-
-
