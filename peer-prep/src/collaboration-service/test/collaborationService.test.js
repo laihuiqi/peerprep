@@ -14,14 +14,14 @@ describe('Collaboration Service', () => {
 
         user1 = io(socketURL, {
             query: {
-                userId: 1,
+                userId: 'Gc2Bz9Nl8Wx4',
                 sessionId: sessionId
             }
         });
 
         user2 = io(socketURL, {
             query: {
-                userId: 2,
+                userId: 'PxJ3lVtWz8Kq',
                 sessionId: sessionId
             }
         });
@@ -96,7 +96,7 @@ describe('Collaboration Service', () => {
         });
 
         user2.on('user-reconnected', (userId) => {
-            expect(userId).toBe("1");
+            expect(userId).toBe("Gc2Bz9Nl8Wx4");
             console.log("4 ", userId);
         });
     });

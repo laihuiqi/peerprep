@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const lineInputSchema = new mongoose.Schema({
     line: Number,
     code: String,
-    lastModifier: Number
+    lastModifier: String
 });
 
 const collaborativeInputSchema = new mongoose.Schema({
