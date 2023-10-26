@@ -2,16 +2,32 @@ const matchingService = require('../services/matchingService');
 
 async function findMatch(req, res, next) {
     try {
-        const { id, language, proficiency, difficulty, topic } = req.body;
+        const { language, proficiency, difficulty, topic } = req.body;
+        const id = req.params.userId; // Extract user id from request params
         console.log(req.body);
         console.log(`${id}, ${language}, ${proficiency}, ${difficulty}, ${topic}`);
 
         const matchResult = await matchingService.findMatch({ id, language, proficiency, difficulty, topic });
 
-        res.status(200).json(matchResult);
+        console.log("send result:", matchResult, res.statusCode);
+
+        switch (matchResult.status) {
+            case 'success':
+                await res.status(200).json(matchResult);
+                break;
+            case 'error':
+                await res.status(500).json(matchResult);
+                break;
+            case 'cancel':
+                await res.status(200).json(matchResult);
+                break;
+            default:
+                await res.status(500).json({ message: 'Unknown error. Please try again!' });
+        }
 
     } catch (error) {
-        next(error);
+        console.error(error);
+        res.status(500).json({ message: 'Failed to find a match. Please try again!' })
     }
 }
 

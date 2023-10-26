@@ -5,6 +5,9 @@
 - RabbitMQ Server ^3.12.5
 - MongoDB ^7.0.0
 
+### Listening port
+http://localhost:3001
+
 ### Run RabbitMQ Server by:
 1. Navigating to the Program Files directory 
 2. ```
