@@ -1,9 +1,19 @@
+const { Server } = require('socket.io');
+const { createServer } = require('node:http');
+const { join } = require('node:path');
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const config = require('./config/config');
-const routes = require('./routes/matchingRoute');
-
+const server = createServer(app);
+const io = new Server(server, {
+    cors:{
+      origin:'*',
+      optionsSuccessStatus:200
+    }
+  });
+const { startCollaboration } = require('./services/collaborationService');
 
 const connectDB = async() => {
     try {
@@ -13,6 +23,7 @@ const connectDB = async() => {
         });
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
+
     } catch (err) {
         console.log(`MongoDB Error: ${err.message}`);
 
@@ -22,18 +33,30 @@ const connectDB = async() => {
 
 connectDB();
 
+app.use(cors());
+app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
-app.use('/', routes);
+app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'client-side', 'index.html'));
+});
+
+io.on('connection', async(socket) => {
+
+    console.log('socket connected: ', socket.id);
+
+    await startCollaboration(socket, io);
+
+});
 
 app.use((err, req, res, next) => {
     console.log(err.stack);
     res.status(500).send({ error: err.message });
 });
 
-app.listen(3001, () => {
-    console.log('Matching service listening on port 3001');
+server.listen(3002, () => {
+    console.log('Collaboration service listening on port 3002');
 });
 
-module.exports = app;   
+module.exports = { io };

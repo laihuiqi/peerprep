@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  # Mongodb service
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - my-net
+
+  # Rabbitmq service
+  rabbitmq:
+    container_name: rabbitmq_container
+    image: rabbitmq:latest
+    ports:
+      # AMQP protocol port
+      - "5672:5672"
+      # HTTP management UI
+      - "15672:15672"
+    networks:
+      - my-net
+
+  # Node api service
+  api:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGODB_URI: mongodb://mongo_db:27017
+      DB_NAME: peer-prep
+    depends_on: 
+      - mongo_db
+      - rabbitmq
+    networks:
+      - my-net
+
+volumes:
+  mongo_data: 
+    driver: local
+
+networks:
+  my-net:
