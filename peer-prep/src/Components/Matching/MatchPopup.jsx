@@ -3,6 +3,9 @@ import axios from 'axios';
 import { SuccessOutput } from './SuccessOutput';
 import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
+import { getUserId } from '../../User/UserState'; 
+
+
 
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
@@ -20,7 +23,15 @@ const MatchPopup = ({ isOpen, isClose }) => {
         // Show the loading popup
         setGoToLoadPopup(true);
 
+        const userId = getUserId();;
+        if (!userId) {
+            console.error("User not logged in");
+            setGoToLoadPopup(false); // Close the loading popup
+            return;
+        }
+
         const payload = {
+            userId: userId,
             difficulty: chosenDifficulty,
             language: chosenLanguage,
             proficiency: chosenProficiency,
@@ -28,7 +39,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
         };
 
         // Make a post request to backend with the payload
-        axios.post(`/api/match`, payload) // replace /${props.userId} with how we access userId
+        axios.post(`home/${userId}`, payload) // replace /${props.userId} with how we access userId
             .then(response => {
                 setGoToLoadPopup(false); // Close the loading popup
                 if (response.data.status === 'success') {
