@@ -5,8 +5,6 @@ import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
 import { getUserId } from '../../User/UserState'; 
 
-
-
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
     const [showSuccessOutput, setShowSuccessOutput] = useState(false);
