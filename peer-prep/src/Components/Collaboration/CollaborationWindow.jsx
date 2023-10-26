@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './CollaborationWindow.css'; 
 import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
+import firebase from 'firebase/app';
+import 'firebase/auth'; 
 
 const CollaborationWindow = () => {
     const [timeRemaining, setTimeRemaining] = useState('1800000');
@@ -28,21 +30,33 @@ const CollaborationWindow = () => {
       setQuestion(questionData.question);
     }, []);
 
-    // Use this for action question input based on user
+    // Use this for non hard coded request
     // useEffect(() => {
-    //   const userId = 123; // Get user id from session
-    //   fetch(`/home/${userId}`)
-    //     .then((response) => response.json())
-    //     .then((data) => {         
-    //       if (data.question) {
-    //           setQuestion(data.question);
+    //   const fetchQuestionData = async () => {
+    //     try {
+    //       const user = firebase.auth().currentUser;
+    //       if (user) {
+    //         const userId = user.uid; // Get the user's UID
+    //         const response = await fetch(`/home/${userId}`);
+    //         if (response.ok) {
+    //           const data = await response.json();
+    //           if (data.question) {
+    //               setQuestion(data.question);
+    //           } else {
+    //               console.error('Unable to get question');
+    //           }
+    //         } else {
+    //           console.error('Unable to fetch question details');
+    //         }
     //       } else {
-    //           console.error('Unable to find question');
+    //           console.error('User is not signed in');
     //       }
-    //     })
-    //     .catch((error) => {
-    //       console.error('Unable to fetch question data:', error);
-    //     });
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //     }
+    //   };
+
+    //   fetchQuestionData();
     // }, []);
 
     const handleEndSession = () => {
