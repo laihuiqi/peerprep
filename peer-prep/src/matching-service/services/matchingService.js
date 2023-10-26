@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 const matchedPairDb = require('../database/matchedPairDb');
-
+const { getMatchQuestion } = require('../database/questionDb');
 
 const refreshDuration = 3000; // 3 seconds
 const waitingDuration = 3000;
@@ -37,7 +37,7 @@ async function findMatch(request) {
             checkCancel = setInterval(async() => {
                 if (matchId && isCancelled.has(parseInt(matchId))) {
                     clearInterval(checkCancel);
-                    resolve({ status: 'cancel', isMatched: false, collaboratorId: null, request: request });
+                    resolve({ status: 'cancel', isMatched: false, sessionId: null, question: null, collaboratorId: null, request: request });
 
                 } else {
                     const checkMatchedPair = await getCurrentMatchedPair(request.id);
@@ -47,6 +47,8 @@ async function findMatch(request) {
                         resolve({
                             status: 'success',
                             isMatched: true,
+                            sessionId: checkMatchedPair.sessionId,
+                            question: checkMatchedPair.question,
                             collaboratorId: String(checkMatchedPair.id1) === String(request.id) ?
                                 parseInt(checkMatchedPair.id2) : parseInt(checkMatchedPair.id1),
                             request: request
@@ -62,20 +64,20 @@ async function findMatch(request) {
             await new Promise(resolve => setTimeout(resolve, waitingDuration));
             // wait for 5 seconds to check if there is a prior object that matched
 
-            const { stored, isMatched, id, collaboratorId } =
+            const { stored, isMatched, sessionId, question, id, collaboratorId } =
             await getMatchFromQueue(channel, matchId, request);
-
-            console.log(`Clean up tasks are completed for ${request.id}!`);
 
             if (!isMatched && !stored) {
                 console.log(`Matched pair could not be found for ${request.id}`);
 
-                resolve({ status: 'error', isMatched: false, collaboratorId: null, request: request });
+                resolve({ status: 'error', isMatched: false, sessionId: null, question: null, collaboratorId: null, request: request });
 
             } else if (stored) {
                 resolve({
                     status: 'success',
                     isMatched: true,
+                    sessionId: sessionId,
+                    question: question,
                     collaboratorId: parseInt(collaboratorId),
                     request: request
                 });
@@ -86,6 +88,7 @@ async function findMatch(request) {
                     id1: parseInt(id),
                     id2: parseInt(collaboratorId),
                     isEnded: false,
+                    question: await getMatchQuestion(request.language, request.difficulty, request.topic),
                     language: request.language,
                     proficiency: request.proficiency,
                     difficulty: request.difficulty,
@@ -97,13 +100,15 @@ async function findMatch(request) {
                 resolve({
                     status: 'success',
                     isMatched: true,
+                    sessionId: matchedPair.sessionId,
+                    question: matchedPair.question,
                     collaboratorId: parseInt(collaboratorId),
                     request: request
                 });
             }
         } catch (error) {
             console.log('Error finding match: ', error);
-            resolve({ status: 'error', message: error.message, isMatched: false, collaboratorId: null, request: request });
+            resolve({ status: 'error', message: error.message, isMatched: false, sessionId: null, question: null, collaboratorId: null, request: request });
 
         } finally {
             availabilityCache.delete(request.id);
@@ -115,6 +120,8 @@ async function findMatch(request) {
             if (rabbitmqConnection) {
                 await rabbitmqConnection.close();
             }
+
+            console.log(`Clean up tasks are completed for ${request.id}!`);
         }
     });
 }
@@ -129,7 +136,7 @@ function criteriaMatches(requestCriteria, currentCriteria) {
     return true;
 }
 
-// Add new request into the queue, 'topic' exchange type is used to route the message
+// Add new request into the queue
 async function addRequestIntoQueue(channel, criteria, request) {
     try {
         await channel.assertQueue(queueName, { durable: false });
@@ -159,7 +166,7 @@ async function getMatchFromQueue(channel, matchId, request) {
         const collaboratorId =
             String(currentPair.id1) === String(request.id) ? currentPair.id2 : currentPair.id1;
 
-        return { stored: true, isMatched: true, id: request.id, collaboratorId: collaboratorId };
+        return { stored: true, isMatched: true, sessionId: currentPair.sessionId, question: currentPair.question, id: request.id, collaboratorId: collaboratorId };
 
     } else {
         return listenToMatchingQueue(channel, matchId, request);
@@ -180,6 +187,8 @@ async function listenToMatchingQueue(channel, matchId, request) {
                     resolve({
                         stored: false,
                         isMatched: false,
+                        sessionId: null,
+                        question: null,
                         id: request.id,
                         collaboratorId: null
                     });
@@ -221,6 +230,8 @@ async function listenToMatchingQueue(channel, matchId, request) {
                     resolve({
                         stored: false,
                         isMatched: matched,
+                        sessionId: null,
+                        question: null,
                         id: request.id,
                         collaboratorId: currentRequest.request.id
                     });
