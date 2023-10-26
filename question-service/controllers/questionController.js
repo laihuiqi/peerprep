@@ -52,11 +52,27 @@ const getMatchQuestion = async (language, difficulty, topic) => {
 }
   
 const createQuestion = async (req, res) => {
-  const { title, description, complexity, category, language } = req.body;
-  const currentSameDescriptionQuestion = await Question.findOne({ description });
+  let { title, description, complexity, category, language } = req.body;
+
+  title = title.trim();
+  description = description.trim();
+  
+  const smallCaseTitle = title.toLowerCase();
+  const smallCaseDescription = description.toLowerCase();
+
+  const currentSameTitleQuestion = await Question.findOne({ title: { $regex: new RegExp(`^${smallCaseTitle}$`, 'i') } });
+  const currentSameDescriptionQuestion = await Question.findOne({ description: { $regex: new RegExp(`^${smallCaseDescription}$`, 'i') } });
+
+  if (currentSameDescriptionQuestion && currentSameTitleQuestion) {
+    return res.status(400).json({ error: 'Question with an identical title and description already exists' });
+  }
 
   if (currentSameDescriptionQuestion) {
     return res.status(400).json({ error: 'Question with an identical description already exists' });
+  }
+
+  if (currentSameTitleQuestion) {
+    return res.status(400).json({ error: 'Question with an identical title already exists' });
   }
 
   try {
@@ -73,7 +89,7 @@ const createQuestion = async (req, res) => {
     res.status(200).json(newQuestion);
   } catch (error) {
     if (!title || !description || !complexity || !category || !language) {
-      return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+      return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.'});
     }
     res.status(400).json({ error: 'Unable to create a new question' });
   }
@@ -81,32 +97,47 @@ const createQuestion = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
-  const { title, description, complexity, category, language } = req.body;
+  let { title, description, complexity, category, language } = req.body;
   
+  checkIdValidity(id);
+  const question = await Question.findById(id);
+  checkQuestionValidity(question);
+
+  title = title.trim();
+  description = description.trim();
+    
+  const smallCaseTitle = title.toLowerCase();
+  const smallCaseDescription = description.toLowerCase();
+    
+  if (title !== question.title) {
+    const currentSameTitleQuestion = await Question.findOne({ title: { $regex: new RegExp(`^${smallCaseTitle}$`, 'i') } });
+
+    if (currentSameTitleQuestion) {
+      return res.status(400).json({ error: 'Question with an identical title already exists.' });
+    }
+  }
+
+  if (description !== question.description) {
+    const currentSameDescriptionQuestion = await Question.findOne({ description: { $regex: new RegExp(`^${smallCaseDescription}$`, 'i') } });
+
+    if (currentSameDescriptionQuestion) {
+      return res.status(400).json({ error: 'Question with an identical description already exists.' });
+    }
+  }  
+
   try {
-      checkIdValidity(id);
-      const question = await Question.findById(id);
-      checkQuestionValidity(question);
-
-      if (description !== question.description) {
-          const currentSameDescriptionQuestion = await Question.findOne({ description });
-          if (currentSameDescriptionQuestion) {
-              return res.status(400).json({ error: 'Question with this description already exists.' });
-          }
-      }
-
-      question.title = title;
-      question.description = description;
-      question.complexity = complexity;
-      question.category = category;
-      question.language = language;
-      const updatedQuestion = await question.save();
-      res.status(200).json(updatedQuestion);
+    question.title = title;
+    question.description = description;
+    question.complexity = complexity;
+    question.category = category;
+    question.language = language;
+    const updatedQuestion = await question.save();
+    res.status(200).json(updatedQuestion);
   } catch (error) {
-      if (!title || !description || !complexity || !category || !language) {
-        return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
-      }
-      res.status(500).json({ error: 'Unable to update question' });
+    if (!title || !description || !complexity || !category || !language) {
+      return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+    }
+    res.status(500).json({ error: 'Unable to update question' });
   }
 }
 

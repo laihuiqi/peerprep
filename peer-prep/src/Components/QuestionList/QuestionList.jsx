@@ -25,9 +25,9 @@ export const Questions = () => {
     fetchQuestions();
   }, []);
 
-  const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription) => {
+  const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription, qLanguage) => {
     try {
-      const question = {title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription}
+      const question = { title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription, language: qLanguage };
       const response = await fetch('/api/questions', {
         method: 'POST',
         body: JSON.stringify(question),
@@ -48,9 +48,9 @@ export const Questions = () => {
     }
   };
 
-  const updateQuestion = async (qId, qTitle, qDescription, qDifficulty, qTopic) => {
+  const updateQuestion = async (qId, qTitle, qDescription, qDifficulty, qTopic, qLanguage) => {
     try {
-      const question = {title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription}
+      const question = { title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription, language: qLanguage };
       const response = await fetch(`/api/questions/` + String(qId), {
         method: 'PATCH',
         body: JSON.stringify(question),
@@ -78,7 +78,7 @@ export const Questions = () => {
       })
       const json = await response.json()
 
-      if ((response.status < 300) && (response.status >= 200))  {
+      if ((response.status < 300) && (response.status >= 200)) {
         fetchQuestions();
         return [];
       } else {
@@ -92,11 +92,10 @@ export const Questions = () => {
 
   return (
     <div className="q-wrapper">
-      <div className="accordion">
-        {qs.map((q, index) => (
-          <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />
-        ))}
-      </div>
+      {qs.map((q, index) => (
+        <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} 
+        updateQuestion={updateQuestion} />
+      ))}
 
       {isAddQ === false ? <div></div> : (
         <QuestionForm

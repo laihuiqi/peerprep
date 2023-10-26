@@ -45,7 +45,7 @@
     margin: auto;
     justify-content: center;
     align-items: center;
-    width: 180px;
+    width: 100px;
     height: 45px;
     color: #fff;
     background: #52CC65;
@@ -55,5 +55,12 @@
     white-space: nowrap; 
     margin-top: 20px;
     cursor: pointer;
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+  }
+
+  .submit-match:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #4cbd5d;
   }
   
