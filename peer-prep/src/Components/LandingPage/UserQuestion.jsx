@@ -9,37 +9,37 @@ export const UserQuestion = ({question, i}) => {
     }
 
     
-    let tagClass = "q-tag"; 
+    let tagClass = "user-q-tag"; 
     
     if(question.complexity) {
         if(question.complexity.toLowerCase() === "easy") {
-            tagClass += " q-tag-green"
+            tagClass += " user-q-tag-green"
         } else if (question.complexity.toLowerCase() === "medium") {
-            tagClass += " q-tag-orange"
+            tagClass += " user-q-tag-orange"
         } else if (question.complexity.toLowerCase() === "hard") {
-            tagClass += " q-tag-red"
+            tagClass += " user-q-tag-red"
         } else {
-            tagClass += " q-tag-white"
+            tagClass += " user-q-tag-white"
         }
     }
     
   return (
-    <div className="q-container">
-        <div className="q-info">
-            <div className="q-header" onClick = {() => toggle(i)}>
-                <div className="q-name">
-                    <div className="q-id">
+    <div className="user-q-container">
+        <div className="user-q-info">
+            <div className="user-q-header" onClick = {() => toggle(i)}>
+                <div className="user-q-name">
+                    <div className="user-q-id">
                         #{i + 1}
                     </div>
-                    <div className= {selected === i? "q-title-show" : "q-title"}>
+                    <div className= {selected === i? "user-q-title-show" : "user-q-title"}>
                         {question.title}
                     </div>
                 </div>
                 <span> {selected === i? "-" : "+"} </span>
             </div>
-            <div className="q-content">
-                <div className= {selected === i? "q-content-expand" : "q-content-contract"}>
-                    <div className="q-description"> {question.description} </div>
+            <div className="user-q-content">
+                <div className= {selected === i? "user-q-content-expand" : "user-q-content-contract"}>
+                    <div className="user-q-description"> {question.description} </div>
                 </div>
             </div>
             
@@ -47,7 +47,7 @@ export const UserQuestion = ({question, i}) => {
         <div className= {tagClass}>
             {question.complexity}
         </div>
-        <div className="q-tag">
+        <div className="user-q-tag">
             {question.category}
         </div>
     </div>
