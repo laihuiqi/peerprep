@@ -3,9 +3,8 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
 import { Navbar } from './Components/Navbar/Navbar';
-import { Questions } from './Components/QuestionList/QuestionList';
 import CollaborationWindow from './Components/Collaboration/CollaborationWindow';
-
+import { Questions } from './Components/QuestionList/QuestionList'; 
 
 function App() {
   return (
@@ -18,6 +17,7 @@ function App() {
        {/* Adding CollaborationWindow for testing */}
        <Route path="/collaboration" element={<CollaborationWindow />}/>
        </Routes>
+      <Questions/>
     </div>
     </Router>
   );

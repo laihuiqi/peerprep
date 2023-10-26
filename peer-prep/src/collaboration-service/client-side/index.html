@@ -18,12 +18,15 @@
   </head>
   <body>
     <ul id="messages"></ul>
+    <button id="changeLine">changeLine</button>
+    <button id="clear">clear</button>
+    <button id="extendTime">extendTime</button>
+    <button id="terminate">terminate</button>
+    <button id="ack">ack</button>
     <form id="form" action="">
       <input id="input" autocomplete="off" title="input" label="" /><button>Send</button>
     </form>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io('http://localhost:3002', { query: { userId: 1, sessionId: "123c44c9-9bc3-402f-ba56-689eb0d2774d" } });
-    </script>
-  </body>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="./client.js"></script>
+  </body> 
 </html>

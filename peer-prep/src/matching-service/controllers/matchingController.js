@@ -9,18 +9,20 @@ async function findMatch(req, res, next) {
 
         const matchResult = await matchingService.findMatch({ id, language, proficiency, difficulty, topic });
 
+        console.log("send result:", matchResult, res.statusCode);
+
         switch (matchResult.status) {
             case 'success':
-                res.status(200).json(matchResult);
+                await res.status(200).json(matchResult);
                 break;
             case 'error':
-                res.status(500).json(matchResult);
+                await res.status(500).json(matchResult);
                 break;
             case 'cancel':
-                res.status(200).json(matchResult);
+                await res.status(200).json(matchResult);
                 break;
             default:
-                res.status(500).json({ message: 'Unknown error. Please try again!' });
+                await res.status(500).json({ message: 'Unknown error. Please try again!' });
         }
 
     } catch (error) {
