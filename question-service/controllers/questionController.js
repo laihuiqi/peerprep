@@ -21,28 +21,37 @@ const getAllQuestions = async (req, res) => {
         res.status(500).json({ error: 'Error retrieving questions'});
     }
 }
+
+const duplicateTitleMessage = "Question title already exists. Please enter new title!";
+const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
   
 const createQuestion = async (req, res) => {
-    const {title, description, complexity, category} = req.body;
+    var {title, description, complexity, category} = req.body;
+    title = title.trim();
+    description = description.trim();
+    category = category.trim();
+    const response = {
+      errors: {},
+      question: null
+    };
+
     const currentSameDescriptionQuestion =  await Question.findOne({ description });
     const currentSameTitleQuestion =  await Question.findOne({ title });
 
-    if (currentSameDescriptionQuestion && currentSameTitleQuestion) {
-      return res.status(400).json({ error: 'Question with an identical title and description already exists' });
-    }  
-    if (currentSameDescriptionQuestion) {
-      return res.status(400).json({ error: 'Question with an identical description already exists' });
-    }  
+    if(currentSameDescriptionQuestion) {
+      response.errors['duplicateDescription'] = duplicateDescriptionMessage;
+    }
     if (currentSameTitleQuestion) {
-      return res.status(400).json({ error: 'Question with an identical title already exists' });
+      response.errors['duplicateTitle'] = duplicateTitleMessage;
     }  
     
-    try {
-      const question = await Question.create({title, description, complexity, category});
-      res.status(200).json(question);
-    } catch (error) {
-      res.status(400).json({error: 'Unable to create a new question'});
+    if(Object.keys(response.errors).length != 0) { 
+      return res.status(400).json(response);
+    } else {
+      response.question = Question.create({title, description, complexity, category});
+      return res.status(200).json(response);
     }
+
 }
 
 const updateQuestion = async (req, res) => {

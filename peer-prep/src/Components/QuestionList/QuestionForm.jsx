@@ -7,14 +7,56 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
   const [topic, setTopic] = useState("");
-  const [description, setDescription] = useState("")
+  const [description, setDescription] = useState("");
 
-  const handleSubmit = (toggleAddQ, addQ) => e => {
+  const [isDuplicateTitle, setIsDuplicateTitle] = useState(true);
+  const [isDuplicateDesc, setIsDuplicateDesc] = useState(false);
+  const [isMissingField, setIsMissingField] = useState(false);
+
+  const [titleError, setTitleError] = useState("");
+  const [descError, setDescError] = useState("");
+  const [missingFieldError, setMissingFieldError] = useState("Please fill all fields!")
+
+
+  const isEmpty = (str) => {
+    return str === ""
+  };
+
+  const setErrorVar = (errors) => {
+    if('duplicateDescription' in errors) {
+      setIsDuplicateDesc(true);
+      setDescError(errors.duplicateDescription)
+    } else {
+      setIsDuplicateDesc(false);
+    }
+    
+    if('duplicateTitle' in errors) {
+      setIsDuplicateTitle(true);
+      setTitleError(errors.duplicateTitle);
+      console.log(titleError)
+    } else {
+      setIsDuplicateTitle(false);
+    }
+  };
+
+  const handleSubmit = (toggleAddQ, addQ) => async e => {
     e.preventDefault();
-    toggleAddQ(false);
-
-    const response = addQ(title, difficulty, topic, description);
-    return response; // If array length is 0, then successful, else can index through it for errors
+    if(isEmpty(title) || isEmpty(difficulty) || isEmpty(topic) || isEmpty(description)) {
+      setIsMissingField(true);
+      console.log(setIsMissingField);
+    } else {
+      setIsMissingField(false);
+      const response = await addQ(title, difficulty, topic, description);
+      if(response.status === 200) {
+        toggleAddQ(false);
+        let res = await response.json();
+        console.log(res);
+      } else {
+        let res = await response.json();
+        console.log(res);
+        setErrorVar(res.errors)
+      }
+    }
   }
 
   function handleChosenDifficulty(e) {
@@ -31,6 +73,8 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
             (e) => setTitle(e.target.value)
           }/>
         </div>
+
+        {isDuplicateTitle? <div className="error-text">{titleError}</div> : <div></div>}
         
         <div className="q-form-content">
           <div className="q-form-tags">
@@ -41,12 +85,16 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
                 (e) => setTopic(e.target.value)
               }
               />
-            </div>
-            <textarea type="text" className="q-form-description q-form-input" 
+          </div>
+          <textarea type="text" className="q-form-description q-form-input" 
             placeholder = "Question description"
             onChange = {
               (e) => setDescription(e.target.value)
-            }/>
+           }/>
+
+           {isDuplicateDesc? <div className="error-text">{descError}</div> : <div></div>}
+           {isMissingField? <div className = "error-text">{missingFieldError}</div>: <div></div>}
+
             <div className="btn-container">
               <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setAddQ(false); 
                 setQId(qId - 1)}}>Cancel</button>

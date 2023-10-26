@@ -23,7 +23,7 @@ export const Questions = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [isAddQ]);
 
   const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription) => {
     try {
@@ -36,12 +36,7 @@ export const Questions = () => {
         }
       });
 
-      if (response.status === 200) {
-        fetchQuestions();
-        return [];
-      } else {
-        return ['Unable to create question'];
-      }
+      return response;
     } catch (error) {
       console.error('Creating question error:', error);
       return ['Unable to create question'];
