@@ -78,7 +78,7 @@ export const Questions = () => {
       })
       const json = await response.json()
 
-      if ((response.status >= 200) && (response.status < 300)) {
+      if ((response.status < 300) && (response.status >= 200)) {
         fetchQuestions();
         return [];
       } else {

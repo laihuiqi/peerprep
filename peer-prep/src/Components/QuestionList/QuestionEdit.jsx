@@ -6,14 +6,14 @@ import { QLanguageDropdown } from './QLanguageDropdown';
 import delete_icon from '../Assets/bin.png';
 
 export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
-  const [title, setTitle] = useState(q.title);
-  const [difficulty, setDifficulty] = useState(q.complexity);
-  const [topic, setTopic] = useState(q.category);
-  const [description, setDescription] = useState(q.description);
-  const [language, setLanguage] = useState(q.language);
+    const [title, setTitle] = useState(q.title);
+    const [difficulty, setDifficulty] = useState(q.complexity);
+    const [topic, setTopic] = useState(q.category);
+    const [description, setDescription] = useState(q.description);
+    const [language, setLanguage] = useState(q.language);
 
   function handleChosenDifficulty(e) {
-    setDifficulty(e.target.value);
+      return setDifficulty(e.target.value);
   }
 
   return (
