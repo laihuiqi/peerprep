@@ -36,4 +36,4 @@ app.listen(3001, () => {
     console.log('Matching service listening on port 3001');
 });
 
-module.exports = app;   
+module.exports = { connectDB };

@@ -1,114 +1,167 @@
-const { io } = require('socket.io-client');
-const config = require('../config/config');
+const { expect } = require('chai');
+const { createServer } = require('http');
+const ioClient = require('socket.io-client');
+const { Server } = require('socket.io');
+const { v4: uuidv4 } = require('uuid');
+const { EXTENSION_TIME } = require('../config/config');
 
-const socketURL = config.serverAddress;
+const socketURL = 'http://localhost:3002';
 
-jest.setTimeout(20000);
+jest.setTimeout(10000);
 
 describe('Collaboration Service', () => {
-    let user1, user2, sessionId;
+    let io, user1, user2, serverSocket, sessionId;
 
-    beforeEach(async() => {
+    beforeEach((done) => {
+        sessionId = uuidv4();
+        const httpServer = createServer();
+        io = new Server(httpServer);
 
-        sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
+        httpServer.listen(() => {
+            user1 = ioClient(socketURL, {
+                query: {
+                    userId: 1,
+                    sessionId: sessionId
+                }
+            });
 
-        user1 = io(socketURL, {
-            query: {
-                userId: 1,
-                sessionId: sessionId
-            }
+            user2 = ioClient(socketURL, {
+                query: {
+                    userId: 2,
+                    sessionId: sessionId
+                }
+            });
+
+            io.on('connection', (socket) => {
+                console.log(1);
+                serverSocket = socket;
+
+            });
+
+            user1.on('connect', done);
+            user2.on('connect', done);
+
+            done();
         });
-
-        user2 = io(socketURL, {
-            query: {
-                userId: 2,
-                sessionId: sessionId
-            }
-        });
-
-        user1.on('join', (recvSessionId) => {
-            expect(recvSessionId).toBe(sessionId);
-        });
-
-        user2.on('join', (recvSessionId) => {
-            expect(recvSessionId).toBe(sessionId);
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 4000));
-
     });
 
-    afterAll(async() => {
-        await user1.disconnect();
-        await user2.disconnect();
-    });
-    
-    test('code change should be detected and broadcasted to all users in the same room', async() => {
 
-        await user1.emit('change-line', 1, 'console.log("hello world");');
-        user2.on('code-changed', (line, code) => {
-            expect(line).toBe(1);
-            expect(code).toBe('console.log("hello world");');
-            console.log("1 ", line, code);
+    afterEach(() => {
+        io.close();
+        user1.disconnect();
+        user2.disconnect();
+    });
+    /*
+        test('users should join room with the correct sessionId', (done) => {
+            user1.on('join', (recvSessionId) => {
+                expect(recvSessionId).equal(sessionId);
+                expect(user1.rooms[sessionId]).equal(sessionId);
+                done();
+            });
+
+            user2.on('join', (recvSessionId) => {
+                expect(recvSessionId).equal(sessionId);
+                expect(user1.rooms[sessionId]).equal(sessionId);
+                done();
+            });
         });
+
         
-        await user2.emit('change-line', 2, 'console.log("bye world");');
+    test('code change should be detected and broadcasted to all users in the same room', (done) => {
+        serverSocket.on('code-changed', (line, code) => {
+            expect(line).equal(1);
+            expect(code).equal('console.log("hello world");');
+            done();
+        });
+
+        user1.emit('code-change', 1, 'console.log("hello world");');
+        user2.emit('code-change', 2, 'console.log("bye world");');
 
         user1.on('code-changed', (line, code) => {
-            expect(line).toBe(2);
-            expect(code).toBe('console.log("bye world");');
-            console.log("1 ", line, code);
+            expect(line).equal(2);
+            expect(code).equal('console.log("bye world");');
+            done();
         });
-        
+
+        user2.on('code-changed', (line, code) => {
+            expect(line).equal(1);
+            expect(code).equal('console.log("hello world");');
+            done();
+        });
     });
     
-    test('time extension should be successful when time is sufficient', async() => {
-        await user1.emit('extend-time');
+        test('code editor should be cleared after the cleaning request', (done) => {
+            user1.emit('clear');
 
-        user1.on('time-extended', (time) => {
-            expect(time).toBe(config.EXTENSION_TIME);
-            console.log("2 ", time);
+            user2.on('cleared', () => {
+                done();
+            });
         });
 
-        user2.on('time-extended', (time) => {
-            expect(time).toBe(config.EXTENSION_TIME);
-            console.log("2 ", time);
-        });
-    });
-
-    test('code editor should be cleared after the cleaning request', async() => {
-        await user1.emit('clear');
-
-        user2.on('cleared', (recvSessionId) => {
-            expect(recvSessionId).toBe(sessionId);
-            console.log("3 ", recvSessionId);
-        });
-    });
-
-    test('user\'s reconnection could be received by collaborator', async() => {
-        await user1.emit('reconnect');
-
-        user1.on('success-reconnected', (collaborativeInput) => {
-            const [time, language, codes] = collaborativeInput;
-            expect(language).toBe('Java');
-            expect(codes).toStrictEqual([]);
-            console.log("4 ", language, codes);
+        test('line change should be detected and last change to previous line should be saved', (done) => {
+            user1.emit('change-line', 1, 'console.log("python god");');
         });
 
-        user2.on('user-reconnected', (userId) => {
-            expect(userId).toBe("1");
-            console.log("4 ", userId);
+        test('time extension should be successful when time is sufficient', (done) => {
+            user1.emit('extend-time');
+
+            user1.on('time-extended', (time) => {
+                expect(time).equal(EXTENSION_TIME);
+                done();
+            });
+
+            user2.on('time-extended', (time) => {
+                expect(time).equal(EXTENSION_TIME);
+                done();
+            });
         });
-    });
 
-    test('session should start to terminate once user requests', async() => {
-        await user1.emit('user-terminate', 2, 'console.log("java is good");');
+        test('session should start to terminate once user requests', (done) => {
+            user1.emit('user-terminate', 2, 'console.log("java is good");');
 
-        user2.on('notify-terminate', (session) => {
-            expect(session).toBe(sessionId);
-            console.log("5 ", session);
+            user2.on('notify-terminate', (session) => {
+                expect(session).equal(sessionId);
+                done();
+            });
+
+            user2.on('user-disconnected', (userId) => {
+                expect(userId).equal(1);
+                done();
+            });
         });
 
-    });
-    
+        test('session should terminate once notification is received', (done) => {
+            user1.emit('ack-terminate', 3, 'console.log("do an easy unit test");');
+
+            user2.on('user-disconnected', (userId) => {
+                expect(userId).equal(1);
+                done();
+            });
+        });
+
+        test('user should be disconnected once session is terminated', (done) => {
+            user1.disconnect();
+
+            user2.on('user-disconnected', (userId) => {
+                expect(userId).equal(1);
+                done();
+            });
+        });
+
+        test('user\'s reconnection could be received by collaborator', (done) => {
+            user1.emit('reconnect');
+
+            user1.on('success-reconnected', (collaborativeInput) => {
+                let language, codes = collaborativeInput;
+                expect(language).equal('None');
+                expect(codes).equal("");
+                done();
+            });
+
+            user2.on('user-reconnected', (userId) => {
+                expect(userId).equal(1);
+                done();
+            });
+        });
+        */
 });

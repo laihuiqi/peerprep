@@ -1,50 +1,9 @@
 const { findMatch, cancelMatch } = require('../services/matchingService');
 const { getCurrentMatchedPair, deleteAllMatchedPairs } = require('../database/matchedPairDb');
-const { addQuestion } = require('../database/questionDb');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
+const { connectDB } = require('../server');
 jest.setTimeout(200000);
 
 describe('Matching Service', () => {
-
-    let mongod;
-
-    const questionJava = {
-        _id: new mongoose.Types.ObjectId(1),
-        title: 'Java Question',
-        description: 'Java Question Description',
-        complexity: 'easy',
-        category: 'arrays',
-        language: 'java',
-        userTags: []
-    };
-
-    beforeAll(async () => {
-        mongod = await MongoMemoryServer.create();
-        const mongoUri = mongod.getUri();
-
-        await mongoose.connect(mongoUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-
-        console.log("testDB connected");
-        await addQuestion(questionJava);
-    });
-
-    afterAll(async () => {
-        await mongoose.disconnect();
-        await mongod.stop();
-    });
-
-    beforeEach(async() => {
-        await deleteAllMatchedPairs();
-    });
-
-    afterEach(async() => {
-        await deleteAllMatchedPairs();
-    });
 
     const javaRequest1 = {
         id: 1,
@@ -134,15 +93,17 @@ describe('Matching Service', () => {
         topic: 'arrays'
     };
 
-    function assertObjectsEqual(actual, expected) {
-        for (const key in expected) {
-            if (typeof expected[key] === 'object' && expected[key] !== null) {
-              assertObjectsEqual(actual[key], expected[key]);
-            } else {
-              expect(actual[key]).toStrictEqual(expected[key]);
-            }
-        }
-    }
+    beforeAll(async() => {
+        await connectDB();
+    });
+
+    beforeEach(async() => {
+        await deleteAllMatchedPairs();
+    });
+
+    afterEach(async() => {
+        await deleteAllMatchedPairs();
+    });
 
     test('Matching basic requests with same language only', async() => {
         const [matchResult1, matchResult2] = await Promise.all([
@@ -150,13 +111,9 @@ describe('Matching Service', () => {
             findMatch(javaRequest2)
         ]);
 
-        const matchPair = await getCurrentMatchedPair(javaRequest1.id);
-
         const expectResult1 = {
             status: 'success',
             isMatched: true,
-            sessionId: matchPair.sessionId,
-            question: questionJava,
             collaboratorId: javaRequest2.id,
             request: javaRequest1
         }
@@ -164,14 +121,17 @@ describe('Matching Service', () => {
         const expectResult2 = {
             status: 'success',
             isMatched: true,
-            sessionId: matchPair.sessionId,
-            question: questionJava,
             collaboratorId: javaRequest1.id,
             request: javaRequest2
         }
 
-        assertObjectsEqual(matchResult1, expectResult1);
-        assertObjectsEqual(matchResult2, expectResult2);
+        expect(matchResult1).toStrictEqual(expectResult1);
+        expect(matchResult2).toStrictEqual(expectResult2);
+
+        const matchedPair1 = await getCurrentMatchedPair(javaRequest1.id);
+        const matchedPair2 = await getCurrentMatchedPair(javaRequest2.id);
+
+        expect(matchedPair1.sessionId).toStrictEqual(matchedPair2.sessionId);
     });
 
     test('Not Match for request with different language', async() => {
@@ -179,13 +139,10 @@ describe('Matching Service', () => {
             findMatch(cppRequest2),
             findMatch(cRequest2)
         ]);
-        console.log(matchResult1);
 
         const expectResult1 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: cppRequest2
         };
@@ -193,14 +150,12 @@ describe('Matching Service', () => {
         const expectResult2 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: cRequest2
         };
 
-        assertObjectsEqual(matchResult1, expectResult1);
-        assertObjectsEqual(matchResult2, expectResult2);
+        expect(matchResult1).toStrictEqual(expectResult1);
+        expect(matchResult2).toStrictEqual(expectResult2);
 
         const matchedPair1 = await getCurrentMatchedPair(cppRequest1.id);
         const matchedPair2 = await getCurrentMatchedPair(cRequest1.id);
@@ -214,14 +169,10 @@ describe('Matching Service', () => {
             findMatch(cppFullRequest1),
             findMatch(cppFullRequest2)
         ]);
-        
-        const matchPair = await getCurrentMatchedPair(cppFullRequest1.id);
 
         const expectResult1 = {
             status: 'success',
             isMatched: true,
-            sessionId: matchPair.sessionId, 
-            question: null,
             collaboratorId: cppFullRequest2.id,
             request: cppFullRequest1
         }
@@ -229,14 +180,17 @@ describe('Matching Service', () => {
         const expectResult2 = {
             status: 'success',
             isMatched: true,
-            sessionId: matchPair.sessionId,
-            question: null,
             collaboratorId: cppFullRequest1.id,
             request: cppFullRequest2
         }
 
-        assertObjectsEqual(matchResult1, expectResult1);
-        assertObjectsEqual(matchResult2, expectResult2);
+        expect(matchResult1).toStrictEqual(expectResult1);
+        expect(matchResult2).toStrictEqual(expectResult2);
+
+        const matchedPair1 = await getCurrentMatchedPair(cppFullRequest1.id);
+        const matchedPair2 = await getCurrentMatchedPair(cppFullRequest2.id);
+
+        expect(matchedPair1.sessionId).toStrictEqual(matchedPair2.sessionId);
 
     });
 
@@ -249,8 +203,6 @@ describe('Matching Service', () => {
         const expectResult1 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: cppFullRequest1
         }
@@ -258,14 +210,12 @@ describe('Matching Service', () => {
         const expectResult2 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
 
-        assertObjectsEqual(matchResult1, expectResult1);
-        assertObjectsEqual(matchResult2, expectResult2);
+        expect(matchResult1).toStrictEqual(expectResult1);
+        expect(matchResult2).toStrictEqual(expectResult2);
     });
 
     test('No match for simple request and complex request with different fields', async() => {
@@ -277,8 +227,6 @@ describe('Matching Service', () => {
         const expectResult1 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: javaRequest1
         }
@@ -286,14 +234,12 @@ describe('Matching Service', () => {
         const expectResult2 = {
             status: 'error',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
 
-        assertObjectsEqual(matchResult1, expectResult1);
-        assertObjectsEqual(matchResult2, expectResult2);
+        expect(matchResult1).toStrictEqual(expectResult1);
+        expect(matchResult2).toStrictEqual(expectResult2);
     });
 
     test('Cancel a match', async() => {
@@ -315,13 +261,11 @@ describe('Matching Service', () => {
         const expectResult1 = {
             status: 'cancel',
             isMatched: false,
-            sessionId: null, 
-            question: null,
             collaboratorId: null,
             request: javaRequest1
         }
 
-        assertObjectsEqual(matchResult, expectResult1);
+        expect(matchResult).toStrictEqual(expectResult1);
         expect(cancelResult).toStrictEqual(true);
 
         const matchedPair1 = await getCurrentMatchedPair(javaRequest1.id);

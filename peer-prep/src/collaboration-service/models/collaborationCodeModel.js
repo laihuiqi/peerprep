@@ -8,10 +8,8 @@ const lineInputSchema = new mongoose.Schema({
 
 const collaborativeInputSchema = new mongoose.Schema({
     sessionId: String,
-    initTime: Number,
     language: String,
     codes: [lineInputSchema]
 });
-
 
 module.exports = mongoose.model('CollaborativeInput', collaborativeInputSchema);
