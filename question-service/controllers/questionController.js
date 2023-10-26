@@ -26,17 +26,21 @@ const duplicateTitleMessage = "Question title already exists. Please enter new t
 const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
   
 const createQuestion = async (req, res) => {
-    var {title, description, complexity, category} = req.body;
+    var { title, description, complexity, category, language } = req.body;
     title = title.trim();
     description = description.trim();
     category = category.trim();
+
+    const smallCaseTitle = title.toLowerCase();
+    const smallCaseDescription = description.toLowerCase();
+
     const response = {
       errors: {},
       question: null
     };
 
-    const currentSameDescriptionQuestion =  await Question.findOne({ description });
-    const currentSameTitleQuestion =  await Question.findOne({ title });
+    const currentSameDescriptionQuestion =  await Question.findOne({ description: { $regex: new RegExp(`^${smallCaseDescription}$`, 'i') } });
+    const currentSameTitleQuestion =  await Question.findOne({ title: { $regex: new RegExp(`^${smallCaseTitle}$`, 'i') } });
 
     if(currentSameDescriptionQuestion) {
       response.errors['duplicateDescription'] = duplicateDescriptionMessage;
@@ -48,7 +52,8 @@ const createQuestion = async (req, res) => {
     if(Object.keys(response.errors).length != 0) { 
       return res.status(400).json(response);
     } else {
-      response.question = Question.create({title, description, complexity, category});
+      const question = new Question({_id: new mongoose.Types.ObjectId(), title, description, complexity, category, language,});
+      response.question = await question.save();
       return res.status(200).json(response);
     }
 }
