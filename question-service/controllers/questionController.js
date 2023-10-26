@@ -34,7 +34,7 @@ const getMatchQuestion = async (language, difficulty, topic) => {
   }
 
   if (topic !== "None") {
-    aggregationPipeline.push({ $match: { topic: topic } });
+    aggregationPipeline.push({ $match: { category: topic } });
   }
 
   aggregationPipeline.push({ $sample: { size: 1 } });
@@ -131,11 +131,9 @@ const updateQuestion = async (req, res) => {
     });
 
     if (currentSameDescriptionQuestion) {
-      return res
-        .status(400)
-        .json({
-          error: "Question with an identical description already exists.",
-        });
+      return res.status(400).json({
+        error: "Question with an identical description already exists.",
+      });
     }
   }
 
@@ -149,11 +147,9 @@ const updateQuestion = async (req, res) => {
     res.status(200).json(updatedQuestion);
   } catch (error) {
     if (!title || !description || !complexity || !category || !language) {
-      return res
-        .status(400)
-        .json({
-          error: "Missing fields are not allowed. Please fill all fields.",
-        });
+      return res.status(400).json({
+        error: "Missing fields are not allowed. Please fill all fields.",
+      });
     }
     res.status(500).json({ error: "Unable to update question" });
   }

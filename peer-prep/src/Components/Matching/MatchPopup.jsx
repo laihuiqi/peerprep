@@ -21,7 +21,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
         // Show the loading popup
         setGoToLoadPopup(true);
 
-        const userId = getUserId();;
+        const userId = getUserId();
         if (!userId) {
             console.error("User not logged in");
             setGoToLoadPopup(false); // Close the loading popup
