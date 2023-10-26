@@ -19,5 +19,3 @@ export const LoadPopup= ({isOpen, isClose}) => {
     );
   }
 };
-
-

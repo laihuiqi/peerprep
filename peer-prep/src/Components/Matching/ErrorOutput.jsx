@@ -2,7 +2,6 @@ import React from 'react';
 import './Output.css'; 
 import cross_icon from '../Assets/cross.png'
 
-
 export const ErrorOutput = ({isOpen, isClose}) => {
   if (isOpen) {
     return (

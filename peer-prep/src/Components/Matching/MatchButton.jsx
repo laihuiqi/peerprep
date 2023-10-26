@@ -11,7 +11,7 @@ export const MatchButton = ({}) => {
     const [showSuccessOutput, setShowSuccessOutput] = useState(false);
     const [collaboratorId, setCollaboratorId] = useState(null);
 
-    // States for new match criteria
+// States for new match criteria
 //    const [chosenDifficulty, setChosenDifficulty] = useState("No Preference"); 
 //    const [chosenLanguage, setChosenLanguage] = useState("No Preference");
 //    const [chosenProficiency, setChosenProficiency] = useState("No Preference");
