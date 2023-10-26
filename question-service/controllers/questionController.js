@@ -22,6 +22,7 @@ const getAllQuestions = async (req, res) => {
     }
 }
 
+<<<<<<< HEAD
 const getMatchQuestion = async (language, difficulty, topic) => {
   let aggregationPipeline = [];
 
@@ -50,63 +51,87 @@ const getMatchQuestion = async (language, difficulty, topic) => {
     return null;
   }
 }
+=======
+const duplicateTitleMessage = "Question title already exists. Please enter new title!";
+const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
+>>>>>>> assignment2
   
 const createQuestion = async (req, res) => {
-  const { title, description, complexity, category, language } = req.body;
-  const currentSameDescriptionQuestion = await Question.findOne({ description });
+    var { title, description, complexity, category, language } = req.body;
+    title = title.trim();
+    description = description.trim();
+    category = category.trim();
 
-  if (currentSameDescriptionQuestion) {
-    return res.status(400).json({ error: 'Question with an identical description already exists' });
-  }
+    const smallCaseTitle = title.toLowerCase();
+    const smallCaseDescription = description.toLowerCase();
 
-  try {
-    const question = new Question({
-      _id: new mongoose.Types.ObjectId(),
-      title,
-      description,
-      complexity,
-      category,
-      language,
-    });
+    const response = {
+      errors: {},
+      question: null
+    };
 
-    const newQuestion = await question.save();
-    res.status(200).json(newQuestion);
-  } catch (error) {
-    if (!title || !description || !complexity || !category || !language) {
-      return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+    const currentSameDescriptionQuestion =  await Question.findOne({ description: { $regex: new RegExp(`^${smallCaseDescription}$`, 'i') } });
+    const currentSameTitleQuestion =  await Question.findOne({ title: { $regex: new RegExp(`^${smallCaseTitle}$`, 'i') } });
+
+    if(currentSameDescriptionQuestion) {
+      response.errors['duplicateDescription'] = duplicateDescriptionMessage;
     }
-    res.status(400).json({ error: 'Unable to create a new question' });
-  }
+    if (currentSameTitleQuestion) {
+      response.errors['duplicateTitle'] = duplicateTitleMessage;
+    }  
+    
+    if(Object.keys(response.errors).length != 0) { 
+      return res.status(400).json(response);
+    } else {
+      const question = new Question({_id: new mongoose.Types.ObjectId(), title, description, complexity, category, language,});
+      response.question = await question.save();
+      return res.status(200).json(response);
+    }
 }
 
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
-  const { title, description, complexity, category, language } = req.body;
+  let { title, description, complexity, category, language } = req.body;
   
+  checkIdValidity(id);
+  const question = await Question.findById(id);
+  checkQuestionValidity(question);
+
+  title = title.trim();
+  description = description.trim();
+    
+  const smallCaseTitle = title.toLowerCase();
+  const smallCaseDescription = description.toLowerCase();
+    
+  if (title !== question.title) {
+    const currentSameTitleQuestion = await Question.findOne({ title: { $regex: new RegExp(`^${smallCaseTitle}$`, 'i') } });
+
+    if (currentSameTitleQuestion) {
+      return res.status(400).json({ error: 'Question with an identical title already exists.' });
+    }
+  }
+
+  if (description !== question.description) {
+    const currentSameDescriptionQuestion = await Question.findOne({ description: { $regex: new RegExp(`^${smallCaseDescription}$`, 'i') } });
+
+    if (currentSameDescriptionQuestion) {
+      return res.status(400).json({ error: 'Question with an identical description already exists.' });
+    }
+  }  
+
   try {
-      checkIdValidity(id);
-      const question = await Question.findById(id);
-      checkQuestionValidity(question);
-
-      if (description !== question.description) {
-          const currentSameDescriptionQuestion = await Question.findOne({ description });
-          if (currentSameDescriptionQuestion) {
-              return res.status(400).json({ error: 'Question with this description already exists.' });
-          }
-      }
-
-      question.title = title;
-      question.description = description;
-      question.complexity = complexity;
-      question.category = category;
-      question.language = language;
-      const updatedQuestion = await question.save();
-      res.status(200).json(updatedQuestion);
+    question.title = title;
+    question.description = description;
+    question.complexity = complexity;
+    question.category = category;
+    question.language = language;
+    const updatedQuestion = await question.save();
+    res.status(200).json(updatedQuestion);
   } catch (error) {
-      if (!title || !description || !complexity || !category || !language) {
-        return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
-      }
-      res.status(500).json({ error: 'Unable to update question' });
+    if (!title || !description || !complexity || !category || !language) {
+      return res.status(400).json({ error: 'Missing fields are not allowed. Please fill all fields.' });
+    }
+    res.status(500).json({ error: 'Unable to update question' });
   }
 }
 
