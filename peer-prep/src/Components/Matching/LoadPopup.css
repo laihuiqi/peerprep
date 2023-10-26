@@ -1,0 +1,74 @@
+.load-popup {
+    text-align: center; 
+    background-color: #ffffff;
+    border-radius: 7px;
+    position: relative;
+    padding: 18px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 1001; 
+    font-size: 19px; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+}
+
+.load-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1000; 
+  }
+
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40;
+    width: 100;
+}
+
+.cancel-match {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+<<<<<<<< HEAD:peer-prep/src/Components/Matching/MatchPopup.css
+    width: 100px;
+    height: 45px;
+    color: #fff;
+    background: #52CC65;
+    border: none;
+========
+    width: 150px;
+    height: 40px;
+    color: #000000;
+    background: #ffffff;
+>>>>>>>> add-matching-ui:peer-prep/src/Components/Matching/LoadPopup.css
+    border-radius: 5px;
+    font-size: 17px; 
+    white-space: nowrap; 
+    margin-top: 20px;
+    cursor: pointer;
+<<<<<<<< HEAD:peer-prep/src/Components/Matching/MatchPopup.css
+    -webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+  }
+
+  .submit-match:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background: #4cbd5d;
+  }
+  
+========
+    border-radius: 5px;
+    border: 2px solid #000000;
+}
+
+
+>>>>>>>> add-matching-ui:peer-prep/src/Components/Matching/LoadPopup.css
