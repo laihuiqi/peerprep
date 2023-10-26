@@ -13,10 +13,10 @@ function App() {
       <div>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Questions />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/questions" element={<Questions />} />
           {/* Adding CollaborationWindow for testing */}
           <Route path="/login" element={<LoginSignUp />} />
-          <Route path="/landing" element={<LandingPage />} />
           <Route path="/collaboration" element={<CollaborationWindow />} />
         </Routes>
         <Questions />
