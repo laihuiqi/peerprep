@@ -3,8 +3,8 @@ const { questionSchema } = require('./questionModel');
 
 const matchedPairSchema = new mongoose.Schema({
     sessionId: String,
-    id1: Number,
-    id2: Number,
+    id1: String,
+    id2: String,
     isEnded: Boolean,
     question: questionSchema,
     language: String,

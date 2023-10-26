@@ -47,7 +47,7 @@ describe('Matching Service', () => {
     });
 
     const javaRequest1 = {
-        id: 1,
+        id: 'Jgk9LsH3pRi2',
         language: 'java',
         proficiency: 'None',
         difficulty: 'None',
@@ -55,7 +55,7 @@ describe('Matching Service', () => {
     };
 
     const javaRequest2 = {
-        id: 2,
+        id: 'Xy7QnWzA4vE1',
         language: 'java',
         proficiency: 'None',
         difficulty: 'None',
@@ -63,7 +63,7 @@ describe('Matching Service', () => {
     };
 
     const pythonRequest1 = {
-        id: 3,
+        id: 'FbRt6YpZuIv8',
         language: 'python',
         proficiency: 'None',
         difficulty: 'None',
@@ -71,7 +71,7 @@ describe('Matching Service', () => {
     };
 
     const cppRequest1 = {
-        id: 4,
+        id: 'MnOq5PxS3dR7',
         language: 'cpp',
         proficiency: 'None',
         difficulty: 'None',
@@ -79,7 +79,7 @@ describe('Matching Service', () => {
     };
 
     const cRequest1 = {
-        id: 5,
+        id: 'GhT2UkL4jEw9',
         language: 'c',
         proficiency: 'None',
         difficulty: 'None',
@@ -87,7 +87,7 @@ describe('Matching Service', () => {
     };
 
     const cRequest2 = {
-        id: 11,
+        id: 'Df8GjR7hTk2L',
         language: 'c',
         proficiency: 'None',
         difficulty: 'None',
@@ -95,7 +95,7 @@ describe('Matching Service', () => {
     };
 
     const cppRequest2 = {
-        id: 6,
+        id: 'NpQ5sV9mXc4Z',
         language: 'cpp',
         proficiency: 'None',
         difficulty: 'None',
@@ -103,7 +103,7 @@ describe('Matching Service', () => {
     };
 
     const cppFullRequest1 = {
-        id: 7,
+        id: 'Yb1FnS6oAq3P',
         language: 'cpp',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -111,7 +111,7 @@ describe('Matching Service', () => {
     };
 
     const javaFullRequest1 = {
-        id: 8,
+        id: 'UvIz3wPxLk9Q',
         language: 'java',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -119,7 +119,7 @@ describe('Matching Service', () => {
     };
 
     const cppFullRequest2 = {
-        id: 9,
+        id: 'Jr7GpW2bXl8K',
         language: 'cpp',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -127,7 +127,7 @@ describe('Matching Service', () => {
     };
 
     const javaFullRequest2 = {
-        id: 10,
+        id: 'HtY5sRfZp2Jv',
         language: 'java',
         proficiency: 'advanced',
         difficulty: 'easy',
