@@ -49,8 +49,8 @@ async function findMatch(request) {
                             isMatched: true,
                             sessionId: checkMatchedPair.sessionId,
                             question: checkMatchedPair.question,
-                            collaboratorId: String(checkMatchedPair.id1) === String(request.id) ?
-                                parseInt(checkMatchedPair.id2) : parseInt(checkMatchedPair.id1),
+                            collaboratorId: checkMatchedPair.id1 === request.id ?
+                                checkMatchedPair.id2 : checkMatchedPair.id1,
                             request: request
                         });
                     }
@@ -78,15 +78,15 @@ async function findMatch(request) {
                     isMatched: true,
                     sessionId: sessionId,
                     question: question,
-                    collaboratorId: parseInt(collaboratorId),
+                    collaboratorId: collaboratorId,
                     request: request
                 });
 
             } else if (isMatched && !stored) {
                 const matchedPair = new MatchedPair({
                     sessionId: uuidv4(),
-                    id1: parseInt(id),
-                    id2: parseInt(collaboratorId),
+                    id1: id,
+                    id2: collaboratorId,
                     isEnded: false,
                     question: await getMatchQuestion(request.language, request.difficulty, request.topic),
                     language: request.language,
@@ -102,7 +102,7 @@ async function findMatch(request) {
                     isMatched: true,
                     sessionId: matchedPair.sessionId,
                     question: matchedPair.question,
-                    collaboratorId: parseInt(collaboratorId),
+                    collaboratorId: collaboratorId,
                     request: request
                 });
             }
@@ -164,7 +164,7 @@ async function getMatchFromQueue(channel, matchId, request) {
 
     if (currentPair) {
         const collaboratorId =
-            String(currentPair.id1) === String(request.id) ? currentPair.id2 : currentPair.id1;
+            currentPair.id1 === request.id ? currentPair.id2 : currentPair.id1;
 
         return { stored: true, isMatched: true, sessionId: currentPair.sessionId, question: currentPair.question, id: request.id, collaboratorId: collaboratorId };
 
