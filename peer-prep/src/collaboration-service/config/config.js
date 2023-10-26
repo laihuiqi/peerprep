@@ -15,6 +15,7 @@ const SYSTEM_TERMINATE_TIMEOUT = 10 * 1000; // 10 secsS
 
 module.exports = {
     serverAddress: 'http://localhost:3002',
+    //mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
     mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
     DEFAULT_TIME_LIMIT,
     MAX_TIME_LIMIT,

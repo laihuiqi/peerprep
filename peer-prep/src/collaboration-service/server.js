@@ -44,8 +44,6 @@ app.get('/', (req, res) => {
 
 io.on('connection', async(socket) => {
 
-    console.log('mongoose connected: ', mongoose.connection.readyState, mongoose.connection.host);
-
     console.log('socket connected: ', socket.id);
 
     await startCollaboration(socket, io);
