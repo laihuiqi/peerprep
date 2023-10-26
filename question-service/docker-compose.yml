@@ -1,0 +1,13 @@
+version: '3'
+services:
+  question-database:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  question-service:
+    build: .
+    ports:
+      - "4000:4000"
+    depends_on:
+      - question-database

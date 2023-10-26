@@ -44,6 +44,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                                 <div className="q-tags">
                                     <div className= {tagClass}>{question.complexity}</div>
                                     <div className="q-tag">{question.category}</div>
+                                    <div className="q-langtag">{question.language}</div> 
                                 </div>
                                 <div className="q-edit" onClick = {()=> setEdit(true)}>
                                     <img src = {edit_icon} alt=""/>

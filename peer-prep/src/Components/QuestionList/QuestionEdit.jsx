@@ -1,18 +1,20 @@
-import React, {useState} from 'react'
-import './QuestionEdit.css'
-import { QDifficultyDropdown } from './QDifficultyDropdown'
+import React, { useState } from 'react';
+import './QuestionEdit.css';
+import { QDifficultyDropdown } from './QDifficultyDropdown';
+import { QLanguageDropdown } from './QLanguageDropdown'; 
 
-import delete_icon from '../Assets/bin.png'
+import delete_icon from '../Assets/bin.png';
 
-export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
+export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
     const [title, setTitle] = useState(q.title);
     const [difficulty, setDifficulty] = useState(q.complexity);
     const [topic, setTopic] = useState(q.category);
-    const [description, setDescription] = useState(q.description)
+    const [description, setDescription] = useState(q.description);
+    const [language, setLanguage] = useState(q.language);
 
-    function handleChosenDifficulty(e) {
-        return setDifficulty(e.target.value)
-    }
+  function handleChosenDifficulty(e) {
+      return setDifficulty(e.target.value);
+  }
 
   return (
     <div className= "form-container">
@@ -31,25 +33,25 @@ export const QuestionEdit = ({q, index, updateQ, setEdit}) => {
                     <div className= "q-form-tags">
                         <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
                         <input type="text" className="q-form-tag q-form-input" defaultValue = {q.category}
-                        onChange = {(e) => {setTopic(e.target.value)}}/> 
-                    </div>
+                        onChange = {(e) => {setTopic(e.target.value)}}/>
+                        <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)}/>
                 </div>
-               
-            
-                <textarea type="text" className="q-form-description q-form-input" defaultValue = {q.description}
-                onChange = {(e) => {setDescription(e.target.value)}}/> 
-                
-                <div className="btn-container">
+            </div>
+
+          <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
+            onChange={(e) => {setDescription(e.target.value);}}/>
+
+<div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {
                     setEdit(false);
-                    updateQ(q._id, title, description, difficulty, topic)
+                    updateQ(q._id, title, description, difficulty, topic, language)
                     }}>Submit
                     </button> 
                 </div> 
             </div>
-            
-            
+
+
         </div>
         <div className="delete-btn">
                 <img src= {delete_icon} alt="" />

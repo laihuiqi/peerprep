@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
-import './QuestionForm.css'
-import delete_icon from '../Assets/bin.png'
-import { QDifficultyDropdown } from './QDifficultyDropdown'
+import React, { useState } from 'react';
+import './QuestionForm.css';
+import delete_icon from '../Assets/bin.png';
+import { QDifficultyDropdown } from './QDifficultyDropdown';
+import { QLanguageDropdown } from './QLanguageDropdown'; 
 
-export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
+export const QuestionForm = ({ qId, addQuestion, setAddQ, setQId, questionNumber }) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("");
+<<<<<<< HEAD
+=======
+  const [language, setLanguage] = useState("SQL");
+>>>>>>> eb2e6c00a34bcc8211f4445e592ad0a3be47bf7c
 
   const [isDuplicateTitle, setIsDuplicateTitle] = useState(true);
   const [isDuplicateDesc, setIsDuplicateDesc] = useState(false);
@@ -39,6 +44,7 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
     }
   };
 
+<<<<<<< HEAD
   const handleSubmit = (toggleAddQ, addQ) => async e => {
     e.preventDefault();
     if(isEmpty(title) || isEmpty(difficulty) || isEmpty(topic) || isEmpty(description)) {
@@ -57,6 +63,10 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
         setErrorVar(res.errors)
       }
     }
+=======
+    const response = addQ(title, difficulty, topic, description, language);
+    return response; // If array length is 0, then successful, else can index through it for errors
+>>>>>>> eb2e6c00a34bcc8211f4445e592ad0a3be47bf7c
   }
 
   function handleChosenDifficulty(e) {
@@ -74,8 +84,11 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
           }/>
         </div>
 
+<<<<<<< HEAD
         {isDuplicateTitle? <div className="error-text">{titleError}</div> : <div></div>}
         
+=======
+>>>>>>> eb2e6c00a34bcc8211f4445e592ad0a3be47bf7c
         <div className="q-form-content">
           <div className="q-form-tags">
               <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
@@ -85,8 +98,14 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
                 (e) => setTopic(e.target.value)
               }
               />
+<<<<<<< HEAD
           </div>
           <textarea type="text" className="q-form-description q-form-input" 
+=======
+            <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
+            </div>
+            <textarea type="text" className="q-form-description q-form-input" 
+>>>>>>> eb2e6c00a34bcc8211f4445e592ad0a3be47bf7c
             placeholder = "Question description"
             onChange = {
               (e) => setDescription(e.target.value)
