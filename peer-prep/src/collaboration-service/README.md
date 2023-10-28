@@ -70,7 +70,7 @@ Here demonstrate local testing using Postman:
 
 Sample data for Question collection:
 
-    ```
+   ```
     {
     "_id": {
         "$oid": "65378371752185e6e1b5b342"
@@ -83,11 +83,11 @@ Sample data for Question collection:
     "userTags": [],
     "__v": 0
     }
-    ```
+   ```
 
 Sample data for MatchedPair collection:
 
-    ```
+   ```
     {
     "_id": {
         "$oid": "653225335725b53773fc050c"
@@ -103,7 +103,7 @@ Sample data for MatchedPair collection:
     "topic": "Arrays",
     "__v": 0
     }
-    ```
+   ```
 
 1. In the history panel of Postman, click `new` button and select `Socket.io`.
 
