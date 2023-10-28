@@ -1,18 +1,19 @@
 # Matching Microservice for PeerPrep
 
 ### Features
+
 - findMatch
 - cancelMatch
 
 ### Table of Contents:
 
-1. [Local Dependencies](#)
-2. [Listening Port](#)
-3. [RabbitMQ Set-Up](#)
-4. [Initiate Matching Service - Local Machine](#)
-5. [Local Testing](#)
-6. [Jest Testing](#)
-7. [Initiate Matching Service - Docker](#)
+1. [Local Dependencies](#to-run-this-microservice-please-ensure-that-you-have-locally-installed)
+2. [Listening Port](#listening-port)
+3. [RabbitMQ Set-Up](#run-rabbitmq-server-by)
+4. [Initiate Matching Service - Local Machine](#start-the-microservice-on-local-machine-by)
+5. [Local Testing](#for-backend-self-testing)
+6. [Jest Testing](#jest-testing)
+7. [Initiate Matching Service - Docker](#running-in-docker)
 
 
 #### To run this microservice, please ensure that you have locally installed:
@@ -79,6 +80,28 @@ MongoDB Connected: 127.0.0.1
 
 
 #### For backend self-testing:
+
+**Note**:
+
+> For Local Testing, please ensure MongDB has relevant stored data in Question.
+
+Sample data for Question collection:
+
+```
+{
+  "_id": {
+    "$oid": "65378371752185e6e1b5b68c"
+  },
+  "title": "test1",
+  "description": "test_intermediate_python_strings",
+  "complexity": "Intermediate",
+  "category": "Strings",
+  "language": "Python",
+  "userTags": [],
+  "__v": 0
+}
+```
+
 1. Finding a match:
    
    Send **POST** request to:
@@ -152,7 +175,7 @@ MongoDB Connected: 127.0.0.1
     "status": "success",
     "isMatched": true,
     "sessionId": <a random uuid string, but should be same for a matched pair>,
-    "questionId": <relevant question object id>,
+    "questionId": "65378371752185e6e1b5b68c",
     "collaboratorId": "Zu8YkQ3mBvLx" or "Qa5Xb8Rv2KpL",
     "request": {
         "id": "Qa5Xb8Rv2KpL" or "Zu8YkQ3mBvLx",
@@ -213,6 +236,7 @@ MongoDB Connected: 127.0.0.1
 
 
 #### Jest testing
+
 1. Test the service using terminal commands:
 
 ```
@@ -222,9 +246,14 @@ npm test
 
 
 #### Running in Docker
+
+**Note**:
+
+> Please delete the containers for other microservices.
+
 1. Navigate to peerprep directory.
    
-2. Uncomment localhost addresses and comment the docker addresses for the services in the `peer-prep\src\backend\matching-service\config\config.js` file as below:
+2. Comment localhost addresses and uncomment the docker addresses for the service in the `peer-prep\src\backend\matching-service\config\config.js` file as below:
    
 ``` 
 //mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',

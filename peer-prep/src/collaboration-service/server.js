@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
     res.status(500).send({ error: err.message });
 });
 
-server.listen(3002, () => {
+server.listen(config.PORT, () => {
     console.log('Collaboration service listening on port 3002');
 });
 
