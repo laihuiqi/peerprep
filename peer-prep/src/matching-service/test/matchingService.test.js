@@ -156,7 +156,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: questionJava,
+            questionId: questionJava._id,
             collaboratorId: javaRequest2.id,
             request: javaRequest1
         }
@@ -165,7 +165,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: questionJava,
+            questionId: questionJava._id,
             collaboratorId: javaRequest1.id,
             request: javaRequest2
         }
@@ -185,7 +185,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cppRequest2
         };
@@ -194,7 +194,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cRequest2
         };
@@ -221,7 +221,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId, 
-            question: null,
+            questionId: null,
             collaboratorId: cppFullRequest2.id,
             request: cppFullRequest1
         }
@@ -230,7 +230,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: null,
+            questionId: null,
             collaboratorId: cppFullRequest1.id,
             request: cppFullRequest2
         }
@@ -250,7 +250,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cppFullRequest1
         }
@@ -259,7 +259,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
@@ -278,7 +278,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaRequest1
         }
@@ -287,7 +287,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
@@ -316,7 +316,7 @@ describe('Matching Service', () => {
             status: 'cancel',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaRequest1
         }
