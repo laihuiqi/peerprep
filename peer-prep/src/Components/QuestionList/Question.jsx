@@ -55,7 +55,7 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
                 </div>
                 
             </div>
-            <div className="delete-btn" onClick = {(e) => deleteQuestion(question._id)}>
+            <div className="delete-btn" onClick = {(e) => deleteQuestion(question.id)}>
                 <img src= {delete_icon} alt="" />
             </div>
         </div>
