@@ -5,6 +5,7 @@ import CodeEditor from '../Collaboration/CodeEditor'
 import back_icon from "../Assets/back.png"
 
 export const AttemptView = ({attempt, setIsList}) => {
+    //to be replaced with attempt.code
     const [code, setCode] = useState("# This is the code from your attempt");
 
     let tagClass = "user-q-tag"; 
@@ -39,6 +40,7 @@ export const AttemptView = ({attempt, setIsList}) => {
                 </div>
             </div>
             <div className="attempt-code">
+                {/* replace language with state variable - attempt.language*/}
                 <CodeEditor code={code} setCode={setCode} language={'python'} isReadOnly = {true}/>
             </div>
         </div>

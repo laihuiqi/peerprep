@@ -28,7 +28,9 @@ export const Attempt = ({i, attempt, setSelectedAttempt, setIsList}) => {
             </div>
         </div>
         <div className="attempt-tags">
+            {/* to be replaced with date passed as component parameter */}
             <div className="user-q-tag attempt-date">31/10/2023</div>
+            
             <div className= {tagClass}>{attempt.complexity}</div>
             <div className="user-q-tag">{attempt.category}</div>
         </div>

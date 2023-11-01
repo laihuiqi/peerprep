@@ -8,6 +8,7 @@ export const AttemptHistory = () => {
     const [isList, setIsList] = useState(true);
     const [selectedAttempt, setSelectedAttempt] = useState(null);
 
+    // to be replaced with actual attempt fetch
     const fetchQuestions = async () => {
         try {
           const response = await fetch('/api/questions');
@@ -28,6 +29,7 @@ export const AttemptHistory = () => {
     <div className="attempt-history-container">
          {isList?
             <div className="attempt-list-container">
+                {/* to be replaced by mapping over actual stored attempts */}
                 {attempts.map((a, index) => (
                     <Attempt key = {index} attempt = {a} i = {index} 
                     setSelectedAttempt = {setSelectedAttempt} setIsList = {setIsList}/>))}
