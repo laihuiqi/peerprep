@@ -3,9 +3,8 @@ import {Attempt} from "./Attempt"
 import {AttemptView} from "./AttemptView"
 import './AttemptHistory.css'
 
-export const AttemptHistory = () => {
+export const AttemptHistory = ({isList, setIsList}) => {
     const [attempts, setAttempts] = useState([]);
-    const [isList, setIsList] = useState(true);
     const [selectedAttempt, setSelectedAttempt] = useState(null);
 
     // to be replaced with actual attempt fetch

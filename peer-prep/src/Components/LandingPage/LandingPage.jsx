@@ -13,6 +13,7 @@ import history_icon from '../Assets/history.png'
  
 export const LandingPage = () => {
     const [page_name, setPageName] = useState("Dashboard");
+    const [isList, setIsList] = useState(true)
 
   return (
     <div className = "landing-container">
@@ -26,7 +27,10 @@ export const LandingPage = () => {
                     <img src = {home_icon} className="nav-icon" alt= ""/>
                     <div className="nav-text"> Dashboard </div>
                 </div>
-                <div className="nav-tab" onClick = {() => {setPageName("Attempt History")}}>
+                <div className="nav-tab" onClick = {() => {
+                    setPageName("Attempt History"); 
+                    setIsList(true)
+                    }}>
                     <img src = {history_icon} className="nav-icon" alt= ""/>
                     <div className="nav-text"> Attempt History </div>
                 </div>
@@ -41,7 +45,7 @@ export const LandingPage = () => {
             {page_name}
             </div>
             {page_name === "Dashboard" ? <Dashboard/> : <div></div>}
-            {page_name === "Attempt History" ? <AttemptHistory/> : <div></div>}
+            {page_name === "Attempt History" ? <AttemptHistory isList = {isList} setIsList = {setIsList}/> : <div></div>}
             {page_name === "User Profile" ? <UserProfile/> : <div></div>}
         </div>
     </div>
