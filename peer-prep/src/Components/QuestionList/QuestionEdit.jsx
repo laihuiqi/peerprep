@@ -38,10 +38,10 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
                 </div>
             </div>
 
-          <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
+            <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
             onChange={(e) => {setDescription(e.target.value);}}/>
 
-<div className="btn-container">
+            <div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {
                     setEdit(false);
@@ -50,8 +50,6 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
                     </button> 
                 </div> 
             </div>
-
-
         </div>
         <div className="delete-btn">
                 <img src= {delete_icon} alt="" />
