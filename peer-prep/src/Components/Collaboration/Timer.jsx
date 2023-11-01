@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect} from 'react';
 import socketIOClient from "socket.io-client";
 
 const ENDPOINT = "http://localhost:3002";

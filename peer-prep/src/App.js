@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -7,21 +7,11 @@ import { Navbar } from "./Components/Navbar/Navbar";
 import { Questions } from "./Components/QuestionList/QuestionList";
 import { LandingPage } from "./Components/LandingPage/LandingPage";
 import CollaborationWindow from "./Components/Collaboration/CollaborationWindow";
-=======
-import React from 'react';
-import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
-import { Navbar } from './Components/Navbar/Navbar';
-import CollaborationWindow from './Components/Collaboration/CollaborationWindow';
-import { Questions } from './Components/QuestionList/QuestionList'; 
-// import {LandingPage} from './Components/LandingPage/LandingPage'
->>>>>>> collaboration-window
+
 
 function App() {
   return (
     <Router>
-<<<<<<< HEAD
       <div>
         <Navbar />
         <Routes>
@@ -32,18 +22,6 @@ function App() {
           <Route path="/collaboration" element={<CollaborationWindow />} />
         </Routes>
       </div>
-=======
-    <div>
-      <Navbar/>
-      <Routes>
-      {/* <LoginSignUp/> */}
-      <Route path = "/" element = {<Questions/>}/>
-       {/* Adding CollaborationWindow for testing */}
-       <Route path="/collaboration" element={<CollaborationWindow />}/>
-       </Routes>
-      {/* <LandingPage/> */}
-    </div>
->>>>>>> collaboration-window
     </Router>
   );
 }

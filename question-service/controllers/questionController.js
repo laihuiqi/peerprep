@@ -48,20 +48,11 @@ const getMatchQuestion = async (language, difficulty, topic) => {
   } else {
     return null;
   }
-<<<<<<< HEAD
-};
+}; 
 
-const duplicateTitleMessage =
-  "Question title already exists. Please enter new title!";
-const duplicateDescriptionMessage =
-  "Question description already exists. Please enter new description!";
-
-=======
-}
 const duplicateTitleMessage = "Question title already exists. Please enter new title!";
 const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
   
->>>>>>> collaboration-window
 const createQuestion = async (req, res) => {
   var { title, description, complexity, category, language } = req.body;
   title = title.trim();
@@ -109,13 +100,9 @@ const createQuestion = async (req, res) => {
 const updateQuestion = async (req, res) => {
   const { id } = req.params;
   let { title, description, complexity, category, language } = req.body;
-<<<<<<< HEAD
-
-  checkIdValidity(id);
-=======
   
   // checkIdValidity(id);
->>>>>>> collaboration-window
+
   const question = await Question.findById(id);
   // checkQuestionValidity(question);
 

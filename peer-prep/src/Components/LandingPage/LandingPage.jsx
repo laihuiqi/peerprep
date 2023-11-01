@@ -3,10 +3,12 @@ import {useState} from 'react'
 import './LandingPage.css'
 import {Dashboard} from './Dashboard'
 import {UserProfile} from './UserProfile'
+import { AttemptHistory } from './AttemptHistory'
 
 import home_icon from '../Assets/home.png'
 import user_icon from '../Assets/user-prof.png'
 import dummy_user from '../Assets/David.png'
+import history_icon from '../Assets/history.png'
 
  
 export const LandingPage = () => {
@@ -24,6 +26,10 @@ export const LandingPage = () => {
                     <img src = {home_icon} className="nav-icon" alt= ""/>
                     <div className="nav-text"> Dashboard </div>
                 </div>
+                <div className="nav-tab" onClick = {() => {setPageName("Attempt History")}}>
+                    <img src = {history_icon} className="nav-icon" alt= ""/>
+                    <div className="nav-text"> Attempt History </div>
+                </div>
                 <div className="nav-tab" onClick = {() => {setPageName("User Profile")}}>
                     <img src = {user_icon} className="nav-icon" alt= ""/>
                     <div className="nav-text"> User Profile</div>
@@ -35,6 +41,7 @@ export const LandingPage = () => {
             {page_name}
             </div>
             {page_name === "Dashboard" ? <Dashboard/> : <div></div>}
+            {page_name === "Attempt History" ? <AttemptHistory/> : <div></div>}
             {page_name === "User Profile" ? <UserProfile/> : <div></div>}
         </div>
     </div>

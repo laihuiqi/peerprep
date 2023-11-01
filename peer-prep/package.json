@@ -15,11 +15,8 @@
     "react-loader-spinner": "^5.4.5",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
-<<<<<<< HEAD
     "socket.io": "^4.7.2",
-=======
     "reactjs-popup": "^2.0.6",
->>>>>>> collaboration-window
     "socket.io-client": "^4.7.2",
     "web-vitals": "^2.1.4"
   },

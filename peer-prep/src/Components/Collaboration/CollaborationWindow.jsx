@@ -147,7 +147,7 @@ const CollaborationWindow = () => {
             {/* Placeholder for code editor */}
             {/*<p>Code editor will go here...</p>*/}
               <div className="editor-section-inner">
-                    <CodeEditor code={code} setCode={setCode} language={language}/>
+                    <CodeEditor code={code} setCode={setCode} language={language} isReadOnly={false}/>
               </div>
               <div className="submit-button-container">
                 <button className="submit-button" onClick={handleSubmit}>Submit</button>

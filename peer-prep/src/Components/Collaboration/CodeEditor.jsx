@@ -2,7 +2,7 @@ import "./CodeEditor.css"
 import Editor from "@monaco-editor/react";
 import React from "react";
 
-const CodeEditor = ({code, setCode, language}) => {
+const CodeEditor = ({code, setCode, language, isReadOnly}) => {
     const OriginalResizeObserver = window.ResizeObserver;
 
     // Monaco Editor Resize Fix (https://github.com/microsoft/vscode/issues/183324#issuecomment-1575484617)
@@ -33,7 +33,8 @@ const CodeEditor = ({code, setCode, language}) => {
                     inlineSuggest: true,
                     fontSize: "16px",
                     formatOnType: true,
-                    minimap: { enabled: false }
+                    minimap: { enabled: false },
+                    readOnly: isReadOnly 
                 }}
             />
         </div>
