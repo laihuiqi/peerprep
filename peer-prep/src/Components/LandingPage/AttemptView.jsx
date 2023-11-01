@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import "./AttemptView.css"
 import CodeEditor from '../Collaboration/CodeEditor'
+import Utility from "../../Utility/Utility"
 
 import back_icon from "../Assets/back.png"
 
@@ -8,18 +9,7 @@ export const AttemptView = ({attempt, setIsList}) => {
     //to be replaced with attempt.code
     const [code, setCode] = useState("# This is the code from your attempt");
 
-    let tagClass = "user-q-tag"; 
-    if(attempt.complexity) {
-        if(attempt.complexity.toLowerCase() === "easy") {
-            tagClass += " user-q-tag-green"
-        } else if (attempt.complexity.toLowerCase() === "medium") {
-            tagClass += " user-q-tag-orange"
-        } else if (attempt.complexity.toLowerCase() === "hard") {
-            tagClass += " user-q-tag-red"
-        } else {
-            tagClass += " user-q-tag-white"
-        }
-    }
+    let tagClass = Utility.setDifficultyTag("user-q-tag", attempt.complexity);
 
   return (
     <div className="attempt-view-container">

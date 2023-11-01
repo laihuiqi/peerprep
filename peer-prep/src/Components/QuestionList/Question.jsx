@@ -3,6 +3,7 @@ import './Question.css'
 import delete_icon from '../Assets/bin.png'
 import edit_icon from '../Assets/pencil.png'
 import {QuestionEdit} from "./QuestionEdit"
+import Utility from "../../Utility/Utility"
 
 export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
     const [selected, setSelected] = useState(null);
@@ -12,19 +13,9 @@ export const Question = ({question, i, deleteQuestion, updateQuestion}) => {
         }
     };
     const [isEdit, setEdit] = useState(false);
-    let tagClass = "q-tag";
 
-    if (question.complexity) {
-        if(question.complexity.toLowerCase() === "easy") {
-            tagClass += " q-tag-green"
-        } else if (question.complexity.toLowerCase() === "medium") {
-            tagClass += " q-tag-orange"
-        } else if (question.complexity.toLowerCase() === "hard"){
-            tagClass += " q-tag-red"
-        } else {
-            tagClass += " q-tag-white"
-        }
-    }
+    let tagClass = Utility.setDifficultyTag("q-tag", question.complexity);
+
   return (
     <div>
         {isEdit? <QuestionEdit q = {question} index = {i} updateQ = {updateQuestion} setEdit = {setEdit}/>:
