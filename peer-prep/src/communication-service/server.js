@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
 });
 
 server.listen(3003, () => {
-    console.log('Communication service listening on port 3002');
+    console.log('Communication service listening on port 3003');
 });
 
 module.exports = { io };
