@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SuccessOutput } from './SuccessOutput';
 import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
-import { getUserId } from '../../User/UserState'; 
+// import { getUserId } from '../../User/UserState'; 
 
 import { getFirebaseUserCredentials } from '../../Authentication/AuthenticationState';
 
