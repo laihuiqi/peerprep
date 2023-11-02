@@ -10,6 +10,8 @@ import { auth } from "./firebase";
 
 import setFirebaseUserCredentials from "./AuthenticationState";
 
+import { setLocalUserState } from "../User/UserStateController";
+
 var unsubscribeAuthenticationStateObserver = null;
 
 async function registerUserUsingFirebase(userEmail, userPassword) {
@@ -96,10 +98,15 @@ function observeAuthState() {
     unsubscribeAuthenticationStateObserver();
   }
 
-  unsubscribeAuthenticationStateObserver = onAuthStateChanged(auth, (user) => {
-    setFirebaseUserCredentials(user);
-    // Possible to add setUserState Here (Issue: Higher Coupling)
-  });
+  unsubscribeAuthenticationStateObserver = onAuthStateChanged(
+    auth,
+    async (user) => {
+      setFirebaseUserCredentials(user);
+
+      // Possible to add setUserState Here (Issue: Higher Coupling)
+      await setLocalUserState(user);
+    }
+  );
 }
 
 observeAuthState();
