@@ -3,9 +3,8 @@ import axios from 'axios';
 import { SuccessOutput } from './SuccessOutput';
 import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
-// import { getUserId } from '../../User/UserState'; 
+import { getUserId } from '../../User/UserState'; 
 
-import { getFirebaseUserCredentials } from '../../Authentication/AuthenticationState';
 
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
@@ -23,7 +22,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
         // Show the loading popup
         setGoToLoadPopup(true);
 
-        const userId = getFirebaseUserCredentials().uid; // temp fix: getUserId()
+        const userId = getUserId();
         if (!userId) {
             console.error("User not logged in");
             setGoToLoadPopup(false); // Close the loading popup
