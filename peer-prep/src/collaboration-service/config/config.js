@@ -1,9 +1,9 @@
 const DEFAULT_TIME_LIMIT = {
-    'Easy': 20 * 60 * 1000, // 20 mins
-    'Intermediate': 40 * 60 * 1000, // 40 mins
-    'Hard': 60 * 60 * 1000, // 60 mins
-    'None': 30 * 60 * 1000 // 30 mins
-}
+  Easy: 20 * 60 * 1000, // 20 mins
+  Intermediate: 40 * 60 * 1000, // 40 mins
+  Hard: 60 * 60 * 1000, // 60 mins
+  None: 30 * 60 * 1000, // 30 mins
+};
 
 const MAX_TIME_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
 
