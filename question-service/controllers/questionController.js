@@ -22,7 +22,7 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
-const getMatchQuestion = async (language, difficulty, topic) => {
+const getMatchQuestion = async (language, difficulty, category) => {
   let aggregationPipeline = [];
 
   if (language !== "None") {
@@ -33,8 +33,8 @@ const getMatchQuestion = async (language, difficulty, topic) => {
     aggregationPipeline.push({ $match: { complexity: difficulty } });
   }
 
-  if (topic !== "None") {
-    aggregationPipeline.push({ $match: { category: topic } });
+  if (category !== "None") {
+    aggregationPipeline.push({ $match: { category: category } });
   }
 
   aggregationPipeline.push({ $sample: { size: 1 } });
@@ -48,6 +48,11 @@ const getMatchQuestion = async (language, difficulty, topic) => {
   } else {
     return null;
   }
+};
+
+const getQuestion = async (questionId) => {
+  await Question.findById(questionId);
+  console.log('get', questionId);
 };
 
 const duplicateTitleMessage =
@@ -219,12 +224,14 @@ const deleteUserTag = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllQuestions,
-  getMatchQuestion,
-  createQuestion,
-  updateQuestion,
-  deleteQuestion,
-  addUserTag,
-  deleteUserTag,
+ module.exports = {
+    getAllQuestions,
+    getMatchQuestion,
+    getQuestion,
+    createQuestion,
+    updateQuestion,
+    deleteQuestion,
+    addUserTag,
+    deleteUserTag
+  }
 };
