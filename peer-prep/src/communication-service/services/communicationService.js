@@ -1,27 +1,50 @@
-const startCommunication = async(socket, io) => {
+const communicationPair = new Map();
 
-    socket.on('create', function (callback) {
-        console.log('caller at', socket.id);
-        callback(socket.id);
-    });
+const startCommunication = async(socket) => {
 
     const sessionId = socket.handshake.query.sessionId;
     const userId = socket.handshake.query.userId;
 
+    let collaborators;
+
     socket.join(sessionId);
     socket.emit('join', sessionId);
 
-    socket.on('candidate', (event) => {
-        socket.broadcast.to(sessionId).emit('served-candidate', event);
+    if (communicationPair.has(sessionId)) {
+        collaborators = communicationPair.get(sessionId);
+
+        if (collaborators && !collaborators.includes(userId)) {
+            collaborators.push(userId);
+            communicationPair.set(sessionId, collaborators);
+
+            socket.to(sessionId).emit('collaborator-joined', userId);
+        }
+    } else {
+        collaborators = [userId]
+        communicationPair.set(sessionId, collaborators);
+    }
+
+    socket.on('recv-join', () => {
+        console.log('recv-join from ', userId);
+        socket.to(sessionId).emit('collaborator-recv-join', userId);
     });
 
-    socket.on('offer', (event) => {
-        socket.broadcast.to(sessionId).emit('offered', { event: event.sdp, caller: socket.id });
+    socket.on('call', (offer) => {
+        console.log(userId, ' calls collaborator');
+        socket.to(sessionId).emit('called', offer);
     });
 
-    socket.on('answer', (event) => {
-        socket.broadcast.to(sessionId).emit('answered', event.sdp);
+    socket.on('answer', (answer) => {
+        console.log(userId, ' answers call');
+        socket.to(sessionId).emit('answered', answer);
     });
+
+    socket.on('disconnect', () => {
+        console.log(userId, ' disconnect');
+        communicationPair.delete(sessionId);
+        socket.to(sessionId).emit('collaborator-disconnected');
+    });
+
 }
 
 module.exports = {

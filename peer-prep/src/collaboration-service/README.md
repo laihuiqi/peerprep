@@ -194,14 +194,14 @@ npm test
 mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
 ```
    
-4. Start the microservice in terminal using commands:
+3. Start the microservice in terminal using commands:
    
 ```
 cd peer-prep\src\backend\collaboration-service
 docker-compose up --build
 ```
 
-5. Successful console output in docker:
+4. Successful console output in docker:
 
 ```
 > collaboration-service@1.0.0 start
@@ -210,5 +210,5 @@ docker-compose up --build
 > MongoDB Connected: mongo_db
 ```
 
-6. End collaboration service in terminal using `Ctrl+C` twice.
+5. End collaboration service in terminal using `Ctrl+C` twice.
 
