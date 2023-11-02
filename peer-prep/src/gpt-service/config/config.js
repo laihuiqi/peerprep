@@ -1,6 +1,6 @@
 const API_ENDPOINT = 'https://api.openai.com/v1/completions';
 
-const API_KEY = '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';
+const API_KEY = process.env.GPT_API_KEY;
 
 module.exports = {
     API_ENDPOINT,

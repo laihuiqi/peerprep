@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// eslint-disable-next-line no-undef
 let socket = io(socketURL, { reconnection: true, query: { userId: userId, sessionId: sessionId }});
 
 let peerConnection = new RTCPeerConnection();
