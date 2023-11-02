@@ -117,4 +117,3 @@ const MatchPopup = ({ isOpen, isClose }) => {
 }
 
 export default MatchPopup;
-

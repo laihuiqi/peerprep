@@ -3,12 +3,21 @@ import './CollaborationWindow.css';
 import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
+import 'firebase/auth';
+import CodeEditor from './CodeEditor';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 const CollaborationWindow = () => {
-    const [timeRemaining, setTimeRemaining] = useState('1800000');
+    const [timeRemaining, setTimeRemaining] = useState(30 * 60 * 1000);
     const [toast, setToast] = useState({ visible: false, message: '' });
     const [question, setQuestion] = useState(null); 
     const [collaborativeInput, setCollaborativeInput] = useState([]);
+    const [question, setQuestion] = useState(null);
+    const [code, setCode] = useState("#Enter your code here");
+    const [language, setLanguage] = useState('python');
+    const [popup, setPopup] = useState(false);
+    const onClosePopup = () => setPopup(false);
     const navigate = useNavigate();
     const socket = useRef(null);
     
@@ -173,6 +182,7 @@ return () => {
   };
   
 
+
     const formatTime = (time) => {
         const totalSeconds = Math.floor(time / 1000);
         const seconds = totalSeconds % 60;
@@ -186,13 +196,40 @@ return () => {
       showToast('Your code has been submitted');
       setTimeout(() => navigate('/'), 1500);
     };
-  
-    return (      
-      <div className="collaboration-window"> 
+
+    useEffect(() => {
+        if (timeRemaining > 0) {
+            const interval = setInterval(() => {
+                setTimeRemaining(timeRemaining - 1000);
+            }, 1000);
+
+            return () => clearInterval(interval);
+        } else {
+            setPopup(true);
+        }
+    }, [timeRemaining]);
+
+    return (
+      <div className="collaboration-window">
+          <Popup open={popup}>
+              <div className="modal">
+                  <div className="header"> Time Up </div>
+                  <div className="content">
+                      <div>Do you want to extend the time ?</div>
+                  </div>
+                  <div className="actions">
+                      <button className="button extend-popup" onClick={(e) => {handleExtendTimer(); onClosePopup()}}>
+                          Yes
+                      </button>
+                      <button className="button close-popup" onClick={(e) => {onClosePopup(); handleEndSession()}}>
+                          No
+                      </button>
+                  </div>
+              </div>
+          </Popup>
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
-            <button className="extend-timer" onClick={handleExtendTimer}>Extend Timer</button>
           </div>
           <div className="right">
             <button className="end-session" onClick={handleEndSession}>End Session</button>
@@ -209,10 +246,16 @@ return () => {
           </div>
           <div className="editor-section">
             {/* Placeholder for code editor */}
-            <p>Code editor will go here...</p>
+            {/*<p>Code editor will go here...</p>*/}
+              <div className="editor-section-inner">
+                    <CodeEditor code={code} setCode={setCode} language={language}/>
+              </div>
+              <div className="submit-button-container">
+                <button className="submit-button" onClick={handleSubmit}>Submit</button>
+              </div>
           </div>
+
         </div>
-        <button className="submit-button" onClick={handleSubmit}>Submit</button>
         <Timer setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession} />
         {toast.visible && <div className="toast">{toast.message}</div>}
       </div>

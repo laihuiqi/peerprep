@@ -6,6 +6,8 @@ import { Navbar } from "./Components/Navbar/Navbar";
 import { Questions } from "./Components/QuestionList/QuestionList";
 import { LandingPage } from "./Components/LandingPage/LandingPage";
 import CollaborationWindow from "./Components/Collaboration/CollaborationWindow";
+// import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
+// import {LandingPage} from './Components/LandingPage/LandingPage'
 
 function App() {
   return (
@@ -13,6 +15,7 @@ function App() {
       <div>
         <Navbar />
         <Routes>
+          {/* <LoginSignUp/> */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/questions" element={<Questions />} />
           {/* Adding CollaborationWindow for testing */}
