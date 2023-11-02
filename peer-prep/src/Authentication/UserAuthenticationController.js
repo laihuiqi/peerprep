@@ -8,80 +8,106 @@ import {
 
 import { auth } from "./firebase";
 
-async function registerUser(userEmail, userPassword) {
-  createUserWithEmailAndPassword(auth, userEmail, userPassword)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("User Created Successfully: " + user);
+import setFirebaseUserCredentials from "./AuthenticationState";
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Creation Unsuccessful: " + error);
+var unsubscribeAuthenticationStateObserver = null;
 
-      // Error
-      return false;
-    });
+async function registerUserUsingFirebase(userEmail, userPassword) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
+
+    console.log("User Created Successfully: " + userCredential.user);
+
+    return true;
+  } catch (error) {
+    // Error
+    console.log("User Creation Unsuccessful: " + error);
+
+    return false;
+  }
 }
 
-async function loginUser(userEmail, userPassword) {
-  signInWithEmailAndPassword(auth, userEmail, userPassword)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("User Logged In Successfully: " + user);
+async function loginUserUsingFirebase(userEmail, userPassword) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("User Login Unsuccessful: " + error);
+    console.log("User Logged In Successfully: " + userCredential.user);
 
-      // Invalid Email/Password
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("User Login Unsuccessful: " + error);
+
+    // Invalid Email/Password
+    return false;
+  }
 }
 
-async function logoutUser() {
-  signOut(auth)
-    .then(() => {
-      console.log("Signout Successful");
+async function logoutUserUsingFirebase() {
+  try {
+    await signOut(auth);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("Could Not Signout: " + error);
+    console.log("Signout Successful");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("Could Not Signout: " + error);
+
+    return false;
+  }
 }
 
-async function resetUserPassword(userEmail) {
-  sendPasswordResetEmail(auth, userEmail)
-    .then(() => {
-      console.log("Password Reset Email Sent Successfully");
+async function resetUserPasswordUsingFirebase(userEmail) {
+  try {
+    await sendPasswordResetEmail(auth, userEmail);
 
-      return true;
-    })
-    .catch((error) => {
-      console.log("Could Not Send Password Reset Email : " + error);
+    console.log("Password Reset Email Sent Successfully");
 
-      return false;
-    });
+    return true;
+  } catch (error) {
+    console.log("Could Not Send Password Reset Email : " + error);
+
+    return false;
+  }
 }
 
-function isUserLoggedIn() {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
+async function isUserLoggedIn() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe(); // Stop listening to further changes
+      if (user) {
+        resolve(true); // User is logged in
+      } else {
+        resolve(false); // User is not logged in
+      }
+    });
   });
 }
 
+function observeAuthState() {
+  if (unsubscribeAuthenticationStateObserver !== null) {
+    unsubscribeAuthenticationStateObserver();
+  }
+
+  unsubscribeAuthenticationStateObserver = onAuthStateChanged(auth, (user) => {
+    setFirebaseUserCredentials(user);
+    // Possible to add setUserState Here (Issue: Higher Coupling)
+  });
+}
+
+observeAuthState();
+
 export {
-  registerUser,
-  loginUser,
-  logoutUser,
-  resetUserPassword,
+  registerUserUsingFirebase,
+  loginUserUsingFirebase,
+  logoutUserUsingFirebase,
+  resetUserPasswordUsingFirebase,
   isUserLoggedIn,
 };
