@@ -1,6 +1,5 @@
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
-const { join } = require('node:path');
 const cors = require('cors');
 const express = require('express');
 const app = express();
@@ -37,10 +36,6 @@ app.use(cors());
 app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
-
-app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'client-side', 'index.html'));
-});
 
 io.on('connection', async(socket) => {
 
