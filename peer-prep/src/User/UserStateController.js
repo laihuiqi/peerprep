@@ -14,21 +14,16 @@ async function setLocalUserState(firebaseUserCredentials) {
     return;
   }
 
-  //   const userIdStoredLocally = localStorage.getItem(USER_LOCAL_STORAGE_KEYWORD);
-
-  //   if (
-  //     userIdStoredLocally === "" ||
-  //     userIdStoredLocally === firebaseUserCredentials.uid
-  //   ) {
   const result = await getUserData(firebaseUserCredentials.uid);
 
-  setUserState(result.data.user);
+  if (result !== null && result.status === 200) {
+    setUserState(result.data.user);
 
-  localStorage.setItem(USER_LOCAL_STORAGE_KEYWORD, firebaseUserCredentials.uid);
+    localStorage.setItem(
+      USER_LOCAL_STORAGE_KEYWORD,
+      firebaseUserCredentials.uid
+    );
+  }
 }
-
-// Set it empty as no user is logged in or user logged in is different
-//   localStorage.setItem(USER_LOCAL_STORAGE_KEYWORD, "");
-// }
 
 export { setLocalUserState };
