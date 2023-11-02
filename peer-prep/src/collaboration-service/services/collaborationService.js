@@ -1,5 +1,6 @@
 const { getSession, endSession, getCurrentActiveSession } = require('../database/matchedPairDb');
 const { initCollaborativeCode, updateCollaborativeInput, updateCollaborativeLineInput, getCollaborativeInput } = require('../database/collaborativeInputDb');
+const { getQuestion } = require('../database/questionDb');
 const config = require('../config/config');
 
 let initSession = new Map();
@@ -22,6 +23,7 @@ const startCollaboration = async(socket, io) => {
 
         if (initSession.has(sessionId)) {
             await new Promise(resolve => setTimeout(resolve, 2000));
+
         } else {
             initSession.set(sessionId, config.DEFAULT_TIME_LIMIT[session.difficulty]);
         }
@@ -31,6 +33,7 @@ const startCollaboration = async(socket, io) => {
 
         let sessionTimer = setTimeout(async() => {
             io.to(sessionId).emit('system-terminate', sessionId);
+
             console.log("terminate here");
 
             await systemTerminate(sessionId, io);
@@ -45,17 +48,21 @@ const startCollaboration = async(socket, io) => {
 
         socket.on('update-code', (line, code) => {
             console.log(`Code changed on line ${line}`);
+
             socket.broadcast.to(sessionId).emit('code-changed', line, code);
         });
 
         socket.on('clear', async() => {
             console.log(`Clearing code input storage for session ${sessionId}`);
+
             socket.broadcast.to(sessionId).emit('cleared', sessionId);
+
             await updateCollaborativeInput(sessionId, []);
         });
 
         socket.on('change-line', async(line, code) => {
             socket.broadcast.to(sessionId).emit('code-changed', line, code);
+
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
@@ -106,6 +113,7 @@ const startCollaboration = async(socket, io) => {
 
             sessionTimer = setTimeout(async() => {
                 io.to(sessionId).emit('system-terminate', sessionId);
+
                 await systemTerminate(sessionId, io);
 
             }, time);
@@ -121,13 +129,14 @@ const startCollaboration = async(socket, io) => {
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
+
             await endSession(sessionId);
+
             initSession.delete(sessionId);
 
             socket.disconnect();
 
             setTimeout(async() => {
-
                 await systemTerminate(sessionId, io);
 
             }, config.SYSTEM_TERMINATE_TIMEOUT);
@@ -142,6 +151,7 @@ const startCollaboration = async(socket, io) => {
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
+
             socket.disconnect();
         });
 
@@ -174,6 +184,7 @@ const startCollaboration = async(socket, io) => {
 
 const systemTerminate = async(sessionId, io) => {
     console.log(`system terminated: ${sessionId}`);
+
     initSession.delete(sessionId);
 
     await endSession(sessionId);
@@ -193,9 +204,19 @@ const restoreCodeEditor = async(sessionId) => {
     console.log(`Restoring code editor for session ${sessionId}`);
 
     const collaborativeInput = await getCollaborativeInput(sessionId);
+
     return collaborativeInput;
 }
 
+const getQuestionById = async(questionId) => {
+    console.log(`Getting question ${questionId}`);
+
+    const question = await getQuestion(questionId);
+    
+    return question;
+}
+
 module.exports = {
-    startCollaboration
+    startCollaboration,
+    getQuestionById
 }
