@@ -9,11 +9,11 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 const CollaborationWindow = () => {
+    const [sessionStarted, setSessionStarted] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState(30 * 60 * 1000);
     const [toast, setToast] = useState({ visible: false, message: '' });
     const [question, setQuestion] = useState(null); 
     const [collaborativeInput, setCollaborativeInput] = useState([]);
-    const [question, setQuestion] = useState(null);
     const [code, setCode] = useState("#Enter your code here");
     const [language, setLanguage] = useState('python');
     const [popup, setPopup] = useState(false);
@@ -27,6 +27,10 @@ const CollaborationWindow = () => {
                 userId: 'user-id', // Replace with dynamic user ID
                 sessionId: 'session-id' // Replace with dynamic session ID
             }
+        });
+
+        socket.current.on('session-started', () => {
+          setSessionStarted(true);
         });
 
         // Set up event listeners
@@ -72,7 +76,6 @@ const CollaborationWindow = () => {
 socket.current.on('user-disconnected', (userId) => {
   console.log(`User ${userId} has disconnected`);
   // Update the UI to reflect the user's disconnection
-  // For example, show a notification or update the list of active users
   showToast(`Experiencing a temporary glitch. Reestablishing your connection...`);
   // Additional logic can be added here
 });
@@ -80,7 +83,6 @@ socket.current.on('user-disconnected', (userId) => {
 socket.current.on('user-reconnected', (userId) => {
   console.log(`User ${userId} has reconnected`);
   // Handle the user's reconnection in the UI
-  // For example, remove any disconnection notification related to this user
   showToast(`Connection restored successfully. Let's keep going!`);
   // Additional logic can be added here
 });
@@ -88,7 +90,6 @@ socket.current.on('user-reconnected', (userId) => {
 socket.current.on('notify-terminate', (sessionId) => {
   console.log(`Session ${sessionId} has been terminated by another user`);
   // Handle the session termination in the UI
-  // For example, show a dialog or redirect the user
   showToast('Session ended, redirecting to home page...');
   navigate('/'); // Redirect to home or another route
   // Any cleanup or finalization logic can be added here
@@ -101,6 +102,7 @@ socket.current.on('success-reconnected', (collaborativeInput) => {
 
 return () => {
   socket.current.disconnect();
+  socket.current.off('session-started');
 };
 }, []);
     
@@ -174,7 +176,6 @@ return () => {
       // Emit a 'terminate-session' event to the server
       socket.current.emit('terminate-session', { sessionId: 'session-id' }); // Replace 'session-id' with the actual session ID
   
-      // Display a toast message (optional, for better user experience)
       showToast('Session terminated');
   
       // Navigate to home or another route after a short delay
@@ -198,16 +199,14 @@ return () => {
     };
 
     useEffect(() => {
-        if (timeRemaining > 0) {
-            const interval = setInterval(() => {
-                setTimeRemaining(timeRemaining - 1000);
-            }, 1000);
+        if (sessionStarted && timeRemaining > 0) {
+          const interval = setInterval(() => {
+            setTimeRemaining((prevTime) => prevTime - 1000);
+          }, 1000);
 
             return () => clearInterval(interval);
-        } else {
-            setPopup(true);
         }
-    }, [timeRemaining]);
+    }, [sessionStarted, timeRemaining]);
 
     return (
       <div className="collaboration-window">
@@ -230,6 +229,7 @@ return () => {
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
+            <button className="extend-timer" onClick={handleExtendTimer}>Extend Timer</button>
           </div>
           <div className="right">
             <button className="end-session" onClick={handleEndSession}>End Session</button>
