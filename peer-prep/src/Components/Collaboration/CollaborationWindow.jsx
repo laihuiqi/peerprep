@@ -20,6 +20,7 @@ const CollaborationWindow = () => {
     const onClosePopup = () => setPopup(false);
     const navigate = useNavigate();
     const socket = useRef(null);
+    const [canExtend, setCanExtend] = useState(false);
     
     useEffect(() => {
       socket.current = socketIOClient('http://localhost:3002', {
@@ -29,13 +30,10 @@ const CollaborationWindow = () => {
             }
         });
 
-        socket.current.on('session-started', () => {
-          setSessionStarted(true);
-        });
-
         // Set up event listeners
         socket.current.on('join', (sessionId) => {
           console.log(`Joined session: ${sessionId}`);
+          setSessionStarted(true);
           // Additional logic for joining session
       });
 
@@ -69,7 +67,7 @@ const CollaborationWindow = () => {
       setTimeRemaining(totalTimeLeft);
   });
 
-  socket.current.on('system-terminated', (sessionId) => {
+  socket.current.on('system-terminate', (sessionId) => {
     navigate('/'); // Navigate to home or another route
 });
 
@@ -162,19 +160,19 @@ return () => {
         }, 1500);
     };
 
-    const handleExtendTimer = () => {
-        console.log("Socket instance: ", socket.current);
-        if (socket.current) {
-          socket.current.emit('extend-timer', 900000); // 15 minutes in milliseconds
-        showToast('Timer extended for 15 minutes');
-        } else {
-          console.log("Socket instance not available");
-        }
-    };
+//    const handleExtendTimer = () => {
+ //       console.log("Socket instance: ", socket.current);
+   //     if (socket.current) {
+    //      socket.current.emit('extend-timer', 900000); // 15 minutes in milliseconds
+     //   showToast('Timer extended for 15 minutes');
+     //   } else {
+      //    console.log("Socket instance not available");
+      //  }
+   // };
 
     const handleEndSession = () => {
       // Emit a 'terminate-session' event to the server
-      socket.current.emit('terminate-session', { sessionId: 'session-id' }); // Replace 'session-id' with the actual session ID
+      socket.current.emit('user-terminate', { sessionId: 'session-id' }); // Replace 'session-id' with the actual session ID
   
       showToast('Session terminated');
   
@@ -198,15 +196,51 @@ return () => {
       setTimeout(() => navigate('/'), 1500);
     };
 
-    useEffect(() => {
-        if (sessionStarted && timeRemaining > 0) {
-          const interval = setInterval(() => {
-            setTimeRemaining((prevTime) => prevTime - 1000);
-          }, 1000);
+            // Modify the handleExtendTimer function
+            const handleExtendTimer = () => {
+              // Only allow extending if less than 2 minute is remaining
+              if (timeRemaining > 120000) {
+                  showToast("You can extend the timer in the last 2 minutes of this session.");
+              } else if (socket.current) {
+                  socket.current.emit('extend-time'); 
+                  showToast('Request to extend time sent successfully!');
+                  // Reset the canExtend flag
+                  setCanExtend(false);
+              }
+          };
+    
+              // useEffect for the countdown logic
+        useEffect(() => {
+          if (sessionStarted && timeRemaining > 0) {
+              const interval = setInterval(() => {
+                  setTimeRemaining((prevTime) => {
+                      // If there's only 1 minute left, allow for extension
+                      if (prevTime <= 60000 && !canExtend) {
+                          setCanExtend(true);
+                      }
+                      // If time runs out, show the popup
+                      if (prevTime <= 0) {
+                          clearInterval(interval);
+                          setPopup(true);
+                      }
+                      return prevTime > 0 ? prevTime - 1000 : 0;
+                  });
+              }, 1000);
+    
+              // Cleanup interval on component unmount
+              return () => clearInterval(interval);
+          }
+      }, [sessionStarted, timeRemaining, canExtend]);
 
-            return () => clearInterval(interval);
-        }
-    }, [sessionStarted, timeRemaining]);
+ //   useEffect(() => {
+ //       if (sessionStarted && timeRemaining > 0) {
+ //         const interval = setInterval(() => {
+ //           setTimeRemaining((prevTime) => prevTime - 1000);
+ //         }, 1000);
+//
+ //           return () => clearInterval(interval);
+ //       }
+ //   }, [sessionStarted, timeRemaining]);
 
     return (
       <div className="collaboration-window">
@@ -229,7 +263,7 @@ return () => {
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
-            <button className="extend-timer" onClick={handleExtendTimer}>Extend Timer</button>
+            <button className="extend-time" onClick={handleExtendTimer} disabled={timeRemaining > 120000}>Extend Timer</button>
           </div>
           <div className="right">
             <button className="end-session" onClick={handleEndSession}>End Session</button>
