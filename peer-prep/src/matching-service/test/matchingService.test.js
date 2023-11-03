@@ -1,6 +1,5 @@
 const { findMatch, cancelMatch } = require('../services/matchingService');
 const { getCurrentMatchedPair, deleteAllMatchedPairs } = require('../database/matchedPairDb');
-const { addQuestion } = require('../database/questionDb');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
@@ -9,17 +8,7 @@ jest.setTimeout(200000);
 describe('Matching Service', () => {
 
     let mongod;
-
-    const questionJava = {
-        _id: new mongoose.Types.ObjectId(1),
-        title: 'Java Question',
-        description: 'Java Question Description',
-        complexity: 'easy',
-        category: 'arrays',
-        language: 'java',
-        userTags: []
-    };
-
+    
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
         const mongoUri = mongod.getUri();
@@ -30,7 +19,6 @@ describe('Matching Service', () => {
         });
 
         console.log("testDB connected");
-        await addQuestion(questionJava);
     });
 
     afterAll(async () => {
@@ -156,7 +144,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            questionId: questionJava._id,
+            questionId: null,
             collaboratorId: javaRequest2.id,
             request: javaRequest1
         }
@@ -165,7 +153,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            questionId: questionJava._id,
+            questionId: null,
             collaboratorId: javaRequest1.id,
             request: javaRequest2
         }

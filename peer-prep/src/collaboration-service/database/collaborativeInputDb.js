@@ -1,5 +1,6 @@
 const CollaborativeInput = require('../models/collaborationCodeModel');
-const { getSession } = require('./matchedPairDb');
+const axios = require('axios');
+const config = require('../config/config');
 
 const getCollaborativeInput = async(sessionId) => {
     try {
@@ -86,7 +87,9 @@ const updateCollaborativeLineInput = async(sessionId, line, code, lastModifier) 
 const updateCollaborativeInput = async(sessionId, codes) => {
     try {
         let collaborativeInput = await CollaborativeInput.findOne({ sessionId: sessionId });
-        const session = await getSession(sessionId);
+        const sessionReq = await axios.get(`${config.matchingServiceUrl}/getSession/${sessionId}`);
+
+        const session = sessionReq.data.session;
 
         if (collaborativeInput.codes !== null) {
             collaborativeInput.codes = codes;

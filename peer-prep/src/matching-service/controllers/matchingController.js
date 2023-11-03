@@ -1,4 +1,5 @@
 const matchingService = require('../services/matchingService');
+const matchingDB = require('../database/matchedPairDb');
 
 async function findMatch(req, res, next) {
     try {
@@ -36,6 +37,69 @@ async function findMatch(req, res, next) {
     }
 }
 
+async function getActiveSession(req, res, next) {
+    try {
+        const userId = req.params.userId;
+
+        const session = await matchingDB.getCurrentActiveSession(userId);
+
+        const jsonRes = {
+            sessionId: session
+        };
+
+        if (session) {
+            res.status(200).json(jsonRes);
+
+        } else {
+        res.status(200).json({ sessionId: null })
+            
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getSession(req, res, next) {
+    try {
+        const sessionId = req.params.sessionId;
+
+        const session = await matchingDB.getSession(sessionId);
+
+        const jsonRes = {
+            sessionId: session.sessionId,
+            session: session
+        };
+
+        if (session) {
+            res.status(200).json(jsonRes);
+
+        } else {
+            res.status(200).json({ sessionId: null, session: null});
+            
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function endSession(req, res, next) {
+    try {
+        const sessionId = req.params.sessionId;
+
+        const isEnded = await matchingDB.endSession(sessionId);
+
+        if (isEnded) {
+            res.status(200).json({ status: 'success', message: 'Session ended successfully' });
+
+        } else {
+            res.status(200).json({ status: 'error', message: 'Failed to end session' });
+            
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function cancelMatch(req, res, next) {
     try {
         const isCancelled = await matchingService.cancelMatch(req.params.userId);
@@ -54,5 +118,8 @@ async function cancelMatch(req, res, next) {
 
 module.exports = {
     findMatch,
+    getActiveSession,
+    getSession,
+    endSession,
     cancelMatch
 };
