@@ -1,9 +1,5 @@
 version: '3.9'
 
-app-service:
-  env_file:
-    - .env
-    
 services:
   # Node api service
   api:
@@ -12,6 +8,8 @@ services:
       - "3004:3004"
     environment:
       PORT: 3004
+    env_file:
+    - .env
     networks:
       - my-net
 
