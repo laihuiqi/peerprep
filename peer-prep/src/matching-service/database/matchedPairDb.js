@@ -68,8 +68,12 @@ async function endSession(sessionId) {
 
         console.log(`Successfully update session state for session ${sessionId}`);
 
+        return true;
+
     } catch (error) {
         console.log(`Failed to update session state for session ${sessionId}:`, error);
+
+        return false;
     }
 }
 

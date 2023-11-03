@@ -1,5 +1,9 @@
 version: '3.9'
 
+app-service:
+  env_file:
+    - .env
+    
 services:
   # Node api service
   api:

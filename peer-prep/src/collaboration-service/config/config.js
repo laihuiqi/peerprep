@@ -15,6 +15,9 @@ const SYSTEM_TERMINATE_TIMEOUT = 10 * 1000; // 10 secsS
 
 module.exports = {
     PORT: 3002,
+    serverAddress: 'http://127.0.0.1:3002',
+    matchingServiceUrl: 'http://127.0.0.1:3001',
+    questionServiceUrl: 'http://127.0.0.1:4000/api/questions',
     //mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
     mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
     DEFAULT_TIME_LIMIT,

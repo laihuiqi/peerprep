@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const config = require('./config/config');
 require('dotenv').config();
 const routes = require('./routes/gptRoute');
 
@@ -13,8 +14,8 @@ app.use((err, req, res, next) => {
     res.status(500).send({ error: err.message });
 });
 
-app.listen(3004, () => {
-    console.log('GPT service listening on port 3004');
+app.listen(config.PORT, () => {
+    console.log(`GPT service listening on port ${config.PORT}`);
 });
 
 module.exports = app;   

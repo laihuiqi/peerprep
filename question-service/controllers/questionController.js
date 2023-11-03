@@ -22,7 +22,13 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
-const getMatchQuestion = async (language, difficulty, category) => {
+const getMatchQuestion = async (req, res) => {
+  console.log('get question with properties: ', req.body);
+
+  const language = req.body.language;
+  const difficulty = req.body.difficulty;
+  const category = req.body.category;
+
   let aggregationPipeline = [];
 
   if (language !== "None") {
@@ -43,16 +49,33 @@ const getMatchQuestion = async (language, difficulty, category) => {
 
   question = question[0];
 
-  if (question) {
-    return question;
-  } else {
-    return null;
+  if (!question) {
+    question = null;
   }
+
+  console.log('get', question);
+
+  const response = {
+    question: question,
+    request: req.body
+  };
+
+  return res.status(200).json(response);
 };
 
-const getQuestion = async (questionId) => {
-  await Question.findById(questionId);
+const getQuestion = async (req, res) => {
+  const { questionId } = req.params.id;
+
+  const question = await Question.findById(questionId);
+
+  const response = {
+    questionId: questionId,
+    question: question,
+  };
+
   console.log('get', questionId);
+
+  return res.status(200).json(response);
 };
 
 const duplicateTitleMessage =
@@ -234,4 +257,3 @@ const deleteUserTag = async (req, res) => {
     addUserTag,
     deleteUserTag
   }
-};
