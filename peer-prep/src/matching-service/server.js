@@ -33,7 +33,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(config.PORT, () => {
-    console.log('Matching service listening on port 3001');
+    console.log(`Matching service listening on port ${config.PORT}`);
 });
 
 module.exports = app;   

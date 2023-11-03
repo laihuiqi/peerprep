@@ -4,6 +4,7 @@ const { join } = require('node:path');
 const cors = require('cors');
 const express = require('express');
 const { startCommunication } = require('./services/communicationService');
+const config = require('./config/config');
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -34,6 +35,6 @@ app.use((err, req, res, next) => {
     res.status(500).send({ error: err.message });
 });
 
-server.listen(3003, () => {
-    console.log('Communication service listening on port 3003');
+server.listen(config.PORT, () => {
+    console.log(`Communication service listening on port ${config.PORT}`);
 });
