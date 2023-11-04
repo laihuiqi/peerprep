@@ -1,6 +1,5 @@
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
-const { join } = require('node:path');
 const cors = require('cors');
 const express = require('express');
 const app = express();
@@ -38,13 +37,7 @@ app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
-app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'client-side', 'index.html'));
-});
-
 io.on('connection', async(socket) => {
-
-    console.log('mongoose connected: ', mongoose.connection.readyState, mongoose.connection.host);
 
     console.log('socket connected: ', socket.id);
 
@@ -57,7 +50,7 @@ app.use((err, req, res, next) => {
     res.status(500).send({ error: err.message });
 });
 
-server.listen(3002, () => {
+server.listen(config.PORT, () => {
     console.log('Collaboration service listening on port 3002');
 });
 

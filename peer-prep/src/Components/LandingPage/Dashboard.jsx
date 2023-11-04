@@ -1,5 +1,5 @@
 import React from 'react'
-import {MatchButton} from '../../frontend/Components/Matching/MatchButton'
+import {MatchButton} from '../Matching/MatchButton'
 import {UserQuestionList} from "../LandingPage/UserQuestionList"
 
 import './Dashboard.css'

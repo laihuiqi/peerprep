@@ -1,9 +1,9 @@
-.q-container {
+.user-q-container {
     display: flex;
     gap: 10px;
 }
 
-.q-info {
+.user-q-info {
     width: 55%;
     background: #f6f6f6;
     padding: 0.1rem 0.1rem;
@@ -13,23 +13,23 @@
     transition-duration: 0.2s;
 }
 
-.q-info:hover{
+.user-q-info:hover{
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     background: #e9e9e9;
 }
 
-.q-header {
+.user-q-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
 }
 
-.q-header span {
+.user-q-header span {
     padding: 0.5rem 1rem;
 }
 
-.q-name {
+.user-q-name {
     display: flex;
     align-items: center;
     min-height: 50px;
@@ -38,23 +38,23 @@
     font-weight: 500;
 }
 
-.q-id {
+.user-q-id {
     padding: 0.5rem 1rem;
 }
 
-.q-title {
+.user-q-title {
     padding: 0.5rem 0.5rem;
     overflow: hidden;
     text-overflow: ellipsis;    
     white-space: nowrap;
 }
 
-.q-title-show {
+.user-q-title-show {
     padding: 0.5rem 0.5rem;
     overflow: hidden;
 }
 
-.q-tag {
+.user-q-tag {
     min-width: 50px;
     width: fit-content;
     height: 20px;
@@ -66,12 +66,12 @@
     justify-content: center;
 }
 
-.q-content {
+.user-q-content {
     width: 85%;
     overflow: hidden;
 }
 
-.q-content-expand{
+.user-q-content-expand{
     display: flex;
     flex-direction: column;
     margin-top: 0;
@@ -79,7 +79,7 @@
     transition: all 0.7s;
 }
 
-.q-content-contract {
+.user-q-content-contract {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -87,7 +87,7 @@
     transition: all 1s;
 }
 
-.q-description {
+.user-q-description {
     width: 85%;
     margin-left: 20px;
     border: none;
@@ -95,18 +95,18 @@
     padding: 1rem 0rem;
 }
 
-.q-tag-green {
+.user-q-tag-green {
     background: #52CC65;
 }
 
-.q-tag-orange {
+.user-q-tag-orange {
     background: #F4B335;
 }
 
-.q-tag-red {
+.user-q-tag-red {
     background: #F65252;
 }
 
-.q-tag-white {
+.user-q-tag-white {
     background: #FFFFFF;
 }

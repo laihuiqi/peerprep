@@ -1,6 +1,5 @@
 const { findMatch, cancelMatch } = require('../services/matchingService');
 const { getCurrentMatchedPair, deleteAllMatchedPairs } = require('../database/matchedPairDb');
-const { addQuestion } = require('../database/questionDb');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
@@ -9,17 +8,7 @@ jest.setTimeout(200000);
 describe('Matching Service', () => {
 
     let mongod;
-
-    const questionJava = {
-        _id: new mongoose.Types.ObjectId(1),
-        title: 'Java Question',
-        description: 'Java Question Description',
-        complexity: 'easy',
-        category: 'arrays',
-        language: 'java',
-        userTags: []
-    };
-
+    
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
         const mongoUri = mongod.getUri();
@@ -30,7 +19,6 @@ describe('Matching Service', () => {
         });
 
         console.log("testDB connected");
-        await addQuestion(questionJava);
     });
 
     afterAll(async () => {
@@ -47,7 +35,7 @@ describe('Matching Service', () => {
     });
 
     const javaRequest1 = {
-        id: 1,
+        id: 'Jgk9LsH3pRi2',
         language: 'java',
         proficiency: 'None',
         difficulty: 'None',
@@ -55,7 +43,7 @@ describe('Matching Service', () => {
     };
 
     const javaRequest2 = {
-        id: 2,
+        id: 'Xy7QnWzA4vE1',
         language: 'java',
         proficiency: 'None',
         difficulty: 'None',
@@ -63,7 +51,7 @@ describe('Matching Service', () => {
     };
 
     const pythonRequest1 = {
-        id: 3,
+        id: 'FbRt6YpZuIv8',
         language: 'python',
         proficiency: 'None',
         difficulty: 'None',
@@ -71,7 +59,7 @@ describe('Matching Service', () => {
     };
 
     const cppRequest1 = {
-        id: 4,
+        id: 'MnOq5PxS3dR7',
         language: 'cpp',
         proficiency: 'None',
         difficulty: 'None',
@@ -79,7 +67,7 @@ describe('Matching Service', () => {
     };
 
     const cRequest1 = {
-        id: 5,
+        id: 'GhT2UkL4jEw9',
         language: 'c',
         proficiency: 'None',
         difficulty: 'None',
@@ -87,7 +75,7 @@ describe('Matching Service', () => {
     };
 
     const cRequest2 = {
-        id: 11,
+        id: 'Df8GjR7hTk2L',
         language: 'c',
         proficiency: 'None',
         difficulty: 'None',
@@ -95,7 +83,7 @@ describe('Matching Service', () => {
     };
 
     const cppRequest2 = {
-        id: 6,
+        id: 'NpQ5sV9mXc4Z',
         language: 'cpp',
         proficiency: 'None',
         difficulty: 'None',
@@ -103,7 +91,7 @@ describe('Matching Service', () => {
     };
 
     const cppFullRequest1 = {
-        id: 7,
+        id: 'Yb1FnS6oAq3P',
         language: 'cpp',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -111,7 +99,7 @@ describe('Matching Service', () => {
     };
 
     const javaFullRequest1 = {
-        id: 8,
+        id: 'UvIz3wPxLk9Q',
         language: 'java',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -119,7 +107,7 @@ describe('Matching Service', () => {
     };
 
     const cppFullRequest2 = {
-        id: 9,
+        id: 'Jr7GpW2bXl8K',
         language: 'cpp',
         proficiency: 'basic',
         difficulty: 'easy',
@@ -127,7 +115,7 @@ describe('Matching Service', () => {
     };
 
     const javaFullRequest2 = {
-        id: 10,
+        id: 'HtY5sRfZp2Jv',
         language: 'java',
         proficiency: 'advanced',
         difficulty: 'easy',
@@ -156,7 +144,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: questionJava,
+            questionId: null,
             collaboratorId: javaRequest2.id,
             request: javaRequest1
         }
@@ -165,7 +153,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: questionJava,
+            questionId: null,
             collaboratorId: javaRequest1.id,
             request: javaRequest2
         }
@@ -185,7 +173,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cppRequest2
         };
@@ -194,7 +182,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cRequest2
         };
@@ -221,7 +209,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId, 
-            question: null,
+            questionId: null,
             collaboratorId: cppFullRequest2.id,
             request: cppFullRequest1
         }
@@ -230,7 +218,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            question: null,
+            questionId: null,
             collaboratorId: cppFullRequest1.id,
             request: cppFullRequest2
         }
@@ -250,7 +238,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: cppFullRequest1
         }
@@ -259,7 +247,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
@@ -278,7 +266,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaRequest1
         }
@@ -287,7 +275,7 @@ describe('Matching Service', () => {
             status: 'error',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaFullRequest1
         }
@@ -316,7 +304,7 @@ describe('Matching Service', () => {
             status: 'cancel',
             isMatched: false,
             sessionId: null, 
-            question: null,
+            questionId: null,
             collaboratorId: null,
             request: javaRequest1
         }

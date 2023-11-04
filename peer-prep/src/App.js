@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
 import { Navbar } from './Components/Navbar/Navbar';
 import CollaborationWindow from './Components/Collaboration/CollaborationWindow';
-import { Questions } from './Components/QuestionList/QuestionList'; 
+import { Questions } from './Components/QuestionList/QuestionList';
 // import {LandingPage} from './Components/LandingPage/LandingPage'
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
        {/* Adding CollaborationWindow for testing */}
        <Route path="/collaboration" element={<CollaborationWindow />}/>
        </Routes>
+      <Questions/>
       {/* <LandingPage/> */}
     </div>
     </Router>
