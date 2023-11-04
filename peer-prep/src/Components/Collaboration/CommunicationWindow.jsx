@@ -13,6 +13,12 @@ const CommunicationWindow = () => {
   const remoteAudioRef = useRef(null);
   const peerConnection = useRef(null);
   const remoteStream = useRef(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
+  const [callWaiting, setCallWaiting] = useState(false);
+  const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
+  const [incomingOffer, setIncomingOffer] = useState(null);
+
+
 
   useEffect(() => {
     // Initialize WebRTC peer connection
@@ -34,8 +40,8 @@ const CommunicationWindow = () => {
     setSocket(newSocket);
 
     // Event listeners for WebRTC signaling
-    newSocket.on('call', handleReceiveCall);
-    newSocket.on('answer', handleAnswer);
+    newSocket.on('called', handleReceiveCall);
+    newSocket.on('answered', handleAnswer);
     newSocket.on('ice-candidate', handleNewICECandidateMsg);
 
     // Cleanup on component unmount
@@ -54,6 +60,13 @@ const CommunicationWindow = () => {
     }]);
   }, []);
 
+  const showToast = (message) => {
+    setToast({ visible: true, message });
+    setTimeout(() => {
+      setToast({ visible: false, message: '' });
+    }, 2000); // 
+  };  
+
   const handleSendMessage = () => {
     if (!socket) return;
     if (!inputValue.trim()) return;
@@ -69,26 +82,73 @@ const CommunicationWindow = () => {
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
-
+  
   const startCall = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    localAudioRef.current.srcObject = localStream;
-
-    localStream.getTracks().forEach(track => {
-      peerConnection.current.addTrack(track, localStream);
-    });
-
-    const offer = await peerConnection.current.createOffer();
-    await peerConnection.current.setLocalDescription(offer);
-    socket.emit('call', { offer });
+    try {
+      // Access only audio since video is not required
+      const localStream = await navigator.mediaDevices.getUserMedia({ audio: true});
+      localAudioRef.current.srcObject = localStream;
+  
+      localStream.getTracks().forEach(track => {
+        peerConnection.current.addTrack(track, localStream);
+      });
+  
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
+      socket.emit('call', { offer });
+      setCallWaiting(true); // Call is now waiting for the partner to accept
+      showToast('Waiting for partner to join the call...');
+    } catch (err) {
+      showToast('Failed to access media devices.');
+      console.error('Failed to start call', err);
+    }
   };
+  
 
   const handleReceiveCall = async (incoming) => {
     await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.offer));
     const answer = await peerConnection.current.createAnswer();
     await peerConnection.current.setLocalDescription(answer);
     socket.emit('answer', { answer });
+    setShowIncomingCallModal(true);
+    setIncomingOffer(incoming.offer);
   };
+
+  const acceptCall = async () => {
+    if (!incomingOffer || !peerConnection) {
+      console.error("No incoming call to accept");
+      return;
+    }
+  
+    try {
+      // Set the remote description to the offer received from the caller
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingOffer));
+  
+      // Create an answer to the offer
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+  
+      // Send the answer back to the caller
+      socket.emit("answer", answer);
+  
+      // UI updates for being in call
+      const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+      if (callButton) {
+        callButton.textContent = 'Hang Up';
+        callButton.disabled = false;
+      }
+  
+      showToast('Call accepted. Connected!');
+  
+      // Update state to reflect that we're in a call
+      setIsInCall(true); // Assuming you have a state variable to track this
+  
+    } catch (error) {
+      console.error("Error accepting call:", error);
+      showToast('Error accepting the call.');
+    }
+  };
+  
 
   const handleAnswer = async (incoming) => {
     await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.answer));
@@ -96,7 +156,7 @@ const CommunicationWindow = () => {
 
   const handleNewICECandidateMsg = async (incoming) => {
     try {
-      await peerConnection.current.addIceCandidate(incoming.candidate);
+      await peerConnection.current.addIceCandidate(new RTCIceCandidate(incoming));
     } catch (e) {
       console.error('Error adding received ice candidate', e);
     }
@@ -112,28 +172,66 @@ const CommunicationWindow = () => {
   };
 
   const endCall = () => {
-    // Stop all tracks on the local stream
-    if (localAudioRef.current && localAudioRef.current.srcObject) {
-      localAudioRef.current.srcObject.getTracks().forEach(track => track.stop());
+    // Emit the end-call event to notify the backend
+    socket.emit("end-call");
+  
+    // Call the function to handle UI and stream cleanup
+    endAudioConnection();
+  
+    // UI feedback for the user
+    // Update the button text and disable the button
+    const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+    if (callButton) {
+      callButton.textContent = 'Call Ended';
+      callButton.disabled = true;
     }
   
-    // Stop all tracks on the remote stream
-    if (remoteStream.current) {
-      remoteStream.current.getTracks().forEach(track => track.stop());
-    }
-  
-    // Close the peer connection
-    if (peerConnection.current) {
-      peerConnection.current.close();
-      peerConnection.current = new RTCPeerConnection();
-    }
-  
-    // Update the call state
-    setIsInCall(false);
+    // Display a message to the user about the call ending
+    showToast('Call ended by you.');
   };
+  
+  const endAudioConnection = () => {
+    // ...existing code to clean up streams and peer connection...
+  
+    // UI feedback for the user
+    // Update the button text and disable the button
+    const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+    if (callButton) {
+      callButton.textContent = 'Call';
+      callButton.disabled = false;
+    }
+  
+    // Display a message to the user about the call ending
+    showToast('Call ended by the other user.');
+  };
+  
+
+  const rejectCall = () => {
+    socket.emit('end-call');
+    setShowIncomingCallModal(false);
+    showToast('Call rejected');
+  };
+
+  const IncomingCallModal = ({ onAccept, onReject }) => (
+    <div className="incoming-call-modal">
+      <div className="incoming-call-content">
+        <h2>Incoming Call...</h2>
+        <button onClick={onAccept}>Accept</button>
+        <button onClick={onReject}>Reject</button>
+      </div>
+    </div>
+  );
+  
+  
 
   return (
     <>
+    {showIncomingCallModal && (
+      <IncomingCallModal
+        onAccept={acceptCall}
+        onReject={rejectCall}/>
+        )}
+    {toast.visible && <div className="toast">{toast.message}</div>}
       {/* Chat toggle button */}
       <div className="chat-toggle-btn-container">
         <button 
