@@ -132,7 +132,7 @@ const CommunicationWindow = () => {
       socket.emit("answer", answer);
   
       // UI updates for being in call
-      const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+      const callButton = document.getElementById('call-btn'); 
       if (callButton) {
         callButton.textContent = 'Hang Up';
         callButton.disabled = false;
@@ -180,7 +180,7 @@ const CommunicationWindow = () => {
   
     // UI feedback for the user
     // Update the button text and disable the button
-    const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+    const callButton = document.getElementById('call-btn'); 
     if (callButton) {
       callButton.textContent = 'Call Ended';
       callButton.disabled = true;
@@ -191,19 +191,39 @@ const CommunicationWindow = () => {
   };
   
   const endAudioConnection = () => {
-    // ...existing code to clean up streams and peer connection...
+    // Stop all tracks on the local media stream
+    if (localAudioRef.current && localAudioRef.current.srcObject) {
+      const tracks = localAudioRef.current.srcObject.getTracks();
+      tracks.forEach(track => {
+        track.stop();
+      });
+      localAudioRef.current.srcObject = null;
+    }
+  
+    // Close the peer connection if it's open
+    if (peerConnection.current) {
+      peerConnection.current.getSenders().forEach(sender => {
+        peerConnection.current.removeTrack(sender);
+      });
+      peerConnection.current.close();
+      peerConnection.current = null;
+    }
   
     // UI feedback for the user
     // Update the button text and disable the button
-    const callButton = document.getElementById('call-button'); // ensure this is your actual call button's ID
+    const callButton = document.getElementById('call-btn'); 
     if (callButton) {
       callButton.textContent = 'Call';
       callButton.disabled = false;
     }
   
+    // Reset call state
+    setIsInCall(false);
+  
     // Display a message to the user about the call ending
-    showToast('Call ended by the other user.');
+    showToast('Call ended.');
   };
+  
   
 
   const rejectCall = () => {
