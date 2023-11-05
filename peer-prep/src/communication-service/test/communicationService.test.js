@@ -58,6 +58,56 @@ describe('Collaboration Service', () => {
             user2.on('collaborator-recv-join', (userId) => {
                 expect(userId).toBe('Gc2Bz9Nl8Wx4');
                 console.log('collaborator-recv-join: ', userId);
+
+                
+                resolve();
+            });
+        });
+        
+        const user2RecvMessagePromise = new Promise((resolve) => {
+            new Promise((resolve) => setTimeout(resolve, 200));
+
+            user1.emit('message', { text: 'hello', fromSelf: true });
+            console.log('user1 sends message');
+
+            user2.on('new-message', async (message) => {
+                console.log('user2 receives message: ', message);
+
+                expect(message.text).toBe('hello');
+                expect(message.sender).toBe('Gc2Bz9Nl8Wx4');
+
+                console.log('user2 receives message: ', message.text);
+                
+                resolve();
+            });
+        });
+
+        const user2RecvMessageLogPromise = new Promise((resolve) => {
+            new Promise((resolve) => setTimeout(resolve, 300));
+
+            user2.emit('get-message-log');
+            console.log('user2 gets message log');
+
+            user2.on('recv-message-log', async (messages) => {
+                console.log('user2 receives message log: ', messages);
+
+                expect(messages.length).toBe(1);
+                expect(messages[0].text).toBe('hello');
+                expect(messages[0].sender).toBe('Gc2Bz9Nl8Wx4');
+
+                console.log('user2 receives message log: ', messages);
+                
+                resolve();
+            });
+        });
+        
+        const user1EndCallPromise = new Promise((resolve) => {
+            new Promise((resolve) => setTimeout(resolve, 400));
+
+            user1.emit('end-call');
+            
+            user2.on('collaborator-end-call', () => {
+                console.log('user1 ends call');
                 resolve();
             });
         });
@@ -67,6 +117,9 @@ describe('Collaboration Service', () => {
             user2JoinPromise,
             user1CollaboratorJoinedPromise,
             user2CollaboratorRecvJoinPromise,
+            user2RecvMessagePromise,
+            user2RecvMessageLogPromise,
+            user1EndCallPromise,
         ]);
 
         user1.disconnect();

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     endButton.addEventListener('click', () => {
         console.log('End call!');
-        endConnection();
+        endVideoConnection();
     });
 });
 
@@ -57,32 +57,6 @@ const setMedia = async () => {
     }
 }
 
-const endConnection = () => {
-    const elToRemove = document.getElementById(collaboratorId);
-    const endButton = document.getElementById('end-call');
-
-    endButton.disabled = true;
-  
-    if (elToRemove) {
-      elToRemove.remove();
-    }
-
-    peerConnection.close();
-    peerConnection = null;
-    socket.disconnect();
-    socket = null;
-
-    if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-        localStream = null;
-    }
-
-    if (remoteStream) {
-        remoteStream.getTracks().forEach(track => track.stop());
-        remoteStream = null;
-    }
-};
-
 socket.on("collaborator-joined", (collaborator) => {
     collaboratorId = collaborator;
 
@@ -111,8 +85,14 @@ socket.on("collaborator-recv-join", (collaborator) => {
 socket.on("collaborator-disconnected", () => {
     console.log('collaborator-disconnected: ', collaboratorId);
 
-    endConnection();
+    endCommunication();
 });
+
+socket.on("collaborator-end-call", () => {
+    console.log('collaborator-end-call: ', collaboratorId);
+
+    endVideoConnection();
+})
 
 socket.on("called", async (offer) => {
     console.log(userId, ' called by ', collaboratorId);
@@ -157,6 +137,11 @@ socket.on("answered", async (answerData) => {
     }
 });
 
+socket.on("new-message", (message) => {
+    console.log('received new-message: ', message);
+});
+
+
 peerConnection.ontrack = ({ streams: [stream] }) => {
     const remoteVideo = document.getElementById("remote-video");
 
@@ -177,6 +162,40 @@ const setVideoConnection = async(offer) => {
 
     socket.emit("answer", answer);
 }
+
+const endCall = () => {
+    socket.emit("end-call");
+    endVideoConnection();
+};
+
+const endVideoConnection = () => {
+    const elToRemove = document.getElementById(collaboratorId);
+    const endButton = document.getElementById('end-call');
+
+    endButton.disabled = true;
+  
+    if (elToRemove) {
+      elToRemove.remove();
+    }
+
+    peerConnection.close();
+    peerConnection = null;
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
+};
+
+const endCommunication = () => {
+    socket.disconnect();
+    socket = null;
+};
 
 const createCollaboratorItemContainer = () => {
     const collaboratorContainerEl = document.createElement("div");
