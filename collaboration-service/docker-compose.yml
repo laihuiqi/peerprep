@@ -28,3 +28,4 @@ volumes:
 
 networks:
   my-net:
+    driver: bridge
