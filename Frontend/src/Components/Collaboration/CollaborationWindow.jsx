@@ -4,6 +4,8 @@ import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
 import firebase from 'firebase/app';
 import 'firebase/auth'; 
+import CommunicationWindow from './CommunicationWindow';
+
 
 const CollaborationWindow = () => {
     const [timeRemaining, setTimeRemaining] = useState('1800000');
@@ -89,6 +91,7 @@ const CollaborationWindow = () => {
   
     return (      
       <div className="collaboration-window"> 
+        <CommunicationWindow />
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
