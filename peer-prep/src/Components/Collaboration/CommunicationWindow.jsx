@@ -42,14 +42,23 @@ const CommunicationWindow = () => {
     setSocket(newSocket);
 
     // Event listeners for WebRTC signaling
+    newSocket.on('collaborator-joined', handleCollaboratorJoined);
+    newSocket.on('collaborator-recv-join', handleCollaboratorRecvJoin);
+    newSocket.on('collaborator-disconnected', handleCollaboratorDisconnected);
+    newSocket.on('collaborator-end-call', handleEndCall);
     newSocket.on('called', handleReceiveCall);
     newSocket.on('answered', handleAnswer);
     newSocket.on('ice-candidate', handleNewICECandidateMsg);
+    newSocket.on('new-message', (message) => {
+      setMessages(prevMessages => [...prevMessages, message]);
+    });
 
     // Cleanup on component unmount
     return () => {
       newSocket.close();
-      peerConnection.current.close();
+      if (peerConnection.current) {
+        peerConnection.current.close();
+      }
     };
   }, []);
 
@@ -88,7 +97,7 @@ const CommunicationWindow = () => {
   const startCall = async () => {
     try {
       // Access only audio since video is not required
-      const localStream = await navigator.mediaDevices.getUserMedia({ audio: true});
+      const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false });
       localAudioRef.current.srcObject = localStream;
   
       localStream.getTracks().forEach(track => {
@@ -97,7 +106,7 @@ const CommunicationWindow = () => {
   
       const offer = await peerConnection.current.createOffer();
       await peerConnection.current.setLocalDescription(offer);
-      socket.emit('call', { offer });
+      socket.emit('call', offer);
       setCallWaiting(true); // Call is now waiting for the partner to accept
       showToast('Waiting for partner to join the call...');
     } catch (err) {
@@ -105,51 +114,56 @@ const CommunicationWindow = () => {
       console.error('Failed to start call', err);
     }
   };
+
+  const handleCollaboratorJoined = (collaboratorId) => {
+    // Update the state to add the new collaborator
+    setCollaborators(prev => [...prev, collaboratorId]);
+    showToast(`Collaborator ${collaboratorId} joined the call.`);
+  };
+
+  const handleCollaboratorRecvJoin = (collaboratorId) => {
+    setCollaborators(prev => [...prev, collaboratorId]);
+    showToast(`Collaborator ${collaboratorId} ready for the call.`);
+  };
+
+  const handleCollaboratorDisconnected = () => {
+    endAudioConnection();
+    setCollaborators([]);
+    showToast('A collaborator has disconnected.');
+  };
   
 
   const handleReceiveCall = async (incoming) => {
     await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.offer));
     const answer = await peerConnection.current.createAnswer();
     await peerConnection.current.setLocalDescription(answer);
-    socket.emit('answer', { answer });
+    socket.emit('answer', answer);
     setShowIncomingCallModal(true);
     setIncomingOffer(incoming.offer);
   };
 
   const acceptCall = async () => {
-    if (!incomingOffer || !peerConnection) {
+    if (!incomingOffer || !peerConnection.current) {
       console.error("No incoming call to accept");
       return;
     }
   
     try {
-      // Set the remote description to the offer received from the caller
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingOffer));
+      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incomingOffer));
   
-      // Create an answer to the offer
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
   
-      // Send the answer back to the caller
       socket.emit("answer", answer);
   
-      // UI updates for being in call
-      const callButton = document.getElementById('call-btn'); 
-      if (callButton) {
-        callButton.textContent = 'Hang Up';
-        callButton.disabled = false;
-      }
-  
+      setIsInCall(true);
       showToast('Call accepted. Connected!');
-  
-      // Update state to reflect that we're in a call
-      setIsInCall(true); // Assuming you have a state variable to track this
-  
     } catch (error) {
       console.error("Error accepting call:", error);
       showToast('Error accepting the call.');
     }
   };
+  
   
 
   const handleAnswer = async (incoming) => {
@@ -224,6 +238,11 @@ const CommunicationWindow = () => {
   
     // Display a message to the user about the call ending
     showToast('Call ended.');
+  };
+
+  const handleEndCall = () => {
+    endAudioConnection();
+    showToast('Call ended by the other user.');
   };
   
   
