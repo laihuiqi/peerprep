@@ -37,6 +37,8 @@ app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
+app.use('/', routes);
+
 io.on('connection', async(socket) => {
 
     console.log('socket connected: ', socket.id);

@@ -303,6 +303,13 @@ const getQuestionById = async(questionId) => {
     return questionReq.data;
 }
 
+const getCollaborationHistory = async(sessionId) => {
+    console.log(`Getting collaborative input for session ${sessionId}`);
+
+    return await getCollaborativeInput(sessionId);
+}
+
 module.exports = {
-    startCollaboration
+    startCollaboration,
+    getCollaborationHistory,
 }

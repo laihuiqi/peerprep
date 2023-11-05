@@ -42,7 +42,8 @@ async function exitSession(req, res, next) {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ status: 'error', message: 'Failed to get response from gpt. Please try again!' })
+        
+        await res.status(500).json({ status: 'error', message: 'Failed to get response from gpt. Please try again!' })
     }
 }
 
@@ -61,7 +62,8 @@ async function getCache(req, res, next) {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ status: 'error', message: error })
+
+        await res.status(500).json({ status: 'error', message: error })
     }
 }
 
