@@ -78,6 +78,14 @@ const startCollaboration = async(socket, io) => {
             }
         });
 
+        socket.on('get-question', async() => {
+            console.log(`Getting question for session ${sessionId}`);
+
+            const question = await getQuestionById(session.questionId);
+
+            socket.emit('recv-question', question);
+        });
+
         socket.on('extend-time', async() => {
             console.log(`Extending time for session ${sessionId}`);
 
@@ -296,6 +304,5 @@ const getQuestionById = async(questionId) => {
 }
 
 module.exports = {
-    startCollaboration,
-    getQuestionById
+    startCollaboration
 }
