@@ -1,4 +1,4 @@
-const socketURL = 'http://localhost:3003';
+const socketURL = 'http://localhost:3007';
 
 let userId = Math.floor(Math.random() * 101).toString();
 let collaboratorId;

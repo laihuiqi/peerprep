@@ -2,11 +2,11 @@ version: '3.9'
 
 services:
   # Mongodb service
-  mongo_db:
+  matching-service-database:
     container_name: db_container
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27020:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -25,16 +25,12 @@ services:
       - my-net
 
   # Node api service
-  api:
+  matching-service:
     build: .
     ports:
-      - "3001:3001"
-    environment:
-      PORT: 3001
-      MONGODB_URI: mongodb://mongo_db:27017
-      DB_NAME: peer-prep
+      - "3004:3004"
     depends_on: 
-      - mongo_db
+      - matching-service-database
       - rabbitmq
     networks:
       - my-net

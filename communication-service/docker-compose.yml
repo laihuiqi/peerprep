@@ -2,14 +2,10 @@ version: '3.9'
 
 services:
   # Node api service
-  api:
+  communication-service:
     build: .
     ports:
-      - "3004:3004"
-    environment:
-      PORT: 3004
-    env_file:
-      - .env
+      - "3007:3007"
     networks:
       - my-net
 

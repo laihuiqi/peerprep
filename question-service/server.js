@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 app.use("/api/questions", questionRoutes);
 
 // define port number
-portNumber = 4000;
+portNumber = 3003;
 
 // connect to database
 mongoose

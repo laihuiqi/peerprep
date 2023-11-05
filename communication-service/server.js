@@ -15,7 +15,7 @@ const io = new Server(server, {
   });
 
 app.use(cors());
-app.use(express.static(__dirname + '/services'));
+app.use(express.static(__dirname + '/services')); // app.use(express.static(__dirname);
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 

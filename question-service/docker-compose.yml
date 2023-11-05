@@ -1,17 +1,13 @@
 version: '3'
 services:
-  question-database:
-    image: mongo
+  question-service-database:
+    image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27019:27017"
 
   question-service:
     build: .
     ports:
-      - "4000:4000"
+      - "3003:3003"
     depends_on:
-      - question-database
-
-    # environment:
-    #   MONGODB_URI: mongodb://mongo_db:27017
-    #   DB_NAME: 
+      - question-service-database

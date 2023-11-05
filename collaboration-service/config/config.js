@@ -14,11 +14,14 @@ const DISCONNECTION_TIMEOUT = 30 * 1000; // 30 secs
 const SYSTEM_TERMINATE_TIMEOUT = 10 * 1000; // 10 secsS
 
 module.exports = {
-    PORT: 3002,
-    serverAddress: 'http://127.0.0.1:3002',
-    matchingServiceUrl: 'http://127.0.0.1:3001',
-    questionServiceUrl: 'http://127.0.0.1:4000/api/questions',
-    //mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
+    PORT: 3005,
+    // serverAddress: 'http://collaboration-service:3005',
+    serverAddress: 'http://127.0.0.1:3005',
+    // matchingServiceUrl: 'http://matching-service:3004',
+    matchingServiceUrl: 'http://127.0.0.1:3004',
+    // questionServiceUrl: 'http://question-service:3003/api/questions',
+    questionServiceUrl: 'http://127.0.0.1:3003/api/questions',
+    //mongodbUri: 'mongodb://collaboration-service-database:27021',
     mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
     DEFAULT_TIME_LIMIT,
     MAX_TIME_LIMIT,

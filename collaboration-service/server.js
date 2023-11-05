@@ -51,7 +51,7 @@ app.use((err, req, res, next) => {
 });
 
 server.listen(config.PORT, () => {
-    console.log('Collaboration service listening on port 3002');
+    console.log(`Collaboration service listening on port ${config.PORT}`);
 });
 
 module.exports = { io };
