@@ -9,7 +9,7 @@ services:
     environment:
       PORT: 3004
     env_file:
-    - .env
+      - .env
     networks:
       - my-net
 
