@@ -22,7 +22,8 @@ portNumber = 4000;
 // connect to database
 mongoose
   .connect(
-    "mongodb+srv://admin:70eLGyahMN7cDMd1@questioncluster.brpdmd1.mongodb.net/?retryWrites=true&w=majority"
+    config.mongodbUri
+    // "mongodb+srv://admin:70eLGyahMN7cDMd1@questioncluster.brpdmd1.mongodb.net/?retryWrites=true&w=majority"
     /*
     config.mongodbUri, // for testing
     {
