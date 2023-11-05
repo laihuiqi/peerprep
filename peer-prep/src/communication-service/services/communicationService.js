@@ -1,4 +1,5 @@
 const communicationPair = new Map();
+const messageLog = new Map();
 
 const startCommunication = async(socket) => {
 
@@ -9,6 +10,10 @@ const startCommunication = async(socket) => {
 
     socket.join(sessionId);
     socket.emit('join', sessionId);
+
+    if (!messageLog.has(sessionId)) {
+        messageLog.set(sessionId, []);
+    }
 
     if (communicationPair.has(sessionId)) {
         collaborators = communicationPair.get(sessionId);
@@ -29,6 +34,25 @@ const startCommunication = async(socket) => {
         socket.to(sessionId).emit('collaborator-recv-join', userId);
     });
 
+    socket.on('message', (message) => {
+        console.log(userId, ' sends message ', message);
+
+        let messages = messageLog.get(sessionId);
+
+        let newMessage = { text: message.text, sender: userId };
+
+        messages.push(newMessage);
+        messageLog.set(sessionId, messages);
+
+        socket.to(sessionId).emit('new-message', newMessage);
+    });
+
+    socket.on('get-message-log', () => {
+        console.log('get-message-log from ', userId);
+
+        socket.emit('recv-message-log', retrieveMessageLog(sessionId));
+    });
+
     socket.on('call', (offer) => {
         console.log(userId, ' calls collaborator');
         socket.to(sessionId).emit('called', offer);
@@ -39,12 +63,34 @@ const startCommunication = async(socket) => {
         socket.to(sessionId).emit('answered', answer);
     });
 
+    socket.on('end-call', () => {
+        console.log(userId, ' ends call');
+
+        socket.to(sessionId).emit('collaborator-end-call');
+    });
+
     socket.on('disconnect', () => {
         console.log(userId, ' disconnect');
-        communicationPair.delete(sessionId);
+        endCommunication(sessionId);
         socket.to(sessionId).emit('collaborator-disconnected');
     });
 
+}
+
+const retrieveMessageLog = (sessionId) => {
+    console.log('retrieveMessageLog for session: ', sessionId);
+
+    if (messageLog.has(sessionId)) {
+        return messageLog.get(sessionId);
+
+    } else {
+        return [];
+    }
+}
+
+const endCommunication = (sessionId) => {
+    communicationPair.delete(sessionId);
+    messageLog.delete(sessionId);
 }
 
 module.exports = {
