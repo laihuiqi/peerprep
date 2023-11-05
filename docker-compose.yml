@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  frontend:
+    build: ./Frontend
+    ports:
+      - 3001:3001
+    volumes:
+      - ./Frontend:/app
+    env_file:
+      - ./Frontend/.env
+
+  user-service:
+    build: ./UserService
+    ports:
+      - 3002:3002
+    volumes:
+      - ./UserService:/app
+  
+  user-service-database:
+    image: mongo:latest
+    ports:
+      - 27017:27018
+    volumes:
+      - ./UserServiceDatabase:/data/db
+
+
+#   question-service:
+#     build: ./question-service
+#     ports:
+#       - 4000:3003
+#     depends_on:
+#       - question-service-database
+  
+#   question-service-database:
+#     image: mongo:latest
+#     ports:
+#       - 27017:27019
+
+
+#   matching-service:
+#     build: ./matching-service
+  
+#   matching-service-database:
+
+
+#   collaboration-service:
+#     build: ./collaboration-service
+
+#   collaboration-service-database:
+
+# networks:
+#   peer-prep-network:
+#     driver: bridge
