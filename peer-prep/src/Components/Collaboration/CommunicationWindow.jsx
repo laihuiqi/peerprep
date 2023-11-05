@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import Draggable from 'react-draggable';
 import './CommunicationWindow.css';
+import callIcon from '../../call.png';
+import hangUpIcon from '../../hangup.png';
 
 const CommunicationWindow = () => {
   const [messages, setMessages] = useState([]);
@@ -241,8 +243,6 @@ const CommunicationWindow = () => {
       </div>
     </div>
   );
-  
-  
 
   return (
     <>
@@ -269,8 +269,8 @@ const CommunicationWindow = () => {
             <button 
               className={`call-btn ${isInCall ? 'hang-up-btn' : ''}`}
               onClick={toggleCall}
+              style={{ backgroundImage: `url(${isInCall ? hangUpIcon : callIcon})` }}
             >
-              {isInCall ? 'Hang Up' : 'Call'}
             </button>
             {/* Local audio stream (hidden) */}
             <audio ref={localAudioRef} style={{ display: 'none' }} autoPlay muted></audio>
