@@ -3,7 +3,7 @@
 import axios from "axios";
 // const axios = require("axios").default; // Supports Testing
 
-const USER_SERVICE_HOST = "http://localhost:3000/";
+const USER_SERVICE_HOST = "http://localhost:3002/";
 
 async function getUserData(userId) {
   try {
