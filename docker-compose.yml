@@ -30,34 +30,85 @@ services:
     networks:
       - peer-prep-network
 
-
   question-service:
-    build: ./question-service
+    build: ./QuestionService
     ports:
-      - 4000:4000
+      - "3003:3003"
+    depends_on:
+      - question-service-database
     networks:
       - peer-prep-network
-#     depends_on:
-#       - question-service-database
-  
+
   question-service-database:
     image: mongo:latest
     ports:
-      - 27019:27017
+      - "27019:27017"
     networks:
       - peer-prep-network
 
+  matching-service:
+    build: ./MatchingService
+    ports:
+      - "3004:3004"
+    depends_on: 
+      - matching-service-database
+      - rabbitmq
+    networks:
+      - peer-prep-network
 
-#   matching-service:
-#     build: ./matching-service
-  
-#   matching-service-database:
+  matching-service-database:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - peer-prep-network
 
+  # Rabbitmq service
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      # AMQP protocol port
+      - "5672:5672"
+      # HTTP management UI
+      - "15672:15672"
+    networks:
+      - peer-prep-network
 
-#   collaboration-service:
-#     build: ./collaboration-service
+  collaboration-service:
+    build: ./CollaborationService
+    ports:
+      - "3005:3005"
+    depends_on: 
+      - collaboration-service-database
+    networks:
+      - peer-prep-network
 
-#   collaboration-service-database:
+  collaboration-service-database:
+    image: mongo:latest
+    ports:
+      - "27021:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - peer-prep-network
+
+  communication-service:
+    build: ./CommunicationService
+    ports:
+      - "3007:3007"
+    networks:
+      - peer-prep-network
+
+  gpt-service:
+    build: ./GptService
+    ports:
+      - "3008:3008"
+    env_file:
+      - ./gpt-service/.env
+    networks:
+      - peer-prep-network
 
 networks:
   peer-prep-network:
