@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { addMatchedPair, getCurrentMatchedPair } = require('../database/matchedPairDb');
 const MatchedPair = require('../models/matchedPairModel');
 const matchedPairDb = require('../database/matchedPairDb');
-const { getMatchQuestion } = require('../database/questionDb');
+const axios = require('axios');
 
 let isCancelled = new Set();
 let availabilityCache = new Map();
@@ -91,13 +91,14 @@ async function findMatch(request) {
                 });
 
             } else if (isMatched && !stored) {
+                const questionId = await getMatchQuestion(request.language, 
+                            request.difficulty, request.topic);
                 const matchedPair = new MatchedPair({
                     sessionId: uuidv4(),
                     id1: id,
                     id2: collaboratorId,
                     isEnded: false,
-                    questionId: await getMatchQuestion(
-                        request.language, request.difficulty, request.topic),
+                    questionId: questionId,
                     language: request.language,
                     proficiency: request.proficiency,
                     difficulty: request.difficulty,
@@ -277,6 +278,28 @@ async function listenToMatchingQueue(channel, matchId, request) {
         });
     } catch (error) {
         return error.message;
+    }
+}
+
+async function getMatchQuestion(language, difficulty, topic) {
+    const url = `${config.questionServiceUrl}/match`;
+    const jsonReq = {
+        language: language,
+        difficulty: difficulty,
+        category: topic
+    };
+
+    try {
+        const response = await axios.post(url, jsonReq);
+
+        console.log('Successfully get match question: ', response.data.question._id);
+
+        return response.data.question._id;
+
+    } catch (error) {
+        console.log('Error getting match question: ', error);
+        
+        return null;
     }
 }
 

@@ -1,111 +1,227 @@
-const io = require('socket.io-client');
+const socketURL = 'http://localhost:3003';
 
-let audio;
+let userId = Math.floor(Math.random() * 101).toString();
+let collaboratorId;
+let sessionId = 'aaa111'
+console.log('sessionId: ', sessionId);
 
-let socket = io();
-let rtcPeerConnection;
-let remoteStream;
+document.addEventListener('DOMContentLoaded', function () {
+    const endButton = document.getElementById('end-call');
+
+    endButton.addEventListener('click', () => {
+        console.log('End call!');
+        endVideoConnection();
+    });
+});
+
+
+// eslint-disable-next-line no-undef
+let socket = io(socketURL, { reconnection: true, query: { userId: userId, sessionId: sessionId }});
+
+let peerConnection = new RTCPeerConnection();
+
 let localStream;
+let remoteStream;
 
-let isCaller = false;
-let caller;
-let receiver;
-let sessionId;
-
-const iceServers = {
-    iceServers: [
-        {
-            urls: "stun:stun.l.google.com:19302",
-        },
-    ],
-};
+let isCalling = false;
 
 const streamConstraints = {
     audio: true,
-    video: false,
+    video: true, // change to false for audio only call
 };
 
-const option = {
-    offerToReceiveAudio: 1
-}
+const callUser = async () => {
+    await setMedia();
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-socket.on('ready', (recv) => {
-    receiver = recv;
-    initPeerConnection();
+    socket.emit("call", offer);
+    console.log(userId, ' call ', collaboratorId);
+};
 
-    rtcPeerConnection.createOffer(option)
-        .then(desc => setLocalAndOffer(desc))
-        .catch(e => console.log(e));
-})
+const setMedia = async () => {
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia(streamConstraints);
+        
+        const localVideo = document.getElementById("local-video");
+        if (localVideo) {
+            localVideo.srcObject = localStream;
+        }
 
-socket.on('join', (session) => {
-    sessionId = session;
-})
-
-socket.on('served-candidate', (event) => {
-    var candidate = new RTCIceCandidate({
-        sdpMLineIndex: event.label,
-        candidate: event.candidate
-    });
-    rtcPeerConnection.addIceCandidate(candidate);
-});
-
-socket.on('offered', (param) => {
-    caller = param.caller;
-    initPeerConnection();
-    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(param.event));
-    rtcPeerConnection.createAnswer()
-        .then(desc => setLocalAndAnswer(desc))
-        .catch(e => console.log(e));
-});
-
-socket.on('answered', (event) => {
-    console.log(event);
-    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
-})
-
-const setLocalAndOffer = (sessionDescription) => {
-    rtcPeerConnection.setLocalDescription(sessionDescription);
-    socket.emit('offer', { 
-        type: 'offer',
-        sdp: sessionDescription,
-        receiver: receiver
-    });
-}
-
-const setLocalAndAnswer = (sessionDescription) => {
-    rtcPeerConnection.setLocalDescription(sessionDescription);
-    socket.emit('answer', { 
-        type: 'answer',
-        sdp: sessionDescription, 
-        caller: caller
-    });
-}
-
-const onIceCandidate = (event) => {
-    let id = isCaller ? receiver : caller;
-    if (event.candidate) {
-        socket.emit("candidate", {
-            type: 'candidate',
-            label: event.candidate.sdpMLineIndex,
-            id: event.candidate.sdpMid,
-            candidate: event.candidate.candidate,
-            sendTo: id
-        });
+        localStream
+        .getTracks()
+        .forEach((track) => peerConnection.addTrack(track, localStream));
+  
+    } catch(err) {
+      console.log(err);
     }
 }
 
-const onStream = (event) => {
-    remoteStream = event.streams;
+socket.on("collaborator-joined", (collaborator) => {
+    collaboratorId = collaborator;
+
+    console.log('collaborator-joined: ', collaboratorId);
+
+    
+    const collaboratorContainer = document.getElementById("collaborator-container");
+    
+    socket.emit('recv-join');
+
+    const collaboratorContainerEl = createCollaboratorItemContainer();
+    collaboratorContainer.appendChild(collaboratorContainerEl);
+});
+
+socket.on("collaborator-recv-join", (collaborator) => {
+    collaboratorId = collaborator;
+
+    console.log('collaborator-recv-join: ', collaboratorId);
+
+    const collaboratorContainer = document.getElementById("collaborator-container");
+
+    const collaboratorContainerEl = createCollaboratorItemContainer();
+    collaboratorContainer.appendChild(collaboratorContainerEl);
+});
+
+socket.on("collaborator-disconnected", () => {
+    console.log('collaborator-disconnected: ', collaboratorId);
+
+    endCommunication();
+});
+
+socket.on("collaborator-end-call", () => {
+    console.log('collaborator-end-call: ', collaboratorId);
+
+    endVideoConnection();
+})
+
+socket.on("called", async (offer) => {
+    console.log(userId, ' called by ', collaboratorId);
+
+    if (isCalling) {
+        await setVideoConnection(offer);
+
+    } else {
+        const acceptButton = document.getElementById('accept-call');
+        const collaboratorContainer = document.getElementById("collaborator-container");
+
+        acceptButton.disabled = false;
+        collaboratorContainer.style.pointerEvents = 'none';
+
+        acceptButton.addEventListener('click', async () => {
+            console.log(userId, ' Accept call!');
+
+            acceptButton.disabled = true;
+
+            const talkingWithInfo = document.getElementById("talking-with-info");
+            talkingWithInfo.innerHTML = `Talking with: "Socket: ${collaboratorId}"`;
+
+            await setMedia();
+
+            await setVideoConnection(offer);
+
+            callUser();
+            isCalling = true;
+    });
+    }
+});
+
+socket.on("answered", async (answerData) => {
+    console.log(collaboratorId, ' answered ', userId);
+    await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(answerData)
+    );
+
+    if (!isCalling) {
+        callUser();
+        isCalling = true;
+    }
+});
+
+socket.on("new-message", (message) => {
+    console.log('received new-message: ', message);
+});
+
+
+peerConnection.ontrack = ({ streams: [stream] }) => {
+    const remoteVideo = document.getElementById("remote-video");
+
+    remoteStream = stream;
+
+    if (remoteVideo) {
+      remoteVideo.srcObject = remoteStream;
+    }
+};
+
+const setVideoConnection = async(offer) => {
+    await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(offer)
+    );
+
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+
+    socket.emit("answer", answer);
 }
 
-const addLocalStream = (event) => {
-    localStream = event;
-}
+const endCall = () => {
+    socket.emit("end-call");
+    endVideoConnection();
+};
 
-const initPeerConnection = () => {
-    rtcPeerConnection = new RTCPeerConnection(iceServers);
-    rtcPeerConnection.onicecandidate = onIceCandidate;
-    rtcPeerConnection.ontrack = onStream;
-    rtcPeerConnection.addTrack(localStream);
+const endVideoConnection = () => {
+    const elToRemove = document.getElementById(collaboratorId);
+    const endButton = document.getElementById('end-call');
+
+    endButton.disabled = true;
+  
+    if (elToRemove) {
+      elToRemove.remove();
+    }
+
+    peerConnection.close();
+    peerConnection = null;
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
+};
+
+const endCommunication = () => {
+    socket.disconnect();
+    socket = null;
+};
+
+const createCollaboratorItemContainer = () => {
+    const collaboratorContainerEl = document.createElement("div");
+  
+    const collaboratorNameEl = document.createElement("p");
+  
+    collaboratorContainerEl.setAttribute("class", "active-collaborator");
+    collaboratorContainerEl.setAttribute("id", collaboratorId);
+
+    collaboratorNameEl.setAttribute("class", "collaboratorName");
+    collaboratorNameEl.innerHTML = `Call Collaborator: ${collaboratorId}`;
+  
+    collaboratorContainerEl.appendChild(collaboratorNameEl);
+  
+    collaboratorContainerEl.addEventListener("click", () => {
+        collaboratorContainerEl.setAttribute("class", 
+        "active-collaborator active-collaborator--selected");
+
+        const talkingWithInfo = document.getElementById("talking-with-info");
+        talkingWithInfo.innerHTML = `Talking with: "Socket: ${collaboratorId}"`;
+        
+        if (!isCalling) {
+            callUser();
+            isCalling = true;
+        }
+    });
+
+    return collaboratorContainerEl;
 }

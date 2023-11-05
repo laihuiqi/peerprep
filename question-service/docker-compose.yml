@@ -11,3 +11,7 @@ services:
       - "4000:4000"
     depends_on:
       - question-database
+
+    # environment:
+    #   MONGODB_URI: mongodb://mongo_db:27017
+    #   DB_NAME: 
