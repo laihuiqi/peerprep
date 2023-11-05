@@ -45,7 +45,13 @@ const startCommunication = async(socket) => {
         messageLog.set(sessionId, messages);
 
         socket.to(sessionId).emit('new-message', newMessage);
-    })
+    });
+
+    socket.on('get-message-log', () => {
+        console.log('get-message-log from ', userId);
+
+        socket.emit('recv-message-log', retrieveMessageLog(sessionId));
+    });
 
     socket.on('call', (offer) => {
         console.log(userId, ' calls collaborator');
@@ -88,6 +94,5 @@ const endCommunication = (sessionId) => {
 }
 
 module.exports = {
-    startCommunication,
-    retrieveMessageLog
+    startCommunication
 }
