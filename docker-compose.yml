@@ -106,10 +106,14 @@ services:
     ports:
       - "3008:3008"
     env_file:
-      - ./gpt-service/.env
+      - ./GptService/.env
     networks:
       - peer-prep-network
 
 networks:
   peer-prep-network:
     driver: bridge
+
+volumes:
+  mongo_data: 
+    driver: local
