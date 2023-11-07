@@ -111,11 +111,11 @@
   
   .aichat-toggle-btn {
     background: url('../../chatbotLogo.png') no-repeat center center; 
-    background-size: contain; /* Make sure the image covers the button */
+    background-size: contain; 
     border: none;
-    width: 80px; /* Set a fixed width */
-    height: 80px; /* Set a fixed height */
-    border-radius: 10px; /* Keep it round */
+    width: 80px;
+    height: 80px; 
+    border-radius: 10px; 
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
