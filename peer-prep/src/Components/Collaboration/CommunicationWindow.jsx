@@ -96,7 +96,7 @@ const CommunicationWindow = () => {
   
   const startCall = async () => {
     try {
-      // Access only audio since video is not required
+      // Access only audio 
       const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false });
       localAudioRef.current.srcObject = localStream;
   

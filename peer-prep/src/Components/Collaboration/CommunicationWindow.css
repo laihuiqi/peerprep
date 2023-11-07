@@ -86,7 +86,7 @@
   
   
   .chat-toggle-btn {
-    background: url('../../communicationLogo.png') no-repeat center center; /* Update with correct path */
+    background: url('../../communicationLogo.png') no-repeat center center; 
     background-size: cover;
     border: none;
     border-radius: 10px;
@@ -105,7 +105,7 @@
   }
 
 .default-message {
-    color: gray; /* Gray text for the default message */
+    color: gray; 
     background: none; 
     padding: 10px;
     margin: 10px 0; 
@@ -115,14 +115,14 @@
 
 .call-btn {
     background: #4CAF50 no-repeat center center; 
-    background-size: contain; /* Make sure the image fits the button */
-    color: transparent; /* Make the text transparent so only the image is visible */
+    background-size: contain; 
+    color: transparent; 
     border: none;
-    padding: 10px; /* Adjust the padding to fit your image */
+    padding: 10px; 
     border-radius: 4px;
     cursor: pointer;
-    width: 28px; /* Width of the button */
-    height: 28px; /* Height of the button */
+    width: 28px; 
+    height: 28px; 
 }
   
   
