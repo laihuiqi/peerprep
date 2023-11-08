@@ -35,7 +35,7 @@ const CommunicationWindow = () => {
     };
 
     // Initialize WebSocket connection
-    const newSocket = io('http://localhost:3003', {
+    const newSocket = io('http://localhost:3007', {
       query: { userId: 'user-id', sessionId: 'session-id' }
     });
 
