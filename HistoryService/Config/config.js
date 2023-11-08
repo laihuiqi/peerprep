@@ -3,5 +3,5 @@ module.exports = {
   databaseName: "attemptsDatabase",
   tableName: "attempt",
   databasePort: 3306,
-  databaseUrl: "history-service-database-test",
+  databaseUrl: "history-service-database",
 };

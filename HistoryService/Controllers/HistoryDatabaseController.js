@@ -8,6 +8,9 @@ const TABLE_NAME = config.tableName;
 var pool = null;
 
 async function connectToDatabase() {
+  // Waiting for SQL Container to be up
+  await new Promise((r) => setTimeout(r, 3000));
+
   pool = mySql
     .createPool({
       host: config.databaseUrl,

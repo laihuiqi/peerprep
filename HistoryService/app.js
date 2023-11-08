@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const {
   connectToDatabase,
 } = require("./Controllers/HistoryDatabaseController");
+
 connectToDatabase().then(() =>
   console.log("History Database Connected Successfully")
 );
