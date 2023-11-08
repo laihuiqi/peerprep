@@ -14,12 +14,25 @@ const checkQuestionValidity = (question) => {
 }
 
 const getAllQuestions = async (req, res) => {
-    try {
-        const questions = await Question.find({}).sort({createdAt: -1});
-        res.status(200).json(questions);
-    } catch (error) {
-        res.status(500).json({ error: 'Error retrieving questions'});
+  try {
+    const { complexity, category, language } = req.query;
+    const filter = {};
+
+    if (complexity) {
+      filter.complexity = complexity;
+    } 
+    if (language) {
+      filter.language = language;
+    } 
+    if (category) {
+      filter.category = category;
     }
+
+    const questions = await Question.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving questions' });
+  }
 }
   
 const createQuestion = async (req, res) => {
