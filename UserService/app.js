@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const config = require("./config");
 
 // Dependencies
 const morgan = require("morgan");
@@ -10,7 +11,7 @@ const mongoose = require("mongoose");
 
 // Connecting to MongoDB Database
 mongoose
-  .connect("mongodb://user-service-database:27017/userData")
+  .connect(config.databaseUrl)
   .then((result) => {
     console.log("Connected To MongoDB");
   })
