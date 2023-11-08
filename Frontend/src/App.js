@@ -18,6 +18,7 @@ function App() {
           {/* Adding CollaborationWindow for testing */}
           <Route path="/login" element={<LoginSignUp />} />
           <Route path="/collaboration" element={<CollaborationWindow />} />
+          <Route path="*" element={<p>Nothing To Prep Here Peer: 404!</p>} />
         </Routes>
       </div>
     </Router>
