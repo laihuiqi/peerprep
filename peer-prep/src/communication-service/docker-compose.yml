@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  # Node api service
+  api:
+    build: .
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+    networks:
+      - my-net
+
+networks:
+  my-net:

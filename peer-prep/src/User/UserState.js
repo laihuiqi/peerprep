@@ -13,6 +13,8 @@ function setUserState(obtainedUser) {
 
   currentLoggedInUser = new UserModel("", "", "");
   currentLoggedInUser.updateUser(obtainedUser);
+
+  console.log("User State Set");
 }
 
 function updateUserState(

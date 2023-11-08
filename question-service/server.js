@@ -1,7 +1,7 @@
-const config = require("./config/config");
 const express = require("express");
 const mongoose = require("mongoose");
 const questionRoutes = require("./routes/questions");
+const config = require("./config/config");
 
 const app = express();
 
@@ -23,6 +23,13 @@ portNumber = 4000;
 mongoose
   .connect(
     "mongodb+srv://admin:70eLGyahMN7cDMd1@questioncluster.brpdmd1.mongodb.net/?retryWrites=true&w=majority"
+    /*
+    config.mongodbUri, // for testing
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    } 
+    */
   )
   .then(() => {
     console.log("connected to database");

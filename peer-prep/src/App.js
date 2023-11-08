@@ -21,8 +21,10 @@ function App() {
           {/* Adding CollaborationWindow for testing */}
           <Route path="/login" element={<LoginSignUp />} />
           <Route path="/collaboration" element={<CollaborationWindow />} />
-        </Routes>
-      </div>
+       </Routes>
+      <Questions/>
+      {/* <LandingPage/> */}
+    </div>
     </Router>
   );
 }

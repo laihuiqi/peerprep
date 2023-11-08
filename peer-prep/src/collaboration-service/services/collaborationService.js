@@ -1,6 +1,6 @@
-const { getSession, endSession, getCurrentActiveSession } = require('../database/matchedPairDb');
 const { initCollaborativeCode, updateCollaborativeInput, updateCollaborativeLineInput, getCollaborativeInput } = require('../database/collaborativeInputDb');
 const config = require('../config/config');
+const axios = require('axios');
 
 let initSession = new Map();
 
@@ -15,14 +15,26 @@ const startCollaboration = async(socket, io) => {
 
         const sessionId = socket.handshake.query.sessionId;
         const userId = socket.handshake.query.userId;
-        const session = await getSession(sessionId);
+        let session;
+        let sessionReq;
+        try {
+            sessionReq = await axios.get(`${config.matchingServiceUrl}/getSession/${sessionId}`);
+            session = sessionReq.data.session;
+
+        } catch (error) {
+            console.log(error);
+            socket.disconnect();
+        }
 
         socket.join(sessionId);
         socket.emit('join', sessionId);
 
         if (initSession.has(sessionId)) {
+            console.log(`session ${sessionId} already initialized`);
             await new Promise(resolve => setTimeout(resolve, 2000));
+
         } else {
+            console.log(`init session ${sessionId}`);
             initSession.set(sessionId, config.DEFAULT_TIME_LIMIT[session.difficulty]);
         }
 
@@ -31,6 +43,7 @@ const startCollaboration = async(socket, io) => {
 
         let sessionTimer = setTimeout(async() => {
             io.to(sessionId).emit('system-terminate', sessionId);
+
             console.log("terminate here");
 
             await systemTerminate(sessionId, io);
@@ -45,17 +58,21 @@ const startCollaboration = async(socket, io) => {
 
         socket.on('update-code', (line, code) => {
             console.log(`Code changed on line ${line}`);
+
             socket.broadcast.to(sessionId).emit('code-changed', line, code);
         });
 
         socket.on('clear', async() => {
             console.log(`Clearing code input storage for session ${sessionId}`);
+
             socket.broadcast.to(sessionId).emit('cleared', sessionId);
+
             await updateCollaborativeInput(sessionId, []);
         });
 
         socket.on('change-line', async(line, code) => {
             socket.broadcast.to(sessionId).emit('code-changed', line, code);
+
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
@@ -106,6 +123,7 @@ const startCollaboration = async(socket, io) => {
 
             sessionTimer = setTimeout(async() => {
                 io.to(sessionId).emit('system-terminate', sessionId);
+
                 await systemTerminate(sessionId, io);
 
             }, time);
@@ -121,13 +139,31 @@ const startCollaboration = async(socket, io) => {
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
-            await endSession(sessionId);
+
+            let endReq;
+
+            try {
+                endReq = await axios.delete(`${config.matchingServiceUrl}/end/${sessionId}`);
+
+            } catch (error) {
+                console.log(error);
+                socket.disconnect();
+            }
+
+            const isEnded = endReq.data.status;
+
+            if (isEnded === 'success') {
+                console.log(`Successfully ended session ${sessionId}`);
+
+            } else {
+                console.log(`Failed to end session ${sessionId}`);
+            }
+
             initSession.delete(sessionId);
 
             socket.disconnect();
 
             setTimeout(async() => {
-
                 await systemTerminate(sessionId, io);
 
             }, config.SYSTEM_TERMINATE_TIMEOUT);
@@ -142,6 +178,7 @@ const startCollaboration = async(socket, io) => {
             if (line > 0 && code !== "") {
                 await updateCollaborativeLineInput(sessionId, line, code, userId);
             }
+
             socket.disconnect();
         });
 
@@ -166,7 +203,25 @@ const startCollaboration = async(socket, io) => {
     } else {
         console.log('Collaboration session does not exist');
 
-        await endSession(socket.handshake.query.sessionId);
+        let sessionId = socket.handshake.query.sessionId;
+
+        let endReq;
+        let isEnded;
+        
+        try {
+            endReq = await axios.delete(`${config.matchingServiceUrl}/end/${sessionId}`);
+            isEnded = endReq.data.status;
+        } catch (error) {
+            console.log(error);
+            isEnded = 'error';
+        }
+
+        if (isEnded === 'success') {
+            console.log(`Successfully ended session ${sessionId}`);
+            
+        } else {
+            console.log(`Failed to end session ${sessionId}`);
+        }
 
         socket.disconnect();
     }
@@ -174,9 +229,27 @@ const startCollaboration = async(socket, io) => {
 
 const systemTerminate = async(sessionId, io) => {
     console.log(`system terminated: ${sessionId}`);
+
     initSession.delete(sessionId);
 
-    await endSession(sessionId);
+    let endReq;
+    let isEnded;
+    
+    try {
+        endReq = await axios.delete(`${config.matchingServiceUrl}/end/${sessionId}`);
+        isEnded = endReq.data.status;
+        
+    } catch (error) {
+        console.log(error);
+        isEnded = 'error';
+    }
+
+    if (isEnded === 'success') {
+        console.log(`Successfully ended session ${sessionId}`);
+        
+    } else {
+        console.log(`Failed to end session ${sessionId}`);
+    }
 
     io.in(sessionId).disconnectSockets();
 }
@@ -184,7 +257,16 @@ const systemTerminate = async(sessionId, io) => {
 const verifyCurrentSession = async(sessionId, userId) => {
     console.log(`Verifying current session ${sessionId} for user ${userId}`);
 
-    const currentSessionId = await getCurrentActiveSession(userId);
+    let currentSessionReq;
+    let currentSessionId;
+
+    try {
+        currentSessionReq = await axios.get(`${config.matchingServiceUrl}/getMatchSession/${userId}`);
+        currentSessionId = currentSessionReq.data.sessionId;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 
     return sessionId === currentSessionId;
 }
@@ -193,9 +275,27 @@ const restoreCodeEditor = async(sessionId) => {
     console.log(`Restoring code editor for session ${sessionId}`);
 
     const collaborativeInput = await getCollaborativeInput(sessionId);
+
     return collaborativeInput;
 }
 
+const getQuestionById = async(questionId) => {
+    console.log(`Getting question ${questionId}`);
+
+    let questionReq;
+
+    try {
+        questionReq = await axios.get(`${config.questionServiceUrl}/${questionId}`);
+    
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+    
+    return questionReq.data;
+}
+
 module.exports = {
-    startCollaboration
+    startCollaboration,
+    getQuestionById
 }
