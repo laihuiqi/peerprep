@@ -2,7 +2,9 @@
 
 # Quick Start
 
-1. Build the Containers.
+1. Navigate to the `HistoryService` Directory in Terminal or Powershell
+
+2. Build the Containers.
 
 Command:
 
@@ -10,14 +12,15 @@ Command:
 docker-compose build
 ```
 
-2. Start the Containers.
-   Command:
+3. Start the Containers.
+
+Command:
 
 ```
 docker-compose up
 ```
 
-3. Using Postman or a likewise app, you can connect to `localhost:3006` to http send queries.
+4. Using Postman or a likewise app, you can connect to `localhost:3006` to send http (REST) queries.
 
 # Starting Containers Individually
 
@@ -29,7 +32,7 @@ docker-compose up
 
 ## Set Up a Docker Network (Bridge)
 
-Set up a Docker network using the following command, and ensure to use the same network name when starting the various services and databases later. (This step is important if you dont want to run via `docker-compose up`)
+Set up a Docker network using the following command, and ensure to use the same network name when starting the various services and databases later. (This step is important if you dont want to run via `docker-compose up` command)
 
 Command:
 
@@ -41,7 +44,7 @@ This command is to be run only for the initial set up, and once the network is s
 
 ## mySQL Container
 
-First and foremost change the `databaseUrl` in the config.js file to `127.0.0.1`
+First and foremost change the `databaseUrl` in the `Config/config.js` file to `127.0.0.1`
 
 Start by running this container first, else History Service will not be able to connect to Database.
 
@@ -63,9 +66,9 @@ The above will open a terminal window for the mySql Docker Container, where `mys
 
 ## History Service Server
 
-Navigate to the `HistoryService` Directory in Terminal or Powershell
+1. Navigate to the `HistoryService` Directory in Terminal or Powershell
 
-Build the container by running the following command
+2. Build the container by running the following command
 
 Command:
 
@@ -73,7 +76,7 @@ Command:
 docker build -t history-service .
 ```
 
-Run this container by running the following command
+3. Run this container by running the following command
 
 Command:
 
