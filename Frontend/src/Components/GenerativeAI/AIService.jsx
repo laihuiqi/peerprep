@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_ENDPOINT = 'http://localhost:3004'; // Update to match backend endpoint
+const API_ENDPOINT = 'http://localhost:3008'; // Update to match backend endpoint
 
 export const getAIResponse = async (userId, prompt) => {
   try {
