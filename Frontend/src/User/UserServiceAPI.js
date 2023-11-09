@@ -24,7 +24,7 @@ import {
 
 import { getFirebaseUserCredentials } from "../Authentication/AuthenticationState";
 
-import { updateUserState, setUserState, getUserAdminStatus } from "./UserState";
+import { updateUserState, setUserState, isUserAdmin } from "./UserState";
 
 async function registerUser(
   userName,
@@ -167,7 +167,7 @@ async function updateLoggedInUserPassword(updatedUserPassword) {
 }
 
 async function elevateUserPrivilege(userEmailToElevate) {
-  if (getUserAdminStatus() === true) {
+  if ((await isUserAdmin()) === true) {
     const result = await updateUserPrivilege(userEmailToElevate, true);
 
     if (result !== null && result.status === 200) {
@@ -179,7 +179,7 @@ async function elevateUserPrivilege(userEmailToElevate) {
 }
 
 async function lowerUserPrivilege(userEmailToLower) {
-  if (getUserAdminStatus() === true) {
+  if ((await isUserAdmin()) === true) {
     const result = await updateUserPrivilege(userEmailToLower, false);
 
     if (result !== null && result.status === 200) {
@@ -191,7 +191,7 @@ async function lowerUserPrivilege(userEmailToLower) {
 }
 
 async function getAllRegisteredUsers() {
-  if (getUserAdminStatus() === true) {
+  if ((await isUserAdmin()) === true) {
     const result = await getAllUsersData();
 
     if (result !== null && result.status === 200) {

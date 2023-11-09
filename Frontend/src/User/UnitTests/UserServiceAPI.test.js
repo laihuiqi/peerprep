@@ -12,30 +12,30 @@ const {
 } = require("../UserServiceAPI");
 
 const {
-  isUserLoggedIn,
   getUserId,
   getUserName,
   getUserEmail,
   getUserPreferredLanguage,
   getUserGithubId,
-  getUserAdminStatus,
+  isUserAdmin,
 } = require("../UserState");
 
 const {
   getFirebaseUserCredentials,
+  isUserLoggedIn,
 } = require("../../Authentication/AuthenticationState");
 
-test("Test User Registration Flow", () => {
+test("Test User Registration Flow", async () => {
   return registerUser(
     "Test Name",
     "test@yahoo.com",
     "Password123",
     "TestGitHubId",
     "TestLanguage"
-  ).then((data) => {
+  ).then(async (data) => {
     expect(data).toBe(true);
 
-    expect(isUserLoggedIn()).toBe(true);
+    expect(await isUserLoggedIn()).toBe(true);
     expect(getUserName()).toBe("Test Name");
 
     expect(getFirebaseUserCredentials).not.toBe(null);
