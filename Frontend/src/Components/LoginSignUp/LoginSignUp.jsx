@@ -40,7 +40,7 @@ export const LoginSignUp = () => {
                 const result = await loginUser(userEmail, userPassword)
 
                 if(result) {
-                    navigate("/");
+                    navigate("/landing");
                 }
             }}>Log In</div>
             <div className={action==="Log In"? "submit gray": "submit"} 
@@ -49,7 +49,7 @@ export const LoginSignUp = () => {
                 const result = await registerUser("Name Placeholder", userEmail, userPassword, "GitHub ID Placeholder", "Preferred Language Placeholder")
 
                 if(result) {
-                    navigate("/");
+                    navigate("/landing");
                 }
             }}>Sign Up</div>
         </div>
