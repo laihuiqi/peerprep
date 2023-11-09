@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import {
   BrowserRouter as Router,
@@ -19,9 +19,6 @@ import { isUserLoggedIn } from "./Authentication/AuthenticationState";
 import useUserStatusHook from "./CustomHooks/userHook";
 
 import "./App.css";
-
-// import { auth } from "./Authentication/firebase";
-// import { useAuthState } from "react-firebase-hooks/auth";
 
 const ProtectedRoute = ({
   checkAdminStatus,
@@ -65,7 +62,6 @@ function App() {
               <ProtectedRoute
                 redirectPath="/unauthorized"
                 checkAdminStatus={true}
-                // isAllowed={!!isUserAdmin() && !!isUserLoggedIn()}
               >
                 <Questions />
               </ProtectedRoute>
