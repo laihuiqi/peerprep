@@ -1,5 +1,10 @@
 // Manage User State Using Local Storage
 
+import {
+  getFirebaseUserCredentials,
+  isUserLoggedIn,
+} from "../Authentication/AuthenticationState";
+
 import { getUserData } from "./UserServiceClientController";
 import { setUserState } from "./UserState";
 
@@ -26,4 +31,15 @@ async function setLocalUserState(firebaseUserCredentials) {
   }
 }
 
-export { setLocalUserState };
+async function getUserAdminStatus() {
+  if (await isUserLoggedIn()) {
+    const userId = getFirebaseUserCredentials().uid;
+    const result = await getUserData(userId);
+
+    return result.data.user.isAdmin;
+  }
+
+  return false;
+}
+
+export { setLocalUserState, getUserAdminStatus };
