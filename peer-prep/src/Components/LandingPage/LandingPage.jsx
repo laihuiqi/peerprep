@@ -3,6 +3,8 @@ import {useState} from 'react'
 import './LandingPage.css'
 import {Dashboard} from './Dashboard'
 import {UserProfile} from './UserProfile'
+import {getUserName} from "../../User/UserState"
+
 
 import home_icon from '../Assets/home.png'
 import user_icon from '../Assets/user-prof.png'
@@ -11,13 +13,14 @@ import dummy_user from '../Assets/David.png'
  
 export const LandingPage = () => {
     const [page_name, setPageName] = useState("Dashboard");
+    const userName = getUserName();
 
   return (
     <div className = "landing-container">
         <div className="navigation-panel">
             <div className="user-header">
                 <img src = {dummy_user} className="user-icon" alt = ""/>
-                <div className="user-name">david101</div>
+                <div className="user-name">{userName}</div>
             </div>
             <div className="nav-tabs">
                 <div className="nav-tab" onClick = {() => {setPageName("Dashboard")}}>

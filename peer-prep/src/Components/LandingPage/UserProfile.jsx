@@ -1,16 +1,18 @@
 import React from 'react'
 import './UserProfile.css'
 import {useState} from 'react'
+import {getUserName, getUserEmail, getUserPreferredLanguage, updateUserState} from "../../User/UserState"
 
 import edit_icon from "../Assets/pencil.png"
 
 export const UserProfile = (user) => {
     const [isEdit, setEdit] = useState(false);
-    const [name, setName] = useState("David Rose");
-    const [lang, setLang] = useState("Python");
+    const [name, setName] = useState(getUserName());
+    const [email, setEmail] = useState(getUserEmail())
+    const [lang, setLang] = useState(getUserPreferredLanguage());
 
     const updateProfile = (name, lang) => {
-        console.log(name, lang)
+        updateUserState(name, email, "", lang);
     }
 
   return (
@@ -27,17 +29,16 @@ export const UserProfile = (user) => {
                 {isEdit? 
                 <input type="text" className="profile-input" defaultValue = "David Rose"
                     onChange = {(e) => {setName(e.target.value)}}/> :
-                <div className = "profile-detail">
-                    David Rose
-                </div>}
+                <div className = "profile-detail">{name}</div>
+                }
                 
             </div>
             <div className="profile-info">
                 <div className="profile-field">
-                    Email id/Github Username
+                    Email id
                 </div>
                 <div className="profile-detail">
-                    david101
+                    {email}
                 </div>
             </div>
             <div className="profile-info">
@@ -48,7 +49,7 @@ export const UserProfile = (user) => {
                 <input type="text" className="profile-input" defaultValue = "Python"
                     onChange = {(e) => {setLang(e.target.value)}}/> :
                 <div className = "profile-detail">
-                    Python
+                    {lang}
                 </div>}
                
             </div>
