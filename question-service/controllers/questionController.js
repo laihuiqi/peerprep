@@ -50,8 +50,8 @@ const getMatchQuestion = async (language, difficulty, topic) => {
   }
 }; 
 
-const duplicateTitleMessage = "Question title already exists. Please enter new title!";
-const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
+export const duplicateTitleMessage = "Question title already exists. Please enter new title!";
+export const duplicateDescriptionMessage = "Question description already exists. Please enter new description!"
   
 const createQuestion = async (req, res) => {
   var { title, description, complexity, category, language } = req.body;

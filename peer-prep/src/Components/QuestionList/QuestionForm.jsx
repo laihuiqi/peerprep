@@ -3,6 +3,7 @@ import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
 import { QDifficultyDropdown } from './QDifficultyDropdown'
 import { QLanguageDropdown } from './QLanguageDropdown';
+export const MISSING_FIELD_ERROR_MESSAGE = "Please fill all fields!";
 
 export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
@@ -11,13 +12,13 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
   const [description, setDescription] = useState("");
   const [language, setLanguage] = useState("SQL");
 
-  const [isDuplicateTitle, setIsDuplicateTitle] = useState(true);
+  const [isDuplicateTitle, setIsDuplicateTitle] = useState(false);
   const [isDuplicateDesc, setIsDuplicateDesc] = useState(false);
   const [isMissingField, setIsMissingField] = useState(false);
 
   const [titleError, setTitleError] = useState("");
   const [descError, setDescError] = useState("");
-  const [missingFieldError, setMissingFieldError] = useState("Please fill all fields!")
+  const [missingFieldError, setMissingFieldError] = useState(MISSING_FIELD_ERROR_MESSAGE);
 
 
   const isEmpty = (str) => {
