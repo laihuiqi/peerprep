@@ -1,6 +1,7 @@
 import React from 'react'
 import './LoginSignUp.css'
 import {useState} from 'react'
+import { useNavigate } from "react-router-dom";
 
 import password_icon from '../Assets/password.png'
 import user_icon from '../Assets/user.png'
@@ -8,6 +9,8 @@ import user_icon from '../Assets/user.png'
 import { registerUser, loginUser } from '../../User/UserServiceAPI'
 
 export const LoginSignUp = () => {
+    const navigate = useNavigate();
+
     const [action, setAction] = useState("Log In");
 
     const [userEmail, setUserEmail] = useState("");
@@ -32,14 +35,22 @@ export const LoginSignUp = () => {
         {action === "Sign Up" ? <div></div>: <div className="forgot-password"> Forgot Password? <span> Click Here.</span></div>}
         <div className="submit-container">
             <div className={action==="Sign Up"? "submit gray": "submit"} 
-            onClick = {() => {
+            onClick = {async () => {
                 setAction("Log In")
-                loginUser(userEmail, userPassword)
+                const result = await loginUser(userEmail, userPassword)
+
+                if(result) {
+                    navigate("/");
+                }
             }}>Log In</div>
             <div className={action==="Log In"? "submit gray": "submit"} 
-            onClick = {() => {
+            onClick = {async () => {
                 setAction("Sign Up")
-                registerUser("Name Placeholder", userEmail, userPassword, "GitHub ID Placeholder", "Preferred Language Placeholder")
+                const result = await registerUser("Name Placeholder", userEmail, userPassword, "GitHub ID Placeholder", "Preferred Language Placeholder")
+
+                if(result) {
+                    navigate("/");
+                }
             }}>Sign Up</div>
         </div>
     </div>
