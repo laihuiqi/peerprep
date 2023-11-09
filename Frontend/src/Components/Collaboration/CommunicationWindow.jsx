@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import Draggable from 'react-draggable';
 import './CommunicationWindow.css';
+import callIcon from '../../call.png';
+import hangUpIcon from '../../hangup.png';
 
 const CommunicationWindow = () => {
   const [messages, setMessages] = useState([]);
@@ -13,6 +15,12 @@ const CommunicationWindow = () => {
   const remoteAudioRef = useRef(null);
   const peerConnection = useRef(null);
   const remoteStream = useRef(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
+  const [callWaiting, setCallWaiting] = useState(false);
+  const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
+  const [incomingOffer, setIncomingOffer] = useState(null);
+
+
 
   useEffect(() => {
     // Initialize WebRTC peer connection
@@ -27,21 +35,30 @@ const CommunicationWindow = () => {
     };
 
     // Initialize WebSocket connection
-    const newSocket = io('http://localhost:3003', {
+    const newSocket = io('http://localhost:3001', {
       query: { userId: 'user-id', sessionId: 'session-id' }
     });
 
     setSocket(newSocket);
 
     // Event listeners for WebRTC signaling
-    newSocket.on('call', handleReceiveCall);
-    newSocket.on('answer', handleAnswer);
+    newSocket.on('collaborator-joined', handleCollaboratorJoined);
+    newSocket.on('collaborator-recv-join', handleCollaboratorRecvJoin);
+    newSocket.on('collaborator-disconnected', handleCollaboratorDisconnected);
+    newSocket.on('collaborator-end-call', handleEndCall);
+    newSocket.on('called', handleReceiveCall);
+    newSocket.on('answered', handleAnswer);
     newSocket.on('ice-candidate', handleNewICECandidateMsg);
+    newSocket.on('new-message', (message) => {
+      setMessages(prevMessages => [...prevMessages, message]);
+    });
 
     // Cleanup on component unmount
     return () => {
       newSocket.close();
-      peerConnection.current.close();
+      if (peerConnection.current) {
+        peerConnection.current.close();
+      }
     };
   }, []);
 
@@ -53,6 +70,13 @@ const CommunicationWindow = () => {
       isDefaultMessage: true
     }]);
   }, []);
+
+  const showToast = (message) => {
+    setToast({ visible: true, message });
+    setTimeout(() => {
+      setToast({ visible: false, message: '' });
+    }, 2000); // 
+  };  
 
   const handleSendMessage = () => {
     if (!socket) return;
@@ -69,26 +93,78 @@ const CommunicationWindow = () => {
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
-
+  
   const startCall = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    localAudioRef.current.srcObject = localStream;
-
-    localStream.getTracks().forEach(track => {
-      peerConnection.current.addTrack(track, localStream);
-    });
-
-    const offer = await peerConnection.current.createOffer();
-    await peerConnection.current.setLocalDescription(offer);
-    socket.emit('call', { offer });
+    try {
+      // Access only audio 
+      const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false });
+      localAudioRef.current.srcObject = localStream;
+  
+      localStream.getTracks().forEach(track => {
+        peerConnection.current.addTrack(track, localStream);
+      });
+  
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
+      socket.emit('call', offer);
+      setCallWaiting(true); // Call is now waiting for the partner to accept
+      showToast('Waiting for partner to join the call...');
+    } catch (err) {
+      showToast('Failed to access media devices.');
+      console.error('Failed to start call', err);
+    }
   };
+
+  const handleCollaboratorJoined = (collaboratorId) => {
+    // Update the state to add the new collaborator
+    setCollaborators(prev => [...prev, collaboratorId]);
+    showToast(`Collaborator ${collaboratorId} joined the call.`);
+  };
+
+  const handleCollaboratorRecvJoin = (collaboratorId) => {
+    setCollaborators(prev => [...prev, collaboratorId]);
+    showToast(`Collaborator ${collaboratorId} ready for the call.`);
+  };
+
+  const handleCollaboratorDisconnected = () => {
+    endAudioConnection();
+    setCollaborators([]);
+    showToast('A collaborator has disconnected.');
+  };
+  
 
   const handleReceiveCall = async (incoming) => {
     await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.offer));
     const answer = await peerConnection.current.createAnswer();
     await peerConnection.current.setLocalDescription(answer);
-    socket.emit('answer', { answer });
+    socket.emit('answer', answer);
+    setShowIncomingCallModal(true);
+    setIncomingOffer(incoming.offer);
   };
+
+  const acceptCall = async () => {
+    if (!incomingOffer || !peerConnection.current) {
+      console.error("No incoming call to accept");
+      return;
+    }
+  
+    try {
+      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incomingOffer));
+  
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
+  
+      socket.emit("answer", answer);
+  
+      setIsInCall(true);
+      showToast('Call accepted. Connected!');
+    } catch (error) {
+      console.error("Error accepting call:", error);
+      showToast('Error accepting the call.');
+    }
+  };
+  
+  
 
   const handleAnswer = async (incoming) => {
     await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.answer));
@@ -96,7 +172,7 @@ const CommunicationWindow = () => {
 
   const handleNewICECandidateMsg = async (incoming) => {
     try {
-      await peerConnection.current.addIceCandidate(incoming.candidate);
+      await peerConnection.current.addIceCandidate(new RTCIceCandidate(incoming));
     } catch (e) {
       console.error('Error adding received ice candidate', e);
     }
@@ -112,28 +188,89 @@ const CommunicationWindow = () => {
   };
 
   const endCall = () => {
-    // Stop all tracks on the local stream
-    if (localAudioRef.current && localAudioRef.current.srcObject) {
-      localAudioRef.current.srcObject.getTracks().forEach(track => track.stop());
+    // Emit the end-call event to notify the backend
+    socket.emit("end-call");
+  
+    // Call the function to handle UI and stream cleanup
+    endAudioConnection();
+  
+    // UI feedback for the user
+    // Update the button text and disable the button
+    const callButton = document.getElementById('call-btn'); 
+    if (callButton) {
+      callButton.textContent = 'Call Ended';
+      callButton.disabled = true;
     }
   
-    // Stop all tracks on the remote stream
-    if (remoteStream.current) {
-      remoteStream.current.getTracks().forEach(track => track.stop());
-    }
-  
-    // Close the peer connection
-    if (peerConnection.current) {
-      peerConnection.current.close();
-      peerConnection.current = new RTCPeerConnection();
-    }
-  
-    // Update the call state
-    setIsInCall(false);
+    // Display a message to the user about the call ending
+    showToast('Call ended by you.');
   };
+  
+  const endAudioConnection = () => {
+    // Stop all tracks on the local media stream
+    if (localAudioRef.current && localAudioRef.current.srcObject) {
+      const tracks = localAudioRef.current.srcObject.getTracks();
+      tracks.forEach(track => {
+        track.stop();
+      });
+      localAudioRef.current.srcObject = null;
+    }
+  
+    // Close the peer connection if it's open
+    if (peerConnection.current) {
+      peerConnection.current.getSenders().forEach(sender => {
+        peerConnection.current.removeTrack(sender);
+      });
+      peerConnection.current.close();
+      peerConnection.current = null;
+    }
+  
+    // UI feedback for the user
+    // Update the button text and disable the button
+    const callButton = document.getElementById('call-btn'); 
+    if (callButton) {
+      callButton.textContent = 'Call';
+      callButton.disabled = false;
+    }
+  
+    // Reset call state
+    setIsInCall(false);
+  
+    // Display a message to the user about the call ending
+    showToast('Call ended.');
+  };
+
+  const handleEndCall = () => {
+    endAudioConnection();
+    showToast('Call ended by the other user.');
+  };
+  
+  
+
+  const rejectCall = () => {
+    socket.emit('end-call');
+    setShowIncomingCallModal(false);
+    showToast('Call rejected');
+  };
+
+  const IncomingCallModal = ({ onAccept, onReject }) => (
+    <div className="incoming-call-modal">
+      <div className="incoming-call-content">
+        <h2>Incoming Call...</h2>
+        <button onClick={onAccept}>Accept</button>
+        <button onClick={onReject}>Reject</button>
+      </div>
+    </div>
+  );
 
   return (
     <>
+    {showIncomingCallModal && (
+      <IncomingCallModal
+        onAccept={acceptCall}
+        onReject={rejectCall}/>
+        )}
+    {toast.visible && <div className="toast">{toast.message}</div>}
       {/* Chat toggle button */}
       <div className="chat-toggle-btn-container">
         <button 
@@ -151,8 +288,8 @@ const CommunicationWindow = () => {
             <button 
               className={`call-btn ${isInCall ? 'hang-up-btn' : ''}`}
               onClick={toggleCall}
+              style={{ backgroundImage: `url(${isInCall ? hangUpIcon : callIcon})` }}
             >
-              {isInCall ? 'Hang Up' : 'Call'}
             </button>
             {/* Local audio stream (hidden) */}
             <audio ref={localAudioRef} style={{ display: 'none' }} autoPlay muted></audio>
