@@ -80,7 +80,7 @@ async function resetUserPasswordUsingFirebase(userEmail) {
   }
 }
 
-async function isUserLoggedIn() {
+async function isUserLoggedInUsingFirebase() {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe(); // Stop listening to further changes
@@ -116,5 +116,5 @@ export {
   loginUserUsingFirebase,
   logoutUserUsingFirebase,
   resetUserPasswordUsingFirebase,
-  isUserLoggedIn,
+  isUserLoggedInUsingFirebase,
 };
