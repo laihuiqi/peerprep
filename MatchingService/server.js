@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./config/config');
 const routes = require('./routes/matchingRoute');
@@ -22,6 +23,7 @@ const connectDB = async() => {
 
 connectDB();
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
