@@ -26,7 +26,7 @@ services:
     ports:
       - 27018:27017
     volumes:
-      - ./UserServiceDatabase:/data/db
+      - user_service_database_volume:/data/db
     networks:
       - peer-prep-network
 
@@ -117,3 +117,7 @@ networks:
 volumes:
   mongo_data: 
     driver: local
+
+  user_service_database_volume: 
+    driver: local
+
