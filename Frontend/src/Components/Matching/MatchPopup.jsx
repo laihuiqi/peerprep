@@ -43,7 +43,8 @@ const MatchPopup = ({ isOpen, isClose }) => {
         };
 
         // Make a post request to backend with the payload
-        axios.post(`home/${userId}`, payload) // replace /${props.userId} with how we access userId
+        const URL = `http://localhost:3004/home/${userId}`;
+        axios.post(URL, payload) // replace /${props.userId} with how we access userId
             .then(response => {
                 setGoToLoadPopup(false); // Close the loading popup
                 if (response.data.status === 'success') {
