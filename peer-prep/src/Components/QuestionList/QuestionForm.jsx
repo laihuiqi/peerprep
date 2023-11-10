@@ -3,11 +3,12 @@ import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
 import { QDifficultyDropdown } from './QDifficultyDropdown'
 import { QLanguageDropdown } from './QLanguageDropdown';
+import { QTopicDropdown } from './QTopicDropdown'; 
 
 export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState("Sorting");
   const [description, setDescription] = useState("");
   const [language, setLanguage] = useState("SQL");
 
@@ -77,13 +78,8 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
         <div className="q-form-content">
           <div className="q-form-tags">
               <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
-              <input type="text" className="q-form-tag q-form-input" 
-              placeholder = 'Topic'
-              onChange = {
-                (e) => setTopic(e.target.value)
-              }
-              />
-           <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
+              <QTopicDropdown chosenTopic={topic} setTopic={(e) => setTopic(e.target.value)} />
+              <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
              </div>
              <textarea type="text" className="q-form-description q-form-input" 
             placeholder = "Question description"
