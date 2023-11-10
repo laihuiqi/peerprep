@@ -19,7 +19,7 @@ const CommunicationWindow = () => {
   const [callWaiting, setCallWaiting] = useState(false);
   const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
   const [incomingOffer, setIncomingOffer] = useState(null);
-
+  const [collaborators, setCollaborators] = useState([]);
 
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const CommunicationWindow = () => {
     };
 
     // Initialize WebSocket connection
-    const newSocket = io('http://localhost:3001', {
+    const newSocket = io('http://localhost:3007', {
       query: { userId: 'user-id', sessionId: 'session-id' }
     });
 
