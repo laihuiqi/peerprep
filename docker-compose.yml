@@ -30,6 +30,26 @@ services:
     networks:
       - peer-prep-network
 
+  history-service:
+    build: ./HistoryService
+    ports:
+      - 3006:3006
+    volumes:
+      - .HistoryService:/app
+    networks:
+      - peer-prep-network
+    depends_on:
+      - history-service-database
+  
+  history-service-database:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    networks:
+      - peer-prep-network
+
   question-service:
     build: ./QuestionService
     ports:
@@ -120,4 +140,3 @@ volumes:
 
   user_service_database_volume: 
     driver: local
-

@@ -47,7 +47,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
             .then(response => {
                 setGoToLoadPopup(false); // Close the loading popup
                 if (response.data.status === 'success') {
-                    consol.log("Matched with: ", response.data.collaboratorId);
+                    console.log("Matched with: ", response.data.collaboratorId);
                     setCollaboratorId(response.data.collaboratorId);
                     setShowSuccessOutput(true); // Triggers the SuccessOutput popup
                     // Delay navigation for 1.5 seconds

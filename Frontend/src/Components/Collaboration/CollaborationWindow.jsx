@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './CollaborationWindow.css'; 
 import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
-import firebase from 'firebase/app';
 import 'firebase/auth'; 
 import CommunicationWindow from './CommunicationWindow';
 
