@@ -2,7 +2,7 @@ import React from 'react';
 import './Output.css'; 
 import tick_icon from '../Assets/tick.png'
 
-export const SuccessOutput= ({isOpen, isClose}) => {
+export const SuccessOutput = ({isOpen, isClose}) => {
   if (isOpen) {
     return (
       <div className="output-overlay">
