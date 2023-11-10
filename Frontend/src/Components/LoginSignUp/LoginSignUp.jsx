@@ -16,7 +16,7 @@ export const LoginSignUp = () => {
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
     const [userName, setUserName] = useState("");
-    const [preferredLang, setPreferredLang] = userState("");
+    const [preferredLang, setPreferredLang] = useState("");
 
   return (
     <div className="container-login">
