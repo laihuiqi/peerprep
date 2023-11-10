@@ -8,10 +8,11 @@ import CodeEditor from './CodeEditor';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { getUserId } from '../../User/UserState'; 
+import { useLocation } from 'react-router-dom';
 
 const CollaborationWindow = () => {
     const [sessionStarted, setSessionStarted] = useState(false);
-    const [timeRemaining, setTimeRemaining] = useState(30 * 60 * 1000);
+    const [timeRemaining, setTimeRemaining] = useState(null);
     const [toast, setToast] = useState({ visible: false, message: '' });
     const [question, setQuestion] = useState(null); 
     const [collaborativeInput, setCollaborativeInput] = useState([]);
@@ -22,12 +23,15 @@ const CollaborationWindow = () => {
     const navigate = useNavigate();
     const socket = useRef(null);
     const [canExtend, setCanExtend] = useState(false);
+    const location = useLocation();
+    const { sessionId, collaboratorId } = location.state || {};
     
     useEffect(() => {
-      socket.current = socketIOClient('http://localhost:3002', {
+      if (sessionId && collaboratorId) {
+        socket.current = socketIOClient('http://localhost:3005', {
             query: {
-                userId: 'user-id', // Replace with dynamic user ID
-                sessionId: 'session-id' // Replace with dynamic session ID
+                userId: getUserId(), // Replace with dynamic user ID
+                sessionId: sessionId // Replace with dynamic session ID
             }
         });
 
@@ -103,7 +107,8 @@ return () => {
   socket.current.disconnect();
   socket.current.off('session-started');
 };
-}, []);
+ }
+}, [sessionId, collaboratorId]);
     
 
   // Hardcoded question data
@@ -200,7 +205,7 @@ return () => {
   
       showToast('Session terminated');
   
-      // Navigate to home or another route after a short delay
+      // to home or another route after a short delay
       setTimeout(() => navigate('/'), 1500);
   };
   
@@ -210,8 +215,6 @@ return () => {
 //        setTimeRemaining(timeRemaining + 900000);
 //        showToast('Timer extended for 15 minutes');
 //    };
-
-
 
     const formatTime = (time) => {
         const totalSeconds = Math.floor(time / 1000);
@@ -277,6 +280,7 @@ return () => {
 
     return (
       <div className="collaboration-window">
+        <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession}/>
           <Popup open={popup}>
               <div className="modal">
                   <div className="header"> Time Up </div>
@@ -296,9 +300,7 @@ return () => {
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
-
             <button className="extend-time" onClick={handleExtendTimer} disabled={timeRemaining > 120000}>Extend Timer</button>
-
           </div>
           <div className="right">
             <button className="end-session" onClick={handleEndSession}>End Session</button>
