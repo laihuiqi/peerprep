@@ -15,6 +15,8 @@ export const LoginSignUp = () => {
 
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
+    const [userName, setUserName] = useState("");
+    const [preferredLang, setPreferredLang] = userState("");
 
   return (
     <div className="container-login">
@@ -31,6 +33,17 @@ export const LoginSignUp = () => {
                 <img src= {password_icon} alt="" />
                 <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
             </div>
+            {action === "Sign Up"? 
+                <div>
+                    <div className="input">
+                        <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
+                        </div>
+                    <div className="input">
+                    <input type="text" placeholder = "Preferred programming language" onChange={(e) => {setPreferredLang(e.target.value);}} value={preferredLang}/>
+                    </div>
+                </div>:
+             <div></div>}
+           
         </div>
         {action === "Sign Up" ? <div></div>: <div className="forgot-password"> Forgot Password? <span> Click Here.</span></div>}
         <div className="submit-container">
@@ -46,7 +59,7 @@ export const LoginSignUp = () => {
             <div className={action==="Log In"? "submit gray": "submit"} 
             onClick = {async () => {
                 setAction("Sign Up")
-                const result = await registerUser("Name Placeholder", userEmail, userPassword, "GitHub ID Placeholder", "Preferred Language Placeholder")
+                const result = await registerUser(userName, userEmail, userPassword, "GitHub ID Placeholder", preferredLang)
 
                 if(result) {
                     navigate("/");
