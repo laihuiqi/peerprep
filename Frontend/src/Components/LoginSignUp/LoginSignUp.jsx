@@ -34,7 +34,7 @@ export const LoginSignUp = () => {
                 <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
             </div>
             {action === "Sign Up"? 
-                <div>
+                <div className="inputs">
                     <div className="input">
                         <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
                         </div>
