@@ -42,12 +42,13 @@ const ProtectedRoute = ({
 function App() {
 
   const userId = 'some-unique-user-id';
+  const location = useLocation();
 
   return (
     <Router>
       <div>
         <Navbar />
-        <AIChat userId={userId} />
+        {location.pathname === '/collaboration' && <AIChat userId={userId} />}
         <Routes>
           <Route path="/login" element={<LoginSignUp />} />
 
