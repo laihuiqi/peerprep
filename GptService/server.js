@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const config = require('./config/config');
 require('dotenv').config();
 const routes = require('./routes/gptRoute');
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 

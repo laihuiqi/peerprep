@@ -29,17 +29,22 @@ const startCollaboration = async(socket, io) => {
         socket.join(sessionId);
         socket.emit('join', sessionId);
 
+        console.log('user joined: ', userId);
+        socket.to(sessionId).emit('user-joined', userId);
+
+        let timerDelay = 2000;
+
         if (initSession.has(sessionId)) {
             console.log(`session ${sessionId} already initialized`);
             await new Promise(resolve => setTimeout(resolve, 2000));
+            io.to(sessionId).emit('init-timer', initSession.get(sessionId)[0], initSession.get(sessionId)[1]);
+            timerDelay = 1000;
 
         } else {
             console.log(`init session ${sessionId}`);
-            initSession.set(sessionId, config.DEFAULT_TIME_LIMIT[session.difficulty]);
+            initSession.set(sessionId, [Date.now(), config.DEFAULT_TIME_LIMIT[session.difficulty]]);
+            timerDelay = 3500;
         }
-
-        const initValue = await initCollaborativeCode(sessionId, session.language);
-        const [startTime, language, codes] = initValue;
 
         let sessionTimer = setTimeout(async() => {
             io.to(sessionId).emit('system-terminate', sessionId);
@@ -48,10 +53,10 @@ const startCollaboration = async(socket, io) => {
 
             await systemTerminate(sessionId, io);
 
-        }, initSession.get(sessionId) - (Date.now() - startTime));
+        }, (initSession.get(sessionId)[1] - (Date.now() - initSession.get(sessionId)[0]) + timerDelay));
 
-        console.log('user joined: ', userId);
-        socket.to(sessionId).emit('user-joined', userId);
+        const initValue = await initCollaborativeCode(initSession.get(sessionId)[0], sessionId, session.language);
+        const [language, codes] = initValue;
 
         console.log(`init code input storage for session ${sessionId}`);
         socket.emit('init-code', language, codes);
@@ -87,54 +92,29 @@ const startCollaboration = async(socket, io) => {
         });
 
         socket.on('extend-time', async() => {
+            timerDelay = 2000;
+
             console.log(`Extending time for session ${sessionId}`);
 
-            const sessionLength = initSession.get(sessionId);
-            const newSessionDuration = sessionLength + config.EXTENSION_TIME;
+            const sessionInitTime = initSession.get(sessionId)[0];
+            const sessionLength = initSession.get(sessionId)[1];
+            const newSessionDuration = sessionLength + config.EXTENSION_TIME <= config.MAX_TIME_LIMIT
+                                        ? sessionLength + config.EXTENSION_TIME 
+                                        : config.MAX_TIME_LIMIT;
 
-            if (newSessionDuration <= config.MAX_TIME_LIMIT) {
-                console.log(`New session duration for session ${sessionId}: ${config.EXTENSION_TIME}`);
+            initSession.set(sessionId, [sessionInitTime, newSessionDuration]);
 
-                clearTimeout(sessionTimer);
-
-                io.to(sessionId).emit('time-extended', config.EXTENSION_TIME);
-
-                sessionTimer = setTimeout(async() => {
-                    io.to(sessionId).emit('system-terminate', sessionId);
-                    await systemTerminate(sessionId, io);
-
-                }, config.EXTENSION_TIME);
-
-                initSession.set(sessionId, newSessionDuration);
-
-            } else {
-                console.log(`Reached Max Time ${sessionId}`);
-
-                clearTimeout(sessionTimer);
-
-                io.to(sessionId).emit('time-extended', config.MAX_TIME_LIMIT - sessionLength);
-
-                sessionTimer = setTimeout(async() => {
-                    io.to(sessionId).emit('system-terminate', sessionId);
-                    await systemTerminate(sessionId, io);
-
-                }, config.MAX_TIME_LIMIT - sessionLength);
-
-                initSession.set(sessionId, config.MAX_TIME_LIMIT);
-            }
-        });
-
-        socket.on('update-time', async(time) => {
-            console.log(`Updating time for session ${sessionId}: ${time}`);
+            console.log(`New session duration for session ${sessionId}: ${newSessionDuration}`);
 
             clearTimeout(sessionTimer);
 
+            io.to(sessionId).emit('time-extended', sessionInitTime, newSessionDuration);
+
             sessionTimer = setTimeout(async() => {
                 io.to(sessionId).emit('system-terminate', sessionId);
-
                 await systemTerminate(sessionId, io);
 
-            }, time);
+            }, (newSessionDuration - (Date.now() - sessionInitTime) + timerDelay));
         });
 
         socket.on('user-terminate', async(line, code) => {

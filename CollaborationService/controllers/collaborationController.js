@@ -1,4 +1,3 @@
-const gptService = require('../services/gptService');
 const collaborationService = require('../services/collaborationService');
 
 async function getHistory(req, res, next) {
