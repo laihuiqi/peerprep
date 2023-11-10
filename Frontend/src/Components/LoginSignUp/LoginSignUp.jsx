@@ -34,16 +34,15 @@ export const LoginSignUp = () => {
                 <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
             </div>
             {action === "Sign Up"? 
-                <div className="inputs">
-                    <div className="input">
-                        <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
-                        </div>
-                    <div className="input">
-                    <input type="text" placeholder = "Preferred programming language" onChange={(e) => {setPreferredLang(e.target.value);}} value={preferredLang}/>
-                    </div>
+                <div className="input">
+                    <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
                 </div>:
-             <div></div>}
-           
+                <div></div>}
+            {action === "Sign Up"? 
+                <div className="input">
+                    <input type="text" placeholder = "Preferred programming language" onChange={(e) => {setPreferredLang(e.target.value);}} value={preferredLang}/>
+                </div>:
+                <div></div>}
         </div>
         {action === "Sign Up" ? <div></div>: <div className="forgot-password"> Forgot Password? <span> Click Here.</span></div>}
         <div className="submit-container">
