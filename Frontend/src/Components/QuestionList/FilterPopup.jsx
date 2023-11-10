@@ -2,6 +2,8 @@ import React from 'react';
 import './FilterPopup.css';
 import { useNavigate } from 'react-router-dom';
 
+import { QUESTION_SERVICE_URL } from './config';
+
 const FilterPopup = ({
   isOpen,
   isClose,
@@ -20,11 +22,11 @@ const FilterPopup = ({
     onChosenLanguage({ target: { value: 'No Preference' } });
     onChosenTopic({ target: { value: 'No Preference' } });
     isClose();
-    navigate('/');
+    navigate('/landing');
   };
 
   const constructFilterURL = () => {
-    let currentURL = 'http://localhost:4000/api/questions?';
+    let currentURL = QUESTION_SERVICE_URL + '?';
 
     if (chosenComplexity !== 'No Preference') {
       currentURL = currentURL + `complexity=${chosenComplexity}&`;

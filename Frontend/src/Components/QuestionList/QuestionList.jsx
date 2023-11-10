@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import FilterPopup from './FilterPopup';
 
+import { QUESTION_SERVICE_URL } from './config';
+
 export const Questions = () => {
   const [qs, setQs] = useState([]);
   const [qId, setQId] = useState(0);
@@ -44,7 +46,7 @@ export const Questions = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/api/questions');
+      const response = await axios.get(QUESTION_SERVICE_URL);
       if (response.status === 200) {
         setQs(response.data);
         setQId(response.data.length);
@@ -84,7 +86,7 @@ export const Questions = () => {
   const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription, qLanguage) => {
     try {
       const question = { title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription, language: qLanguage };
-      const response = await axios.post('http://localhost:4000/api/questions', question, {
+      const response = await axios.post(QUESTION_SERVICE_URL, question, {
         validateStatus: function (status) {
           return status >= 200 && status <= 400;
         },
@@ -100,7 +102,7 @@ export const Questions = () => {
   const updateQuestion = async (qId, qTitle, qDescription, qDifficulty, qTopic, qLanguage) => {
     try {
       const question = { title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription, language: qLanguage };
-      const response = await axios.patch('http://localhost:4000/api/questions/' + String(qId), question);
+      const response = await axios.patch(QUESTION_SERVICE_URL + '/' + String(qId), question);
 
       if (response.status === 200) {
         fetchQuestions();
@@ -116,7 +118,7 @@ export const Questions = () => {
 
   const deleteQuestion = async (qId) => {
     try {
-      const response = await axios.delete('http://localhost:4000/api/questions/' + String(qId));
+      const response = await axios.delete(QUESTION_SERVICE_URL + '/' + String(qId));
       const json = response.data;
 
       if (response.status < 300 && response.status >= 200) {
