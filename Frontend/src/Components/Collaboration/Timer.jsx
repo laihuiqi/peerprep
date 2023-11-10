@@ -3,12 +3,12 @@ import socketIOClient from "socket.io-client";
 
 const ENDPOINT = "http://localhost:3002";
 
-const Timer = ({ setTimeRemaining, onSessionEnd }) => {
+const Timer = ({ setTimeRemaining, onSessionEnd, onExtendTimer}) => {
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT, { query: { userId: 1, sessionId: "1234" } });
 
     socket.on("session-timer", data => {
-      setTimeRemaining(data.timeRemaining); // passing the time to parent component
+      setTimeRemaining(data.timeRemaining); // passing the time to collaboration window
     });
 
     socket.on("session-end", () => {
@@ -19,7 +19,7 @@ const Timer = ({ setTimeRemaining, onSessionEnd }) => {
 
     // Listen for time extension events
     socket.on("time-extended", (extension) => {
-      setTimeRemaining(prevTime => prevTime + extension); // update the time in parent component
+      setTimeRemaining(prevTime => prevTime + extension); 
     });
 
     return () => {

@@ -133,7 +133,7 @@ const updateQuestion = async (req, res) => {
 
   checkIdValidity(id);
   const question = await Question.findById(id);
-  checkQuestionValidity(question);
+  // checkQuestionValidity(question);
 
   title = title.trim();
   description = description.trim();
