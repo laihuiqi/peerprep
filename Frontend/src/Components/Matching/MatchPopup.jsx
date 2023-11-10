@@ -4,12 +4,13 @@ import { SuccessOutput } from './SuccessOutput';
 import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
 import { getUserId } from '../../User/UserState'; 
-
+import { useNavigate } from 'react-router-dom';
 
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
     const [showSuccessOutput, setShowSuccessOutput] = useState(false);
     const [collaboratorId, setCollaboratorId] = useState(null);
+    const navigate = useNavigate();
 
     // States for the matching criteria
     const [chosenDifficulty, setChosenDifficulty] = useState("No Preference");
@@ -29,12 +30,16 @@ const MatchPopup = ({ isOpen, isClose }) => {
             return;
         }
 
+        const formatPreference = (preference) => {
+            return preference === "No Preference" ? "None" : preference;
+        };
+
         const payload = {
             userId: userId,
-            difficulty: chosenDifficulty,
-            language: chosenLanguage,
-            proficiency: chosenProficiency,
-            topic: chosenTopic
+            difficulty: formatPreference(chosenDifficulty),
+            language: formatPreference(chosenLanguage),
+            proficiency: formatPreference(chosenProficiency),
+            topic: formatPreference(chosenTopic)
         };
 
         // Make a post request to backend with the payload
@@ -42,9 +47,13 @@ const MatchPopup = ({ isOpen, isClose }) => {
             .then(response => {
                 setGoToLoadPopup(false); // Close the loading popup
                 if (response.data.status === 'success') {
-                    console.log("Matched with: ", response.data.collaboratorId);
+                    consol.log("Matched with: ", response.data.collaboratorId);
                     setCollaboratorId(response.data.collaboratorId);
                     setShowSuccessOutput(true); // Triggers the SuccessOutput popup
+                    // Delay navigation for 1.5 seconds
+                    setTimeout(() => {
+                        navigate('/collaboration');
+                    }, 1500);
                 } else {
                     console.log("No match found");
                     setShowSuccessOutput(false); // SuccessOutput popup does not show
