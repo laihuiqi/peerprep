@@ -12,9 +12,54 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
     const [description, setDescription] = useState(q.description);
     const [language, setLanguage] = useState(q.language);
 
-  function handleChosenDifficulty(e) {
-      return setDifficulty(e.target.value);
-  }
+    const [isDuplicateTitle, setIsDuplicateTitle] = useState(true);
+    const [isDuplicateDesc, setIsDuplicateDesc] = useState(false);
+    const [isMissingField, setIsMissingField] = useState(false);
+
+    const [titleError, setTitleError] = useState("");
+    const [descError, setDescError] = useState("");
+    const [missingFieldError, setMissingFieldError] = useState("Please fill all fields!")
+
+
+    const isEmpty = (str) => {
+        return str === ""
+    };
+
+    const setErrorVar = (errors) => {
+        if('duplicateDescription' in errors) {
+        setIsDuplicateDesc(true);
+        setDescError(errors.duplicateDescription)
+        } else {
+        setIsDuplicateDesc(false);
+        }
+        
+        if('duplicateTitle' in errors) {
+        setIsDuplicateTitle(true);
+        setTitleError(errors.duplicateTitle);
+        } else {
+        setIsDuplicateTitle(false);
+        }
+    };
+
+    const handleSubmit = (toggleEdit, editQ) => async e => {
+        e.preventDefault();
+        if(isEmpty(title) || isEmpty(difficulty) || isEmpty(topic) || isEmpty(description)) {
+        setIsMissingField(true);
+        } else {
+        setIsMissingField(false);
+        const response = await editQ(q._id, title, description, difficulty, topic, language);
+        if(response.status === 200) {
+            toggleEdit(false);
+        } else {
+            let res = await response.json();
+            setErrorVar(res.errors)
+        }
+        }
+    }
+
+    function handleChosenDifficulty(e) {
+        return setDifficulty(e.target.value);
+    }
 
   return (
     <div className= "form-container">
@@ -27,6 +72,8 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
                 </div>
                 <span> - </span>
             </div>
+
+            {isDuplicateTitle? <div className="error-text">{titleError}</div> : <div></div>}
             
             <div className="q-form-content">
                 <div className="q-form-tags-container">
@@ -38,14 +85,16 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
                 </div>
             </div>
 
-          <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
+            <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
             onChange={(e) => {setDescription(e.target.value);}}/>
 
-<div className="btn-container">
+           {isDuplicateDesc? <div className="error-text">{descError}</div> : <div></div>}
+           {isMissingField? <div className = "error-text">{missingFieldError}</div>: <div></div>}
+
+            <div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {
-                    setEdit(false);
-                    updateQ(q._id, title, description, difficulty, topic, language)
+                        handleSubmit(setEdit, updateQ);
                     }}>Submit
                     </button> 
                 </div> 
