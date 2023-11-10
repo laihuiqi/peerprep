@@ -35,7 +35,7 @@ services:
     ports:
       - 3006:3006
     volumes:
-      - .HistoryService:/app
+      - ./HistoryService:/app
     networks:
       - peer-prep-network
     depends_on:
@@ -63,6 +63,8 @@ services:
     image: mongo:latest
     ports:
       - "27019:27017"
+    volumes:
+      - question_service_database_volume:/data/db
     networks:
       - peer-prep-network
 
@@ -81,7 +83,7 @@ services:
     ports:
       - "27020:27017"
     volumes:
-      - mongo_data:/data/db
+      - matching_service_database_volume:/data/db
     networks:
       - peer-prep-network
 
@@ -110,7 +112,7 @@ services:
     ports:
       - "27021:27017"
     volumes:
-      - mongo_data:/data/db
+      - collaboration_service_database_volume:/data/db
     networks:
       - peer-prep-network
 
@@ -135,7 +137,13 @@ networks:
     driver: bridge
 
 volumes:
-  mongo_data: 
+  matching_service_database_volume: 
+    driver: local
+
+  collaboration_service_database_volume: 
+    driver: local
+  
+  question_service_database_volume: 
     driver: local
 
   user_service_database_volume: 
