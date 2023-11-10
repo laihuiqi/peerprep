@@ -49,9 +49,9 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
       const response = await addQ(title, difficulty, topic, description, language);
       if(response.status === 200) {
         toggleAddQ(false);
-        let res = await response.json();
+        let res = response.data;
       } else {
-        let res = await response.json();
+        let res = response.data;
         setErrorVar(res.errors)
       }
     }
