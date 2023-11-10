@@ -25,14 +25,17 @@ export const LoginSignUp = () => {
             <div className="underline"></div>
         </div>
         <div className="inputs">
-            <div className="input">
-                <img src= {user_icon} alt="" />
-                <input type="text" placeholder = "Email" onChange={(e) => {setUserEmail(e.target.value);}} value={userEmail}/>
+            <div className="input-container">
+                <div className="input">
+                    <img src= {user_icon} alt="" />
+                    <input type="text" placeholder = "Email" onChange={(e) => {setUserEmail(e.target.value);}} value={userEmail}/>
+                </div>
+                <div className="input">
+                    <img src= {password_icon} alt="" />
+                    <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
+                </div>
             </div>
-            <div className="input">
-                <img src= {password_icon} alt="" />
-                <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
-            </div>
+            
             {action === "Sign Up"? 
                 <div className="input">
                     <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
