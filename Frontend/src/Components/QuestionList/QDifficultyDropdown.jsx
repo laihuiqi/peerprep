@@ -1,5 +1,5 @@
 import React from "react";
-import "./QDifficultyDropdown.css";
+import "./QDropdown.css";
 
 export const QDifficultyDropdown = ({chosenDifficulty, setDifficulty}) => {
   return (
