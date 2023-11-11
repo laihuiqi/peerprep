@@ -9,7 +9,7 @@ var pool = null;
 
 async function connectToDatabase() {
   // Waiting for SQL Container to be up
-  await new Promise((r) => setTimeout(r, 3000));
+  await new Promise((r) => setTimeout(r, 5000));
 
   pool = mySql
     .createPool({
