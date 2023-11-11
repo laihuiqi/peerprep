@@ -74,7 +74,7 @@ export const Questions = () => {
         // Store the filter URL in sessionStorage
         sessionStorage.setItem('Link after filtering', filteredLink);
 
-        navigate('/filter');
+        navigate('/questions/filter');
       } else {
         console.error('Error getting questions according to filter');
       }
@@ -154,7 +154,7 @@ export const Questions = () => {
         />
       )}
 
-      {(filterQuestions.length > 0 ? filterQuestions : qs).map((q, index) => (
+      {(location.pathname.includes('/filter') ? filterQuestions : qs).map((q, index) => (
         <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />
       ))}
 

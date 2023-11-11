@@ -120,7 +120,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                 {goToLoadPopup && <LoadPopup isOpen={true} isClose={() => setGoToLoadPopup(false)} />}
 
                 {showSuccessOutput && 
-                <SuccessOutput isOpen={true} collaboratorId={collaboratorId} isClose={() => setShowSuccessOutput(false)} />}
+                <SuccessOutput isOpen={true} isClose={() => setShowSuccessOutput(false)} />}
             </div>
     );
 }
