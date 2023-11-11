@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './QuestionEdit.css';
 import { QDifficultyDropdown } from './QDifficultyDropdown';
 import { QLanguageDropdown } from './QLanguageDropdown'; 
+import { QTopicDropdown } from './QTopicDropdown'; 
 
 import delete_icon from '../Assets/bin.png';
 
@@ -79,8 +80,7 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
                 <div className="q-form-tags-container">
                     <div className= "q-form-tags">
                         <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
-                        <input type="text" className="q-form-tag q-form-input" defaultValue = {q.category}
-                        onChange = {(e) => {setTopic(e.target.value)}}/>
+                        <QTopicDropdown chosenTopic={topic} setTopic={(e) => setTopic(e.target.value)} />
                         <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)}/>
                 </div>
             </div>
@@ -88,9 +88,12 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
             <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
             onChange={(e) => {setDescription(e.target.value);}}/>
 
+<<<<<<< HEAD
            {isDuplicateDesc? <div className="error-text">{descError}</div> : <div></div>}
            {isMissingField? <div className = "error-text">{missingFieldError}</div>: <div></div>}
 
+=======
+>>>>>>> origin/merge-question-service-with-all-services
             <div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {

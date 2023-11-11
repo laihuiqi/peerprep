@@ -5,6 +5,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const config = require('./config/config');
+const routes = require('./routes/collaborationRoute');
 const server = createServer(app);
 const io = new Server(server, {
     cors:{

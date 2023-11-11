@@ -65,14 +65,14 @@ describe('Collaboration Service', () => {
     test('time extension should be successful when time is sufficient', async() => {
         await user1.emit('extend-time');
 
-        user1.on('time-extended', (time) => {
-            expect(time).toBe(config.EXTENSION_TIME);
-            console.log("2 ", time);
+        user1.on('time-extended', (init, length) => {
+            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy + config.EXTENSION_TIME);
+            console.log("2 ", length);
         });
 
-        user2.on('time-extended', (time) => {
-            expect(time).toBe(config.EXTENSION_TIME);
-            console.log("2 ", time);
+        user2.on('time-extended', (init, length) => {
+            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy + config.EXTENSION_TIME);
+            console.log("2 ", length);
         });
     });
 
@@ -86,6 +86,7 @@ describe('Collaboration Service', () => {
     });
 
     test('user\'s reconnection could be received by collaborator', async() => {
+        await user1.emit('clear');
         await user1.emit('reconnect');
 
         user1.on('success-reconnected', (collaborativeInput) => {

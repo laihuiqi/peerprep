@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer, useRef } from 'react';
 import './CollaborationWindow.css'; 
 import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import socketIOClient from "socket.io-client";
 import 'firebase/auth';
 import CodeEditor from './CodeEditor';
@@ -9,6 +10,11 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { getUserId } from '../../User/UserState'; 
 import { useLocation } from 'react-router-dom';
+=======
+import 'firebase/auth'; 
+import CommunicationWindow from './CommunicationWindow';
+
+>>>>>>> origin/merge-question-service-with-all-services
 
 const CollaborationWindow = () => {
     const [sessionStarted, setSessionStarted] = useState(false);

@@ -1,6 +1,7 @@
 // Stores the User State
 
 import UserModel from "../DataModel/UserModel";
+import { getUserAdminStatus } from "./UserStateController";
 
 var currentLoggedInUser = null;
 
@@ -31,10 +32,6 @@ function updateUserState(
   currentLoggedInUser.updateEmail(updatedUserEmail);
   currentLoggedInUser.updateGithubId(updatedUserGithubId);
   currentLoggedInUser.updatePreferredLanguage(updatedUserPreferredLanguage);
-}
-
-function isUserLoggedIn() {
-  return currentLoggedInUser === null ? false : true;
 }
 
 function getUserId() {
@@ -77,22 +74,17 @@ function getUserGithubId() {
   return null;
 }
 
-function getUserAdminStatus() {
-  if (currentLoggedInUser) {
-    return currentLoggedInUser.adminStatus;
-  }
-
-  return null;
+async function isUserAdmin() {
+  return await getUserAdminStatus();
 }
 
 export {
-  isUserLoggedIn,
   getUserId,
   getUserName,
   getUserEmail,
   getUserPreferredLanguage,
   getUserGithubId,
-  getUserAdminStatus,
+  isUserAdmin,
   setUserState,
   updateUserState,
 };

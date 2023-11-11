@@ -32,13 +32,13 @@ const getCollaborativeInputByLine = async(sessionId, line) => {
     }
 }
 
-const initCollaborativeCode = async(sessionId, language) => {
+const initCollaborativeCode = async(initTime, sessionId, language) => {
     try {
         const input = await getCollaborativeInput(sessionId);
 
         if (input[0] === "None") {
             const collaborativeInput = new CollaborativeInput(
-                { sessionId: sessionId, initTime: Date.now(), language: language, codes: [] });
+                { sessionId: sessionId, initTime: initTime, language: language, codes: [] });
 
             await collaborativeInput.save();
 

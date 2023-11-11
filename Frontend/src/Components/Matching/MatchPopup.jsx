@@ -42,6 +42,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
             topic: formatPreference(chosenTopic)
         };
 
+<<<<<<< HEAD
        // Make a post request to backend with the payload
        const URL = `http://localhost:3004/home/${userId}`;
        axios.post(URL, payload) // replace /${props.userId} with how we access userId
@@ -69,6 +70,33 @@ const MatchPopup = ({ isOpen, isClose }) => {
            
            });
         };
+=======
+        // Make a post request to backend with the payload
+        const URL = `http://localhost:3004/home/${userId}`;
+        axios.post(URL, payload) // replace /${props.userId} with how we access userId
+            .then(response => {
+                setGoToLoadPopup(false); // Close the loading popup
+                if (response.data.status === 'success') {
+                    console.log("Matched with: ", response.data.collaboratorId);
+                    setCollaboratorId(response.data.collaboratorId);
+                    setShowSuccessOutput(true); // Triggers the SuccessOutput popup
+                    // Delay navigation for 1.5 seconds
+                    setTimeout(() => {
+                        navigate('/collaboration');
+                    }, 1500);
+                } else {
+                    console.log("No match found");
+                    setShowSuccessOutput(false); // SuccessOutput popup does not show
+                }
+ //               setGoToLoadPopup(false); // Close the loading popup
+            })
+            .catch(error => {
+                console.error("Error finding a match: ", error);
+                setGoToLoadPopup(false); // Close the loading popup
+            
+            });
+         };
+>>>>>>> origin/merge-question-service-with-all-services
 
    if (!isOpen) return null;
 
@@ -122,7 +150,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                 {goToLoadPopup && <LoadPopup isOpen={true} isClose={() => setGoToLoadPopup(false)} />}
 
                 {showSuccessOutput && 
-                <SuccessOutput isOpen={true} collaboratorId={collaboratorId} isClose={() => setShowSuccessOutput(false)} />}
+                <SuccessOutput isOpen={true} isClose={() => setShowSuccessOutput(false)} />}
             </div>
     );
 }
