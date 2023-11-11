@@ -1,11 +1,9 @@
 import axios from "axios";
-import config from "./config";
+import { HISTORY_SERVICE_HOST } from "./config";
 
 async function getUserAttemptsFromHistoryDatabase(userId) {
   try {
-    const result = await axios.get(
-      config.HISTORY_SERVICE_HOST + "history/" + userId
-    );
+    const result = await axios.get(HISTORY_SERVICE_HOST + "history/" + userId);
 
     return result;
   } catch (error) {
@@ -23,7 +21,7 @@ async function addUserAttemptToHistoryDatabase(
 ) {
   try {
     const result = await axios.post(
-      config.HISTORY_SERVICE_HOST + "history/add-attempt",
+      HISTORY_SERVICE_HOST + "history/add-attempt",
       {
         userId1: userId1,
         userId2: userId2,
