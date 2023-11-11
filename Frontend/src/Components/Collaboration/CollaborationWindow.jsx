@@ -9,6 +9,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { getUserId } from '../../User/UserState'; 
 import { useLocation } from 'react-router-dom';
+import CommunicationWindow from './CommunicationWindow';
 
 import axios from "axios"
 
@@ -236,6 +237,7 @@ return () => {
 
     return (
       <div className="collaboration-window">
+        <CommunicationWindow />
         <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession}/>
           <Popup open={popup}>
               <div className="modal">
