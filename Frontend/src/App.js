@@ -6,6 +6,7 @@ import {
   Routes,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 
 import { LoginSignUp } from "./Components/LoginSignUp/LoginSignUp";
@@ -13,7 +14,6 @@ import { Navbar } from "./Components/Navbar/Navbar";
 import { Questions } from "./Components/QuestionList/QuestionList";
 import { LandingPage } from "./Components/LandingPage/LandingPage";
 import CollaborationWindow from "./Components/Collaboration/CollaborationWindow";
-
 import AIChat from "./Components/GenerativeAI/AIChat";
 
 import { isUserAdmin } from "./User/UserState";
@@ -40,16 +40,17 @@ const ProtectedRoute = ({
   return children ? children : <Outlet />;
 };
 
-function App() {
-
-  const userId = 'some-unique-user-id';
+const AIChatWrapper = () => {
   const location = useLocation();
+  return location.pathname === "/collaboration" ? <AIChat /> : null;
+};
 
+function App() {
   return (
     <Router>
       <div>
         <Navbar />
-        {location.pathname === '/collaboration' && <AIChat userId={userId} />}
+        <AIChatWrapper />
         <Routes>
           <Route path="/login" element={<LoginSignUp />} />
 
