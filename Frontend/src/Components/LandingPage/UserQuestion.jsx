@@ -1,6 +1,7 @@
 import React from 'react'
 import './UserQuestion.css'
 import {useState} from 'react'
+import Utility from "../../Utility/Utility"
 
 export const UserQuestion = ({question, i}) => {
     const [selected, setSelected] = useState(null);
@@ -8,21 +9,8 @@ export const UserQuestion = ({question, i}) => {
         selected === i ? setSelected(null) : setSelected(i)
     }
 
-    
-    let tagClass = "user-q-tag"; 
-    
-    if(question.complexity) {
-        if(question.complexity.toLowerCase() === "easy") {
-            tagClass += " user-q-tag-green"
-        } else if (question.complexity.toLowerCase() === "medium") {
-            tagClass += " user-q-tag-orange"
-        } else if (question.complexity.toLowerCase() === "hard") {
-            tagClass += " user-q-tag-red"
-        } else {
-            tagClass += " user-q-tag-white"
-        }
-    }
-    
+    let tagClass = Utility.setDifficultyTag("user-q-tag", question.complexity);
+ 
   return (
     <div className="user-q-container">
         <div className="user-q-info">
