@@ -53,3 +53,18 @@
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     background: #4cbd5d;
   }
+
+  .search-entry {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-entry input {
+    width: 600px;
+    padding: 8px;
+    font-size: 19px; 
+    margin-top: 40px;
+    border: 1px solid rgb(208, 200, 200);
+    border-radius: 4px;
+  }
+  

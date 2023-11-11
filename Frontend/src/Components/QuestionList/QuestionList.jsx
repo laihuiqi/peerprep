@@ -12,6 +12,7 @@ export const Questions = () => {
   const [qs, setQs] = useState([]);
   const [qId, setQId] = useState(0);
   const [isAddQ, setAddQ] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const [isFilterPopupOpen, setFilterPopupOpen] = useState(false);
   const [filterQuestions, setFilteredQs] = useState([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState('No Preference');
@@ -83,6 +84,16 @@ export const Questions = () => {
     }
   };
 
+  const handleSearchChange = (e) => {
+    const searchQuery = e.target.value;
+    setSearchValue(searchQuery);
+    const filtered = qs.filter((q) =>
+      q.description.toLowerCase().includes(searchQuery.toLowerCase()||
+      q.title.toLowerCase().includes(searchQuery.toLowerCase()) )
+    );
+    setFilteredQs(filtered);
+  };
+
   const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription, qLanguage) => {
     try {
       const question = { title: qTitle, complexity: qDifficulty, category: qTopic, description: qDescription, language: qLanguage };
@@ -138,6 +149,16 @@ export const Questions = () => {
       <div className="filter-q-btn" onClick={() => setFilterPopupOpen(true)}>
         Filter Questions
       </div>
+
+      <div className="search-entry">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+      </div>
+
       {isAddQ === false ? <div></div> : <QuestionForm questionNumber={qs.length + 1} qId={qId} setAddQ={setAddQ} setQId={setQId} addQuestion={addQuestion} />}
 
       {isFilterPopupOpen && (
@@ -154,7 +175,7 @@ export const Questions = () => {
         />
       )}
 
-      {(location.pathname.includes('/filter') ? filterQuestions : qs).map((q, index) => (
+      {(location.pathname.includes('/filter') ? filterQuestions : (searchValue ? filterQuestions : qs)).map((q, index) => (
         <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />
       ))}
 
