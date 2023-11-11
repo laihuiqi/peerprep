@@ -9,7 +9,8 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { getUserId } from '../../User/UserState'; 
 import { useLocation } from 'react-router-dom';
-import CommunicationWindow from './CommunicationWindow';
+
+import axios from "axios"
 
 
 const CollaborationWindow = () => {
@@ -116,9 +117,9 @@ return () => {
 
     const fetchQuestion = async () => {
       try {
-        const response = await fetch(`home/${userId}`);
-        if (response.ok) {
-          const json = await response.json();
+        const response = await axios.get(`http://localhost:3004/home/${userId}`);
+        if (response.status === 200) {
+          const json = response.data;
           setQuestion(json.questionId);
         } else {
           console.log('Response is not ok:', response.statusText);
@@ -180,7 +181,7 @@ return () => {
 
     const handleSubmit = () => {
       socket.current.emit('user-terminate', { sessionId: 'session-id' });
-      
+
       showToast('Your code has been submitted');
       setTimeout(() => navigate('/landing'), 1500);
     };
