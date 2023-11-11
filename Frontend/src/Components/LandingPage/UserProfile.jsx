@@ -27,7 +27,7 @@ export const UserProfile = (user) => {
                     Name
                 </div>
                 {isEdit? 
-                <input type="text" className="profile-input" defaultValue = "David Rose"
+                <input type="text" className="profile-input" defaultValue = {getUserName()}
                     onChange = {(e) => {setName(e.target.value)}}/> :
                 <div className = "profile-detail">{name}</div>
                 }
@@ -46,7 +46,7 @@ export const UserProfile = (user) => {
                     Preferred Language
                 </div>
                 {isEdit? 
-                <input type="text" className="profile-input" defaultValue = "Python"
+                <input type="text" className="profile-input" defaultValue = {getUserPreferredLanguage()}
                     onChange = {(e) => {setLang(e.target.value)}}/> :
                 <div className = "profile-detail">
                     {lang}
