@@ -105,55 +105,6 @@ return () => {
 };
 }, []);
     
-
-  // Hardcoded question data
-    const questionData = {
-      "status": "success",
-      "isMatched": true,
-      "sessionId": "your-session-id",
-      "question": {
-          "title": "Test Question",
-          "description": "This is a Test question.",
-          "complexity": "Easy",
-          "category": "Data Structures",
-          "language": "Other Languages"
-      },
-      "collaboratorId": 456
-   };
-    useEffect(() => {
- //      You can set the hardcoded question data directly in the state
-      setQuestion(questionData.question);
-  }, []);
-
-    // Use this for non hard coded request
-    // useEffect(() => {
-    //   const fetchQuestionData = async () => {
-    //     try {
-    //       const user = firebase.auth().currentUser;
-    //       if (user) {
-    //         const userId = user.uid; // Get the user's UID
-    //         const response = await fetch(`/home/${userId}`);
-    //         if (response.ok) {
-    //           const data = await response.json();
-    //           if (data.question) {
-    //               setQuestion(data.question);
-    //           } else {
-    //               console.error('Unable to get question');
-    //           }
-    //         } else {
-    //           console.error('Unable to fetch question details');
-    //         }
-    //       } else {
-    //           console.error('User is not signed in');
-    //       }
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //     }
-    //   };
-
-    //   fetchQuestionData();
-    // }, []);
-  
     const userId = getUserId();
 
     const fetchQuestion = async () => {
