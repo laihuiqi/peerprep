@@ -4,12 +4,13 @@ import { SuccessOutput } from './SuccessOutput';
 import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
 import { getUserId } from '../../User/UserState'; 
-
+import { useNavigate } from 'react-router-dom';
 
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
     const [showSuccessOutput, setShowSuccessOutput] = useState(false);
     const [collaboratorId, setCollaboratorId] = useState(null);
+    const navigate = useNavigate();
 
     // States for the matching criteria
     const [chosenDifficulty, setChosenDifficulty] = useState("No Preference");
@@ -29,36 +30,47 @@ const MatchPopup = ({ isOpen, isClose }) => {
             return;
         }
 
-        const payload = {
-            userId: userId,
-            difficulty: chosenDifficulty,
-            language: chosenLanguage,
-            proficiency: chosenProficiency,
-            topic: chosenTopic
+        const formatPreference = (preference) => {
+            return preference === "No Preference" ? "None" : preference;
         };
 
-        // Make a post request to backend with the payload
-        axios.post(`home/${userId}`, payload) // replace /${props.userId} with how we access userId
-            .then(response => {
-                setGoToLoadPopup(false); // Close the loading popup
-                if (response.data.status === 'success') {
-                    console.log("Matched with: ", response.data.collaboratorId);
-                    setCollaboratorId(response.data.collaboratorId);
-                    setShowSuccessOutput(true); // Triggers the SuccessOutput popup
-                } else {
-                    console.log("No match found");
-                    setShowSuccessOutput(false); // SuccessOutput popup does not show
-                }
- //               setGoToLoadPopup(false); // Close the loading popup
-            })
-            .catch(error => {
-                console.error("Error finding a match: ", error);
-                setGoToLoadPopup(false); // Close the loading popup
-            
-            });
-         };
+        const payload = {
+            userId: userId,
+            difficulty: formatPreference(chosenDifficulty),
+            language: formatPreference(chosenLanguage),
+            proficiency: formatPreference(chosenProficiency),
+            topic: formatPreference(chosenTopic)
+        };
 
-    if (!isOpen) return null;
+       // Make a post request to backend with the payload
+       const URL = `http://localhost:3004/home/${userId}`;
+       axios.post(URL, payload) // replace /${props.userId} with how we access userId
+           .then(response => {
+               setGoToLoadPopup(false); // Close the loading popup
+               if (response.data.status === 'success') {
+                   console.log("Matched with: ", response.data.collaboratorId);
+                   const sessionId = response.data.sessionId;
+                   const collaboratorId = response.data.collaboratorId;
+                   setCollaboratorId(collaboratorId);
+                   setShowSuccessOutput(true); // Triggers the SuccessOutput popup
+                   // Delay navigation for 1.5 seconds
+                   setTimeout(() => {
+                    navigate('/collaboration', { state: { sessionId, collaboratorId } });
+                }, 1500);
+               } else {
+                   console.log("No match found");
+                   setShowSuccessOutput(false); // SuccessOutput popup does not show
+               }
+//               setGoToLoadPopup(false); // Close the loading popup
+           })
+           .catch(error => {
+               console.error("Error finding a match: ", error);
+               setGoToLoadPopup(false); // Close the loading popup
+           
+           });
+        };
+
+   if (!isOpen) return null;
 
     return (
         <div className="match-popup-overlay">
