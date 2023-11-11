@@ -2,26 +2,20 @@ import React, {useState, useEffect} from 'react'
 import {Attempt} from "./Attempt"
 import {AttemptView} from "./AttemptView"
 import './AttemptHistory.css'
+import { getUserAttempts } from '../../History/HistoryServiceAPI'
+import {getUserId} from "../../User/UserState"
 
 export const AttemptHistory = ({isList, setIsList}) => {
     const [attempts, setAttempts] = useState([]);
     const [selectedAttempt, setSelectedAttempt] = useState(null);
 
     // to be replaced with actual attempt fetch
-    const fetchQuestions = async () => {
-        try {
-          const response = await fetch('/api/questions');
-          const json = await response.json()
-          if (response.ok) {
-            setAttempts(json);
-          }
-        } catch (error) {
-          console.error('Error loading questions:', error);
-        }
-      };
+    const fetchAttempts = async () => {
+        setAttempts(getUserAttempts(getUserId()));
+    };
     
       useEffect(() => {
-        fetchQuestions();
+        fetchAttempts();
       }, []);
 
   return (
