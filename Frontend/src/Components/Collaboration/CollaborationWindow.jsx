@@ -75,7 +75,7 @@ const CollaborationWindow = () => {
   });
 
   socket.current.on('system-terminate', (sessionId) => {
-    navigate('/'); // Navigate to home or another route
+    navigate('/landing'); // Navigate to home or another route
 });
 
 socket.current.on('user-disconnected', (userId) => {
@@ -96,7 +96,7 @@ socket.current.on('notify-terminate', (sessionId) => {
   console.log(`Session ${sessionId} has been terminated by another user`);
   // Handle the session termination in the UI
   showToast('Session ended, redirecting to home page...');
-  navigate('/'); // Redirect to home or another route
+  navigate('/landing'); // Redirect to home or another route
   // Any cleanup or finalization logic can be added here
 });
 
@@ -159,7 +159,7 @@ return () => {
       showToast('Session terminated');
   
       // to home or another route after a short delay
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate('/landing'), 1500);
   };
   
 
@@ -179,8 +179,10 @@ return () => {
     };
 
     const handleSubmit = () => {
+      socket.current.emit('user-terminate', { sessionId: 'session-id' });
+      
       showToast('Your code has been submitted');
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate('/landing'), 1500);
     };
 
 
