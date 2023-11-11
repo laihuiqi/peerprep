@@ -22,7 +22,7 @@ const FilterPopup = ({
     onChosenLanguage({ target: { value: 'No Preference' } });
     onChosenTopic({ target: { value: 'No Preference' } });
     isClose();
-    navigate('/landing');
+    navigate('/questions');
   };
 
   const constructFilterURL = () => {
@@ -93,7 +93,7 @@ const FilterPopup = ({
               onClick={() => {
                 const currentURL = constructFilterURL();
                 onSubmission(currentURL); 
-                navigate('/filter');
+                navigate('/questions/filter');
               }}
               className="submit-filter"
             >
