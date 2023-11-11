@@ -13,10 +13,7 @@ import { Navbar } from "./Components/Navbar/Navbar";
 import { Questions } from "./Components/QuestionList/QuestionList";
 import { LandingPage } from "./Components/LandingPage/LandingPage";
 import CollaborationWindow from "./Components/Collaboration/CollaborationWindow";
-<<<<<<< HEAD
-// import { LoginSignUp } from './Components/LoginSignUp/LoginSignUp';
-// import {LandingPage} from './Components/LandingPage/LandingPage'
-=======
+
 import AIChat from "./Components/GenerativeAI/AIChat";
 
 import { isUserAdmin } from "./User/UserState";
@@ -42,7 +39,6 @@ const ProtectedRoute = ({
 
   return children ? children : <Outlet />;
 };
->>>>>>> origin/merge-question-service-with-all-services
 
 function App() {
 
@@ -54,18 +50,6 @@ function App() {
         <Navbar />
         <AIChat userId={userId} />
         <Routes>
-<<<<<<< HEAD
-{/* <LoginSignUp/> */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/questions" element={<Questions />} />
-          {/* Adding CollaborationWindow for testing */}
-          <Route path="/login" element={<LoginSignUp />} />
-          <Route path="/collaboration" element={<CollaborationWindow />} />
-       </Routes>
-      <Questions/>
-      {/* <LandingPage/> */}
-    </div>
-=======
           <Route path="/login" element={<LoginSignUp />} />
 
           <Route element={<ProtectedRoute checkAdminStatus={false} />}>
@@ -91,7 +75,6 @@ function App() {
           />
         </Routes>
       </div>
->>>>>>> origin/merge-question-service-with-all-services
     </Router>
   );
 }

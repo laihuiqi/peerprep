@@ -50,10 +50,6 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
       const response = await addQ(title, difficulty, topic, description, language);
       if(response.status === 200) {
         toggleAddQ(false);
-<<<<<<< HEAD
-=======
-        let res = response.data;
->>>>>>> origin/merge-question-service-with-all-services
       } else {
         let res = response.data;
         setErrorVar(res.errors)

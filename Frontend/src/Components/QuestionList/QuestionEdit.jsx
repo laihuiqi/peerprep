@@ -88,12 +88,9 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
             <textarea type="text" className="q-form-description q-form-input" defaultValue={q.description}
             onChange={(e) => {setDescription(e.target.value);}}/>
 
-<<<<<<< HEAD
            {isDuplicateDesc? <div className="error-text">{descError}</div> : <div></div>}
            {isMissingField? <div className = "error-text">{missingFieldError}</div>: <div></div>}
 
-=======
->>>>>>> origin/merge-question-service-with-all-services
             <div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {
