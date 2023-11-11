@@ -96,9 +96,9 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
-export const duplicateTitleMessage =
+const duplicateTitleMessage =
   "Question title already exists. Please enter new title!";
-export const duplicateDescriptionMessage =
+const duplicateDescriptionMessage =
   "Question description already exists. Please enter new description!";
 
 const createQuestion = async (req, res) => {
@@ -278,4 +278,6 @@ module.exports = {
   deleteUserTag,
   getMatchQuestion,
   getQuestion,
+  duplicateTitleMessage,
+  duplicateDescriptionMessage
 };
