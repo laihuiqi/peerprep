@@ -3,21 +3,23 @@ import './QuestionForm.css'
 import delete_icon from '../Assets/bin.png'
 import { QDifficultyDropdown } from './QDifficultyDropdown'
 import { QLanguageDropdown } from './QLanguageDropdown';
+import { QTopicDropdown } from './QTopicDropdown'; 
+export const MISSING_FIELD_ERROR_MESSAGE = "Please fill all fields!";
 
 export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState("Sorting");
   const [description, setDescription] = useState("");
   const [language, setLanguage] = useState("SQL");
 
-  const [isDuplicateTitle, setIsDuplicateTitle] = useState(true);
+  const [isDuplicateTitle, setIsDuplicateTitle] = useState(false);
   const [isDuplicateDesc, setIsDuplicateDesc] = useState(false);
   const [isMissingField, setIsMissingField] = useState(false);
 
   const [titleError, setTitleError] = useState("");
   const [descError, setDescError] = useState("");
-  const [missingFieldError, setMissingFieldError] = useState("Please fill all fields!")
+  const [missingFieldError, setMissingFieldError] = useState(MISSING_FIELD_ERROR_MESSAGE)
 
 
   const isEmpty = (str) => {
@@ -49,9 +51,8 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
       const response = await addQ(title, difficulty, topic, description, language);
       if(response.status === 200) {
         toggleAddQ(false);
-        let res = await response.json();
       } else {
-        let res = await response.json();
+        let res = response.data;
         setErrorVar(res.errors)
       }
     }
@@ -77,13 +78,8 @@ export const QuestionForm = ({qId, addQuestion, setAddQ, setQId, questionNumber}
         <div className="q-form-content">
           <div className="q-form-tags">
               <QDifficultyDropdown chosenDifficulty = {difficulty} setDifficulty = {handleChosenDifficulty}/>
-              <input type="text" className="q-form-tag q-form-input" 
-              placeholder = 'Topic'
-              onChange = {
-                (e) => setTopic(e.target.value)
-              }
-              />
-           <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
+              <QTopicDropdown chosenTopic={topic} setTopic={(e) => setTopic(e.target.value)} />
+              <QLanguageDropdown chosenLanguage={language} setLanguage={(e) => setLanguage(e.target.value)} />
              </div>
              <textarea type="text" className="q-form-description q-form-input" 
             placeholder = "Question description"

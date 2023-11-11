@@ -13,26 +13,22 @@ const checkQuestionValidity = (question) => {
   }
 };
 
-const getAllQuestions = async (req, res) => {
-  try {
-    const questions = await Question.find({}).sort({ createdAt: -1 });
-    res.status(200).json(questions);
-  } catch (error) {
-    res.status(500).json({ error: "Error retrieving questions" });
-  }
-};
-
 const getMatchQuestion = async (req, res) => {
-  console.log('get question with properties: ', req.body);
+  console.log("get question with properties: ", req.body);
 
   const language = req.body.language;
   const difficulty = req.body.difficulty;
   const category = req.body.category;
 
   let aggregationPipeline = [];
-
+  let actualLanguage = "";
   if (language !== "None") {
-    aggregationPipeline.push({ $match: { language: language } });
+    if (language === "SQL") {
+      actualLanguage = "SQL";
+    } else {
+      actualLanguage = "Other Languages";
+    }
+    aggregationPipeline.push({ $match: { language: actualLanguage } });
   }
 
   if (difficulty !== "None") {
@@ -53,11 +49,11 @@ const getMatchQuestion = async (req, res) => {
     question = null;
   }
 
-  console.log('get', question);
+  console.log("get", question);
 
   const response = {
     question: question,
-    request: req.body
+    request: req.body,
   };
 
   return res.status(200).json(response);
@@ -73,9 +69,31 @@ const getQuestion = async (req, res) => {
     question: question,
   };
 
-  console.log('get', questionId);
+  console.log("get", questionId);
 
   return res.status(200).json(response);
+};
+
+const getAllQuestions = async (req, res) => {
+  try {
+    const { complexity, category, language } = req.query;
+    const filter = {};
+
+    if (complexity) {
+      filter.complexity = complexity;
+    }
+    if (language) {
+      filter.language = language;
+    }
+    if (category) {
+      filter.category = category;
+    }
+
+    const questions = await Question.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(500).json({ error: "Error retrieving questions" });
+  }
 };
 
 const duplicateTitleMessage =
@@ -133,7 +151,7 @@ const updateQuestion = async (req, res) => {
 
   checkIdValidity(id);
   const question = await Question.findById(id);
-  checkQuestionValidity(question);
+  // checkQuestionValidity(question);
 
   title = title.trim();
   description = description.trim();
@@ -159,9 +177,11 @@ const updateQuestion = async (req, res) => {
     });
 
     if (currentSameDescriptionQuestion) {
-      return res.status(400).json({
-        error: "Question with an identical description already exists.",
-      });
+      return res
+        .status(400)
+        .json({
+          error: "Question with an identical description already exists.",
+        });
     }
   }
 
@@ -175,9 +195,11 @@ const updateQuestion = async (req, res) => {
     res.status(200).json(updatedQuestion);
   } catch (error) {
     if (!title || !description || !complexity || !category || !language) {
-      return res.status(400).json({
-        error: "Missing fields are not allowed. Please fill all fields.",
-      });
+      return res
+        .status(400)
+        .json({
+          error: "Missing fields are not allowed. Please fill all fields.",
+        });
     }
     res.status(500).json({ error: "Unable to update question" });
   }
@@ -247,13 +269,15 @@ const deleteUserTag = async (req, res) => {
   }
 };
 
- module.exports = {
-    getAllQuestions,
-    getMatchQuestion,
-    getQuestion,
-    createQuestion,
-    updateQuestion,
-    deleteQuestion,
-    addUserTag,
-    deleteUserTag
-  }
+module.exports = {
+  getAllQuestions,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
+  addUserTag,
+  deleteUserTag,
+  getMatchQuestion,
+  getQuestion,
+  duplicateTitleMessage,
+  duplicateDescriptionMessage
+};

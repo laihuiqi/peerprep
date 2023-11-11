@@ -1,7 +1,8 @@
+const config = require("./config/config");
 const express = require("express");
 const mongoose = require("mongoose");
 const questionRoutes = require("./routes/questions");
-const config = require("./config/config");
+const cors = require("cors");
 
 const app = express();
 
@@ -13,27 +14,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// cors middleware
+app.use(
+  cors({
+    // origin: 'http://localhost:3000',
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    credentials: true,
+  })
+);
+
 // go to question routes
 app.use("/api/questions", questionRoutes);
 
 // define port number
-portNumber = 3003;
+const portNumber = 3003;
 
 // connect to database
 mongoose
-  .connect(
-    config.mongodbUri
-    // "mongodb+srv://admin:70eLGyahMN7cDMd1@questioncluster.brpdmd1.mongodb.net/?retryWrites=true&w=majority"
-    /*
-    config.mongodbUri, // for testing
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    } 
-    */
-  )
+  .connect(config.mongodbUri)
   .then(() => {
-    console.log("connected to database");
+    console.log("connected to the database");
     app.listen(portNumber, () => {
       console.log("listening for requests on port", portNumber);
     });
@@ -41,5 +41,3 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-module.exports = app;

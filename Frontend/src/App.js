@@ -13,6 +13,7 @@ import { Navbar } from "./Components/Navbar/Navbar";
 import { Questions } from "./Components/QuestionList/QuestionList";
 import { LandingPage } from "./Components/LandingPage/LandingPage";
 import CollaborationWindow from "./Components/Collaboration/CollaborationWindow";
+
 import AIChat from "./Components/GenerativeAI/AIChat";
 
 import { isUserAdmin } from "./User/UserState";
@@ -63,7 +64,7 @@ function App() {
           </Route>
 
           <Route
-            path="/questions"
+            path="/questions/*"
             element={
               <ProtectedRoute
                 redirectPath="/unauthorized"
