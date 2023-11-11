@@ -7,6 +7,7 @@ import password_icon from '../Assets/password.png'
 import user_icon from '../Assets/user.png'
 
 import { registerUser, loginUser } from '../../User/UserServiceAPI'
+import {resetUserPasswordUsingFirebase} from "../../Authentication/UserAuthenticationController"
 
 export const LoginSignUp = () => {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ export const LoginSignUp = () => {
                 </div>:
                 <div></div>}
         </div>
-        {action === "Sign Up" ? <div></div>: <div className="forgot-password"> Forgot Password? <span> Click Here.</span></div>}
+        {action === "Sign Up" ? <div></div>: <div className="forgot-password" onClick={()=>resetUserPasswordUsingFirebase(userEmail)}> Forgot Password? <span> Click Here.</span></div>}
         <div className="submit-container">
             <div className={action==="Sign Up"? "submit gray": "submit"} 
             onClick = {async () => {
