@@ -28,6 +28,12 @@ jobs:
       - name: Run User Service and User Service Database with Docker Compose
         run: docker-compose up -d user-service user-service-database
 
+      - name: List Docker Containers
+        run: docker ps
+
+      - name: Check Logs of User Service
+        run: docker logs ay2324s1-course-assessment-g16_user-service_1
+
       - name: Run Test Cases in User Service
         run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
 
