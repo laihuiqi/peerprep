@@ -31,7 +31,7 @@ const CollaborationWindow = () => {
     const {sessionId, collaboratorId } = location.state || {};
     
     useEffect(() => {
-      if (sessionId && collaboratorId) {
+      if (sessionId) {
         socket.current = socketIOClient('http://localhost:3005', {
             query: {
                 userId: getUserId(), // Replace with dynamic user ID
@@ -113,7 +113,7 @@ return () => {
   socket.current.off('session-started');
 };
  }
-}, [sessionId, collaboratorId]);
+}, [sessionId]);
     
     const userId = getUserId();
 
@@ -238,7 +238,7 @@ return () => {
 
     return (
       <div className="collaboration-window">
-        <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession}/>
+        <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession} socket={socket.current}/>
           <Popup open={popup}>
               <div className="modal">
                   <div className="header"> Time Up </div>

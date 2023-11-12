@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import socketIOClient from "socket.io-client";
 
-const Timer = ({ sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTimer }) => {
+const Timer = ({ sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTimer, socket}) => {
   useEffect(() => {
-    const ENDPOINT = "http://localhost:3005"; 
-    const socket = socketIOClient(ENDPOINT, { query: { userId, sessionId } });
+    if (!socket) return;
 
     socket.on("init-timer", (startTime, timeLimit) => {
       const currentTime = Date.now();
@@ -27,7 +26,7 @@ const Timer = ({ sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTime
     return () => {
       socket.disconnect();
     };
-  }, [sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTimer]);
+  }, [sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTimer, socket]);
 
   return null; 
 };
