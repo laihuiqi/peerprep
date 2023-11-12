@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "keywords": [
     "User",
