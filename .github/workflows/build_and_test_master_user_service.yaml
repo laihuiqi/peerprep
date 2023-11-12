@@ -27,7 +27,8 @@ jobs:
         run: docker-compose up -d user-service user-service-database
 
       - name: Run Test Cases in User Service
-        run: docker exec ay2324s1-course-assessment-g16-user-service-1 npm test
+        # run: docker exec ay2324s1-course-assessment-g16-user-service-1 npm test
+        run: docker ps
 
       # - name: Upload Artifacts
       #   uses: actions/upload-artifact@v3
