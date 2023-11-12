@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "UserService/**"
+      - ".github/workflows/build_and_test_master_user_service.yaml"
 
   pull_request:
     paths:
       - "UserService/**"
+      - ".github/workflows/build_and_test_master_user_service.yaml"
 
 jobs:
   build-and-test-user-service:
@@ -27,8 +29,7 @@ jobs:
         run: docker-compose up -d user-service user-service-database
 
       - name: Run Test Cases in User Service
-        # run: docker exec ay2324s1-course-assessment-g16-user-service-1 npm test
-        run: docker ps
+        run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
 
       # - name: Upload Artifacts
       #   uses: actions/upload-artifact@v3
