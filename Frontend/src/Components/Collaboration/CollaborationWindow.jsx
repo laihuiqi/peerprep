@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer, useRef } from 'react';
 import './CollaborationWindow.css'; 
 import Timer from './Timer';
 import { useNavigate } from 'react-router-dom';
-import socketIOClient from "socket.io-client";
+import socketIOClient, { Socket } from "socket.io-client";
 import 'firebase/auth';
 import CodeEditor from './CodeEditor';
 import Popup from 'reactjs-popup';
@@ -28,16 +28,16 @@ const CollaborationWindow = () => {
     const socket = useRef(null);
     const [canExtend, setCanExtend] = useState(false);
     const location = useLocation();
-    const {sessionId, collaboratorId } = location.state || {};
+    const { sessionId, collaboratorId } = location.state || {};
     
     useEffect(() => {
-      if (sessionId) {
+      if (sessionId && collaboratorId) {
         socket.current = socketIOClient('http://localhost:3005', {
             query: {
                 userId: getUserId(), // Replace with dynamic user ID
                 sessionId: sessionId // Replace with dynamic session ID
             },
-            reconnection: false // to prevent the socket from reconnecting automatically
+            reconnection: false
         });
 
         // Set up event listeners
@@ -113,7 +113,7 @@ return () => {
   socket.current.off('session-started');
 };
  }
-}, [sessionId]);
+}, [sessionId, collaboratorId]);
     
     const userId = getUserId();
 
