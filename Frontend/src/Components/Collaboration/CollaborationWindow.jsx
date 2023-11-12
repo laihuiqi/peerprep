@@ -28,7 +28,7 @@ const CollaborationWindow = () => {
     const socket = useRef(null);
     const [canExtend, setCanExtend] = useState(false);
     const location = useLocation();
-    const { sessionId, collaboratorId } = location.state || {};
+    const {sessionId, collaboratorId } = location.state || {};
     
     useEffect(() => {
       if (sessionId && collaboratorId) {
@@ -36,7 +36,8 @@ const CollaborationWindow = () => {
             query: {
                 userId: getUserId(), // Replace with dynamic user ID
                 sessionId: sessionId // Replace with dynamic session ID
-            }
+            },
+            reconnection: false // to prevent the socket from reconnecting automatically
         });
 
         // Set up event listeners
@@ -237,7 +238,6 @@ return () => {
 
     return (
       <div className="collaboration-window">
-        <CommunicationWindow />
         <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession}/>
           <Popup open={popup}>
               <div className="modal">

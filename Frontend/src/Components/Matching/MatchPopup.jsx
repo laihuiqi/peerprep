@@ -56,7 +56,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                    // Delay navigation for 1.5 seconds
                    setTimeout(() => {
                     navigate('/collaboration', { state: { sessionId, collaboratorId } });
-                }, 1500);
+                }, 1000);
                } else {
                    console.log("No match found");
                    setShowSuccessOutput(false); // SuccessOutput popup does not show
