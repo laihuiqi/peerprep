@@ -15,6 +15,9 @@ jobs:
   build-and-test-user-service:
     runs-on: ubuntu-latest
 
+    env:
+      CONTAINER_NAME: "ay2324s1-course-assessment-g16_user-service_1"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -38,10 +41,10 @@ jobs:
         run: docker-compose logs
 
       - name: Run Test Cases in User Service
-        run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
+        run: docker exec $CONTAINER_NAME npm test # Here _ is being used after file directory and service name vs -
 
       - name: Retrieve Artifacts [JEST Test Reports]
-        run: docker cp ay2324s1-course-assessment-g16_user-service_1:/app/coverage ./user-service-test-jest-reports
+        run: docker cp $CONTAINER_NAME:/app/coverage ./user-service-test-jest-reports
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
