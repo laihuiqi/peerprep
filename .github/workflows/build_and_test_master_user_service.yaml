@@ -28,6 +28,9 @@ jobs:
       - name: Run User Service and User Service Database with Docker Compose
         run: docker-compose up -d user-service user-service-database
 
+      # - name: Wait For Startup
+      #   run: sleep 30
+
       - name: List Docker Containers
         run: docker ps
 
