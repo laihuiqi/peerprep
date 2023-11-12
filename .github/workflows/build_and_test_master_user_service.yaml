@@ -31,8 +31,8 @@ jobs:
       - name: List Docker Containers
         run: docker ps
 
-      - name: Check Logs of User Service
-        run: docker logs ay2324s1-course-assessment-g16_user-service_1
+      - name: Check Logs
+        run: docker-compose logs
 
       - name: Run Test Cases in User Service
         run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
