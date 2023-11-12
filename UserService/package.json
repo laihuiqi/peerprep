@@ -4,7 +4,7 @@
   "description": "User Service For PeerPrep. Provides Authentication and User Storage Capabilities",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest --coverage --passWithNoTests",
     "start": "nodemon server.js"
   },
   "keywords": [

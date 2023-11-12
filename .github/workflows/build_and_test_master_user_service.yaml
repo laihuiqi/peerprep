@@ -34,17 +34,18 @@ jobs:
       - name: List Docker Containers
         run: docker ps
 
-      - name: Check Logs
+      - name: Logs [For Checking Status Only]
         run: docker-compose logs
 
       - name: Run Test Cases in User Service
         run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
 
-      # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: user-service-test-artifacts
-      #     path: path/to/artifacts
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        run: docker cp ay2324s1-course-assessment-g16_user-service_1:/app/coverage ./user-service-test-jest-reports
+        with:
+          name: user-service-test-jest-report-artifacts
+          path: ./user-service-test-jest-reports/*
 
       - name: Shut Down Containers
         run: docker-compose down
