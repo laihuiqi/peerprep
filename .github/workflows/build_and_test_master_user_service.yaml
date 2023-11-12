@@ -28,17 +28,8 @@ jobs:
       - name: Run User Service and User Service Database with Docker Compose
         run: docker-compose up -d user-service user-service-database
 
-      - name: Wait For Startup
-        run: sleep 30
-
-      - name: Check Express Installation Before
-        run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm list express
-
-      - name: Run NPM install Exprerss
-        run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm i express
-
-      - name: Check Express Installation After 
-        run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm list express
+      # - name: Wait For Startup
+      #   run: sleep 30
 
       - name: List Docker Containers
         run: docker ps
