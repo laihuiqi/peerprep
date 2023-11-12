@@ -40,9 +40,11 @@ jobs:
       - name: Run Test Cases in User Service
         run: docker exec ay2324s1-course-assessment-g16_user-service_1 npm test # Here _ is being used after file directory and service name vs -
 
+      - name: Retrieve Artifacts [JEST Test Reports]
+        run: docker cp ay2324s1-course-assessment-g16_user-service_1:/app/coverage ./user-service-test-jest-reports
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
-        run: docker cp ay2324s1-course-assessment-g16_user-service_1:/app/coverage ./user-service-test-jest-reports
         with:
           name: user-service-test-jest-report-artifacts
           path: ./user-service-test-jest-reports/*
