@@ -24,7 +24,7 @@ jobs:
         run: docker-compose build --no-cache user-service user-service-database
 
       - name: Run User Service and User Service Database with Docker Compose
-        run: docker-compose up user-service user-service-database -d
+        run: docker-compose up -d user-service user-service-database
 
       - name: Run Test Cases in User Service
         run: docker exec ay2324s1-course-assessment-g16-user-service-1 npm test
