@@ -9,6 +9,8 @@ const axios = require("axios");
 
 let initSession = new Map();
 
+let sessionTracker = new Map();
+
 const startCollaboration = async (socket, io) => {
 	const collaborationSessionExist = await verifyCurrentSession(
 		socket.handshake.query.sessionId,
@@ -35,6 +37,15 @@ const startCollaboration = async (socket, io) => {
 		}
 
 		socket.join(sessionId);
+		if (!sessionTracker.has(sessionId)) {
+			sessionTracker.set(sessionId, 1);
+			while (sessionTracker.get(sessionId) != 2) {
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			} 
+		} else {
+			sessionTracker.set(sessionId, 2);
+		}
+        
 		socket.broadcast.to(sessionId).emit("join", sessionId);
 
 		console.log("user joined: ", userId);
