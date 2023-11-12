@@ -14,4 +14,7 @@ const collaborativeInputSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('CollaborativeInput', collaborativeInputSchema);
+module.exports = {
+    CollaborativeInput: mongoose.model('CollaborativeInput', collaborativeInputSchema, lineInputSchema), 
+    LineInput: mongoose.model('LineInput', lineInputSchema)
+}

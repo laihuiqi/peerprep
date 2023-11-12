@@ -1,6 +1,7 @@
-const CollaborativeInput = require("../models/collaborationCodeModel");
+import { CollaborativeInput, LineInput } from "../models/collaborationCodeModel";
 const axios = require("axios");
 const config = require("../config/config");
+import { DEFAULT_CODE } from "../../Frontend/src/Components/Collaboration/CollaborationWindow";
 
 const getCollaborativeInput = async (sessionId) => {
 	try {
@@ -37,7 +38,7 @@ const getCollaborativeInputByLine = async (sessionId, line) => {
 	}
 };
 
-const initCollaborativeCode = async (initTime, sessionId, language) => {
+const initCollaborativeCode = async (initTime, sessionId, language, userId) => {
 	try {
 		const input = await getCollaborativeInput(sessionId);
 
@@ -46,7 +47,11 @@ const initCollaborativeCode = async (initTime, sessionId, language) => {
 				sessionId: sessionId,
 				initTime: initTime,
 				language: language,
-				codes: [],
+				codes: [new LineInput({
+                    line: 1, 
+                    code: DEFAULT_CODE, 
+                    lastModifier: userId
+                })],
 			});
 
 			await collaborativeInput.save();

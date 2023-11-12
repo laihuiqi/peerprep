@@ -1,10 +1,14 @@
 import "./CodeEditor.css"
 import Editor from "@monaco-editor/react";
 import React from "react";
+import { getUserId } from "../../User/UserState";
 
-const CodeEditor = ({code, setCode, language, isReadOnly}) => {
+const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
     const OriginalResizeObserver = window.ResizeObserver;
-
+    var originalCode = code;
+    originalCode.sort((a, b) => {
+        return a.line - b.line;
+    })
     // Monaco Editor Resize Fix (https://github.com/microsoft/vscode/issues/183324#issuecomment-1575484617)
     window.ResizeObserver = function (callback) {
         const wrappedCallback = (entries, observer) => {
@@ -22,13 +26,32 @@ const CodeEditor = ({code, setCode, language, isReadOnly}) => {
         }
     }
 
+    socket.emit()
+
+    const toCode = (collabInput) => {
+        collabInput.sort((a, b) => {
+            return a.line - b.line;
+        })
+        return collabInput.map(item => item.code).join("\n");
+    }
+
+    const toCollabInput = (code) => {
+        return code.split('\n').map((line, index) => {
+            if (line == originalCode[index].line) {
+                return {line: index + 1, code: line, lastModifier: getUserId()}
+            } else {
+                return {line: index + 1, code: line, lastModifier: originalCode[index].lastModifier}
+            }
+        })
+    }
+
     return (
         <div className="code-editor">
             <Editor
                 language={language}
                 theme="vs-light"
-                value={code}
-                onChange={e => {setCode(code)}}
+                value={toCode(code)}
+                onChange={e => {setCode(toCollabInput(e.target.value))}}
                 options={{
                     inlineSuggest: true,
                     fontSize: "16px",

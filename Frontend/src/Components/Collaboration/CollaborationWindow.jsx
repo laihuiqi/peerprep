@@ -10,6 +10,7 @@ import "reactjs-popup/dist/index.css";
 import {getUserId} from "../../User/UserState";
 import {useLocation} from "react-router-dom";
 import CommunicationWindow from "./CommunicationWindow";
+export const DEFAULT_CODE = "#Enter your code here";
 
 import axios from "axios";
 
@@ -19,7 +20,6 @@ const CollaborationWindow = () => {
 	const [toast, setToast] = useState({visible: false, message: ""});
 	const [question, setQuestion] = useState(null);
 	const [collaborativeInput, setCollaborativeInput] = useState([]);
-	const [code, setCode] = useState("#Enter your code here");
 	const [language, setLanguage] = useState("python");
 	const [popup, setPopup] = useState(false);
 	const onClosePopup = () => setPopup(false);
@@ -36,7 +36,7 @@ const CollaborationWindow = () => {
 					userId: getUserId(), // Replace with dynamic user ID
 					sessionId: sessionId, // Replace with dynamic session ID
 				},
-				// reconnection: false,
+				//reconnection: false,
 			});
 
 			// Set up event listeners
@@ -55,6 +55,7 @@ const CollaborationWindow = () => {
 			socket.current.on("init-code", (language, codes) => {
 				setCollaborativeInput(codes);
 				setLanguage(language);
+        socket.current.emit("update-code", 1, DEFAULT_CODE);
 			});
 
 			socket.current.on("code-changed", (line, code) => {
@@ -300,10 +301,11 @@ const CollaborationWindow = () => {
 					{/*<p>Code editor will go here...</p>*/}
 					<div className="editor-section-inner">
 						<CodeEditor
-							code={code}
-							setCode={setCode}
+							code={collaborativeInput}
+							setCode={setCollaborativeInput}
 							language={language}
 							isReadOnly={false}
+              socket={socket.current}
 						/>
 					</div>
 					<div className="submit-button-container">
@@ -313,10 +315,6 @@ const CollaborationWindow = () => {
 					</div>
 				</div>
 			</div>
-			<Timer
-				setTimeRemaining={setTimeRemaining}
-				onSessionEnd={handleEndSession}
-			/>
 			{toast.visible && <div className="toast">{toast.message}</div>}
 		</div>
 	);

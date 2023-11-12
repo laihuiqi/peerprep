@@ -82,7 +82,8 @@ const startCollaboration = async (socket, io) => {
 		const initValue = await initCollaborativeCode(
 			initSession.get(sessionId)[0],
 			sessionId,
-			session.language
+			session.language,
+            userId
 		);
 		const [language, codes] = initValue;
 
