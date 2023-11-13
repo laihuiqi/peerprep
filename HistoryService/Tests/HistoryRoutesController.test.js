@@ -6,7 +6,7 @@ const {
 
 beforeAll(async () => {
   await connectToDatabase();
-});
+}, 30000);
 
 test("Add a Attempt: POST /history/add-attempt", async () => {
   const result = await request(app).post("/history/add-attempt").send({

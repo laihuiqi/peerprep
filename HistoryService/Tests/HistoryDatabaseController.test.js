@@ -4,9 +4,9 @@ const {
   addAttemptDetailsToDatabase,
 } = require("../Controllers/HistoryDatabaseController");
 
-test("Connect to mySQL Database", async () => {
+beforeAll(async () => {
   await connectToDatabase();
-});
+}, 30000);
 
 test("Add Attempt Details To Database", async () => {
   const result = await addAttemptDetailsToDatabase(
