@@ -24,7 +24,7 @@ async function connectToDatabase() {
         .promise();
 
       console.log(`Attempting to connect to database (Attempt ${attempt})...`);
-      await pool.query(`USE ${DATABASE_NAME};`); // Simple query to test connection
+      await pool.query(`SHOW DATABASES;`); // Simple query to test connection
       console.log("Connected to database.");
       connected = true;
       break;
