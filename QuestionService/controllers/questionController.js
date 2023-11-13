@@ -21,9 +21,14 @@ const getMatchQuestion = async (req, res) => {
   const category = req.body.category;
 
   let aggregationPipeline = [];
-
+  let actualLanguage = "";
   if (language !== "None") {
-    aggregationPipeline.push({ $match: { language: language } });
+    if (language === "SQL") {
+      actualLanguage = "SQL";
+    } else {
+      actualLanguage = "Other Languages";
+    }
+    aggregationPipeline.push({ $match: { language: actualLanguage } });
   }
 
   if (difficulty !== "None") {
@@ -146,7 +151,7 @@ const updateQuestion = async (req, res) => {
 
   checkIdValidity(id);
   const question = await Question.findById(id);
-  checkQuestionValidity(question);
+  // checkQuestionValidity(question);
 
   title = title.trim();
   description = description.trim();
@@ -273,4 +278,6 @@ module.exports = {
   deleteUserTag,
   getMatchQuestion,
   getQuestion,
+  duplicateTitleMessage,
+  duplicateDescriptionMessage
 };

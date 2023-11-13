@@ -7,6 +7,7 @@ import password_icon from '../Assets/password.png'
 import user_icon from '../Assets/user.png'
 
 import { registerUser, loginUser } from '../../User/UserServiceAPI'
+import {resetUserPasswordUsingFirebase} from "../../Authentication/UserAuthenticationController"
 
 export const LoginSignUp = () => {
     const navigate = useNavigate();
@@ -15,6 +16,8 @@ export const LoginSignUp = () => {
 
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
+    const [userName, setUserName] = useState("");
+    const [preferredLang, setPreferredLang] = useState("");
 
   return (
     <div className="container-login">
@@ -24,15 +27,29 @@ export const LoginSignUp = () => {
         </div>
         <div className="inputs">
             <div className="input">
-                <img src= {user_icon} alt="" />
-                <input type="text" placeholder = "Email" onChange={(e) => {setUserEmail(e.target.value);}} value={userEmail}/>
+                <div className="input-container">
+                    <img src= {user_icon} alt="" />
+                    <input type="text" placeholder = "Email" onChange={(e) => {setUserEmail(e.target.value);}} value={userEmail}/>
+                </div>
             </div>
             <div className="input">
-                <img src= {password_icon} alt="" />
-                <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
+                <div className="input-container">
+                    <img src= {password_icon} alt="" />
+                    <input type="password" placeholder = "Password"  onChange={(e) => {setUserPassword(e.target.value);}} value={userPassword}/>
+                </div>
             </div>
+            {action === "Sign Up"? 
+                <div className="input">
+                    <input type="text" placeholder = "Name" onChange={(e) => {setUserName(e.target.value);}} value={userName}/>
+                </div>:
+                <div></div>}
+            {action === "Sign Up"? 
+                <div className="input">
+                    <input type="text" placeholder = "Preferred programming language" onChange={(e) => {setPreferredLang(e.target.value);}} value={preferredLang}/>
+                </div>:
+                <div></div>}
         </div>
-        {action === "Sign Up" ? <div></div>: <div className="forgot-password"> Forgot Password? <span> Click Here.</span></div>}
+        {action === "Sign Up" ? <div></div>: <div className="forgot-password" onClick={()=>resetUserPasswordUsingFirebase(userEmail)}> Forgot Password? <span> Click Here.</span></div>}
         <div className="submit-container">
             <div className={action==="Sign Up"? "submit gray": "submit"} 
             onClick = {async () => {
@@ -46,7 +63,7 @@ export const LoginSignUp = () => {
             <div className={action==="Log In"? "submit gray": "submit"} 
             onClick = {async () => {
                 setAction("Sign Up")
-                const result = await registerUser("Name Placeholder", userEmail, userPassword, "GitHub ID Placeholder", "Preferred Language Placeholder")
+                const result = await registerUser(userName, userEmail, userPassword, "GitHub ID Placeholder", preferredLang)
 
                 if(result) {
                     navigate("/landing");

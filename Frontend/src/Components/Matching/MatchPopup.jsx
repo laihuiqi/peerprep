@@ -42,33 +42,35 @@ const MatchPopup = ({ isOpen, isClose }) => {
             topic: formatPreference(chosenTopic)
         };
 
-        // Make a post request to backend with the payload
-        const URL = `http://localhost:3004/home/${userId}`;
-        axios.post(URL, payload) // replace /${props.userId} with how we access userId
-            .then(response => {
-                setGoToLoadPopup(false); // Close the loading popup
-                if (response.data.status === 'success') {
-                    console.log("Matched with: ", response.data.collaboratorId);
-                    setCollaboratorId(response.data.collaboratorId);
-                    setShowSuccessOutput(true); // Triggers the SuccessOutput popup
-                    // Delay navigation for 1.5 seconds
-                    setTimeout(() => {
-                        navigate('/collaboration');
-                    }, 1500);
-                } else {
-                    console.log("No match found");
-                    setShowSuccessOutput(false); // SuccessOutput popup does not show
-                }
- //               setGoToLoadPopup(false); // Close the loading popup
-            })
-            .catch(error => {
-                console.error("Error finding a match: ", error);
-                setGoToLoadPopup(false); // Close the loading popup
-            
-            });
-         };
+       // Make a post request to backend with the payload
+       const URL = `http://localhost:3004/home/${userId}`;
+       axios.post(URL, payload) // replace /${props.userId} with how we access userId
+           .then(response => {
+               setGoToLoadPopup(false); // Close the loading popup
+               if (response.data.status === 'success') {
+                   console.log("Matched with: ", response.data.collaboratorId);
+                   const sessionId = response.data.sessionId;
+                   const collaboratorId = response.data.collaboratorId;
+                   setCollaboratorId(collaboratorId);
+                   setShowSuccessOutput(true); // Triggers the SuccessOutput popup
+                   // Delay navigation for 1.5 seconds
+                   setTimeout(() => {
+                    navigate('/collaboration', { state: { sessionId, collaboratorId } });
+                }, 1500);
+               } else {
+                   console.log("No match found");
+                   setShowSuccessOutput(false); // SuccessOutput popup does not show
+               }
+//               setGoToLoadPopup(false); // Close the loading popup
+           })
+           .catch(error => {
+               console.error("Error finding a match: ", error);
+               setGoToLoadPopup(false); // Close the loading popup
+           
+           });
+        };
 
-    if (!isOpen) return null;
+   if (!isOpen) return null;
 
     return (
         <div className="match-popup-overlay">
@@ -126,4 +128,3 @@ const MatchPopup = ({ isOpen, isClose }) => {
 }
 
 export default MatchPopup;
-

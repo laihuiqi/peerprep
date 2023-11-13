@@ -6,6 +6,7 @@ import {
   Routes,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 
 import { LoginSignUp } from "./Components/LoginSignUp/LoginSignUp";
@@ -39,15 +40,17 @@ const ProtectedRoute = ({
   return children ? children : <Outlet />;
 };
 
+const AIChatWrapper = () => {
+  const location = useLocation();
+  return location.pathname === "/collaboration" ? <AIChat /> : null;
+};
+
 function App() {
-
-  const userId = 'some-unique-user-id';
-
   return (
     <Router>
       <div>
         <Navbar />
-        <AIChat userId={userId} />
+        <AIChatWrapper />
         <Routes>
           <Route path="/login" element={<LoginSignUp />} />
 

@@ -2,7 +2,11 @@ import { getAIResponse } from './AIService';
 import './AIChat.css';
 import React, { useState, useEffect } from 'react';
 
-const AIChat = ({ userId }) => {
+import { getUserId } from '../../User/UserState';
+
+const AIChat = () => {
+  const userId = getUserId();
+
   const [prompt, setPrompt] = useState('');
   const [responses, setResponses] = useState([]); // Initialize as an array
   const [chatOpen, setChatOpen] = useState(false);
