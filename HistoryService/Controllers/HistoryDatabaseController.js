@@ -60,7 +60,7 @@ async function getAttemptDetailsFromDatabase(userId) {
     `
     SELECT * 
     FROM ${TABLE_NAME}
-    WHERE UserId1 = ? OR UserId2 = ?
+    WHERE userId1 = ? OR userId2 = ?
     `,
     [userId, userId]
   );
