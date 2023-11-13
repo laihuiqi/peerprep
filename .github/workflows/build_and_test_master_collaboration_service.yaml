@@ -49,7 +49,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: user-service-test-jest-report-artifacts
+          name: collaboration-service-test-jest-report-artifacts
           path: ./collaboration-service-test-jest-reports/*
 
       - name: Shut Down Containers
