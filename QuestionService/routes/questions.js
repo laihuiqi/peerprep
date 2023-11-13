@@ -6,8 +6,6 @@ const {
   getMatchQuestion,
   deleteQuestion,
   updateQuestion,
-  addUserTag,
-  deleteUserTag
 } = require('../controllers/questionController')
 const router = express.Router()
 
@@ -18,9 +16,5 @@ router.post('/', createQuestion)
 router.post('/match', getMatchQuestion)
 router.delete('/:id', deleteQuestion)
 router.patch('/:id', updateQuestion)
-
-// UPDATE, DELETE tags
-router.patch('/:id/tags', addUserTag)
-router.delete('/:id/tags', deleteUserTag)
 
 module.exports = router

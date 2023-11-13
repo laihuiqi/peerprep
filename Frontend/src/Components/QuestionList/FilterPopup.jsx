@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './FilterPopup.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,15 +15,6 @@ const FilterPopup = ({
   onChosenTopic,
   onSubmission,
 }) => {
-  const navigate = useNavigate(); 
-
-  const handleClearFilter = () => {
-    onChosenComplexity({ target: { value: 'No Preference' } });
-    onChosenLanguage({ target: { value: 'No Preference' } });
-    onChosenTopic({ target: { value: 'No Preference' } });
-    isClose();
-    navigate('/questions');
-  };
 
   const constructFilterURL = () => {
     let currentURL = QUESTION_SERVICE_URL + '?';
@@ -86,16 +77,25 @@ const FilterPopup = ({
           </div>
 
           <div className='button-container'>
-            <div className="clear-filter" onClick={() => handleClearFilter()}>
-             Clear Filter
-            </div>
+          <button
+              className="clear-filter"
+              onClick={() => {
+                onChosenComplexity({ target: { value: 'No Preference' } });
+                onChosenLanguage({ target: { value: 'No Preference' } });
+                onChosenTopic({ target: { value: 'No Preference' } });
+                onSubmission(QUESTION_SERVICE_URL);
+                isClose();
+              }}
+            >
+              Clear Filter
+            </button>
             <button
+              className="submit-filter"
               onClick={() => {
                 const currentURL = constructFilterURL();
-                onSubmission(currentURL); 
-                navigate('/questions/filter');
+                onSubmission(currentURL);
+                isClose();
               }}
-              className="submit-filter"
             >
               Apply Filter
             </button>
