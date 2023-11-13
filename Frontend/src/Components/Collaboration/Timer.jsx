@@ -23,9 +23,9 @@ const Timer = ({ sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTime
       }
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, [sessionId, userId, setTimeRemaining, onSessionEnd, onExtendTimer, socket]);
 
   return null; 
