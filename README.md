@@ -31,3 +31,7 @@
 ## GPT Service Build and Test
 
 ![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_gpt_service.yaml/badge.svg)
+
+## History Service Build and Test
+
+![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_history_service.yaml/badge.svg)

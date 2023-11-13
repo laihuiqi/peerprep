@@ -12,7 +12,7 @@ const getAttemptDetails = async (req, res, next) => {
     if (result[0].length === 0) {
       res.status(404).json({
         message: "NO HISTORY DATA FOUND: GET USER ATTEMPT HISTORY",
-        result: [0],
+        result: result[0],
       });
 
       return;
