@@ -1,19 +1,24 @@
-import { CollaborativeInput, LineInput } from "../models/collaborationCodeModel";
+const {
+	CollaborativeInput,
+	LineInput,
+} = require("../models/collaborationCodeModel");
 const axios = require("axios");
 const config = require("../config/config");
-import { DEFAULT_CODE } from "../../Frontend/src/Components/Collaboration/CollaborationWindow";
+const DEFAULT_CODE = "#Enter your code here";
 
 const getCollaborativeInput = async (sessionId) => {
 	try {
 		const dataOutput = await CollaborativeInput.findOne({sessionId: sessionId});
 
-		console.log(`Get collaborative input for session ${sessionId}`);
+		console.log(
+			`Get collaborative input for session ${sessionId}: ${dataOutput}`
+		);
 
 		return [dataOutput.initTime, dataOutput.language, dataOutput.codes];
 	} catch (error) {
 		console.log(`Error getting collaborative input for session ${sessionId}`);
 
-		return ["None", "", ""];
+		return ["None", "", []];
 	}
 };
 
@@ -47,27 +52,30 @@ const initCollaborativeCode = async (initTime, sessionId, language, userId) => {
 				sessionId: sessionId,
 				initTime: initTime,
 				language: language,
-				codes: [new LineInput({
-                    line: 1, 
-                    code: DEFAULT_CODE, 
-                    lastModifier: userId
-                })],
+				codes: [
+					new LineInput({
+						line: 1,
+						code: DEFAULT_CODE,
+						lastModifier: userId,
+					}),
+				],
 			});
 
 			await collaborativeInput.save();
 
 			console.log(`Successfully added:`, collaborativeInput);
 
-			return [language, []];
+			return [collaborativeInput.language, collaborativeInput.codes];
 		} else {
-			console.log(`Collaborative input already exists for ${sessionId}`);
-
-			return input;
+			console.log(
+				`Collaborative input already exists for ${sessionId}: ${input}`
+			);
+			return [input[1], input[2]];
 		}
 	} catch (error) {
 		console.log(`Failed to add collaborative input for ${sessionId}`);
 
-		return ["None", ""];
+		return ["None", []];
 	}
 };
 

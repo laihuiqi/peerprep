@@ -26,7 +26,7 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
         }
     }
 
-    socket.emit()
+    // socket.emit()
 
     const toCode = (collabInput) => {
         collabInput.sort((a, b) => {

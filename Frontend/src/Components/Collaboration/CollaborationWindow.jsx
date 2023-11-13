@@ -10,9 +10,9 @@ import "reactjs-popup/dist/index.css";
 import {getUserId} from "../../User/UserState";
 import {useLocation} from "react-router-dom";
 import CommunicationWindow from "./CommunicationWindow";
-export const DEFAULT_CODE = "#Enter your code here";
-
 import axios from "axios";
+
+export const DEFAULT_CODE = "#Enter your code here";
 
 const CollaborationWindow = () => {
 	const [sessionStarted, setSessionStarted] = useState(false);
