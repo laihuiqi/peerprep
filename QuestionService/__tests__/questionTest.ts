@@ -26,22 +26,30 @@ describe('Testing of question apis', () => {
     const createResponse = await supertest(app)
       .post('/api/questions')
       .send({
-        title: 'Create Question',
-        description: 'This is for testing question creation.',
-        complexity: 'Medium',
-        category: 'Create',
+        title: "Test Question A",
+        description: "This is test question A.",
+        complexity: "Medium",
+        category: "Algorithms",
+        language: "Other Languages"
       });
-    expect(createResponse.status).toBe(200);
-    expect(createResponse.body.title).toBe('Create Question');
-    qId = createResponse.body._id; 
+
+      expect(createResponse.status).toBe(200);
+      expect(createResponse.body.question.title).toBe("Test Question A");
+      expect(createResponse.body.question.description).toBe("This is test question A.");
+      expect(createResponse.body.question.complexity).toBe("Medium");
+      expect(createResponse.body.question.category).toBe("Algorithms");
+      expect(createResponse.body.question.language).toBe("Other Languages");
+
+    qId = createResponse.body.question._id; 
   });
 
   it('should edit question', async () => {
     const editedQuestion = {
-      title: 'Edit Question',
-      description: 'This is an edited question',
-      complexity: 'Hard',
-      category: 'Edited',
+      title: "Test Question B",
+      description: "This is test question B.",
+      complexity: "Easy",
+      category: "String",
+      language: "Other Languages"
     };
 
     const editResponse = await supertest(app)
@@ -49,7 +57,11 @@ describe('Testing of question apis', () => {
       .send(editedQuestion);
 
     expect(editResponse.status).toBe(200);
-    expect(editResponse.body.title).toBe('Edit Question');
+    expect(editResponse.body.title).toBe("Test Question B");
+    expect(editResponse.body.description).toBe("This is test question B.");
+    expect(editResponse.body.complexity).toBe("Easy");
+    expect(editResponse.body.category).toBe("String");
+    expect(editResponse.body.language).toBe("Other Languages");
   });
 
   it('should add tag', async () => {

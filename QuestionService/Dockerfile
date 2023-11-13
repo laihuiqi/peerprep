@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3003
 
-CMD ["sh", "-c", "npm start & node populateDb.js"]
+CMD ["sh", "-c", "npm test && npm start & node populateDb.js"]
