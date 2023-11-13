@@ -90,10 +90,10 @@ const startCollaboration = async (socket, io) => {
 		console.log(`init code input storage for session ${sessionId}`);
 		socket.broadcast.to(sessionId).emit("init-code", language, codes);
 
-		socket.on("update-code", async (line, code) => {
-			console.log(`Code changed on line ${line}`);
-			socket.broadcast.to(sessionId).emit("code-changed", line, code);
-			await updateCollaborativeLineInput(sessionId, line, code, userId);
+		socket.on("update-code", async (codes) => {
+			console.log(`Code changed`);
+			socket.broadcast.to(sessionId).emit("code-changed", codes);
+			await updateCollaborativeInput(sessionId, codes);
 		});
 
 		socket.on("clear", async () => {

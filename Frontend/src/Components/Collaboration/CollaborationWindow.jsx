@@ -57,12 +57,9 @@ const CollaborationWindow = () => {
 				setLanguage(lang);
 			});
 
-			socket.current.on("code-changed", (line, code) => {
+			socket.current.on("code-changed", (codes) => {
 				// Update the specific line of code in the collaborative input
-				const updatedInput = collaborativeInput.map((item, index) =>
-					index === line ? {...item, code: code} : item
-				);
-				setCollaborativeInput(updatedInput);
+				setCollaborativeInput(codes);
 			});
 
 			socket.current.on("cleared", (sessionId) => {
