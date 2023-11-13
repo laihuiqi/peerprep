@@ -4,19 +4,18 @@ async function getHistory(req, res, next) {
     try {
         const sessionId = req.params.sessionId;
 
-        const response = collaborationService.getCollaborationHistory(sessionId);
+        const response = await collaborationService.getCollaborationHistory(sessionId);
 
         if (response[0] === 'None') {
             
             await res.status(500).json({ status: 'error', message: 'Collaboration data does not exist'});
 
         } else {
-
             const jsonRes = {
                 status: "success",
-                initTime: response.initTime,
-                language: response.language,
-                codes: response.codes,
+                initTime: response[0],
+                language: response[1],
+                codes: response[2],
             }
 
             await res.status(200).json(jsonRes);
