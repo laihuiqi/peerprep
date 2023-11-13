@@ -52,9 +52,9 @@ const CollaborationWindow = () => {
 				// Handle new user joining
 			});
 
-			socket.current.on("init-code", (language, codes) => {
+			socket.current.on("init-code", (lang, codes) => {
 				setCollaborativeInput(codes);
-				setLanguage(language);
+				setLanguage(lang);
 			});
 
 			socket.current.on("code-changed", (line, code) => {
