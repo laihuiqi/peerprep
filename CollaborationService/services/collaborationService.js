@@ -151,10 +151,6 @@ const startCollaboration = async (socket, io) => {
 
 			socket.broadcast.to(sessionId).emit("notify-terminate");
 
-			if (line > 0 && code !== "") {
-				await updateCollaborativeLineInput(sessionId, line, code, userId);
-			}
-
 			let endReq;
 
 			try {

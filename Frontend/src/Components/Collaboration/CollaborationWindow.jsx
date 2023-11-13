@@ -98,7 +98,7 @@ const CollaborationWindow = () => {
 				console.log(`Session ${sessionId} has been terminated by another user`);
 				// Handle the session termination in the UI
 				showToast("Session ended, redirecting to home page...");
-				navigate("/landing"); // Redirect to home or another route
+				setTimeout(() => navigate("/landing"), 1500); // Redirect to home or another route
 				// Any cleanup or finalization logic can be added here
 			});
 
