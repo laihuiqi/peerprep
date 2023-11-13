@@ -48,7 +48,7 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
     return (
         <div className="code-editor">
             <Editor
-                language={language}
+                language={language.toLowerCase()}
                 theme="vs-light"
                 value={toCode(code)}
                 onChange={(newValue, e) => {setCode(toCollabInput(newValue))}}

@@ -55,7 +55,6 @@ const CollaborationWindow = () => {
 			socket.current.on("init-code", (language, codes) => {
 				setCollaborativeInput(codes);
 				setLanguage(language);
-        socket.current.emit("update-code", 1, DEFAULT_CODE);
 			});
 
 			socket.current.on("code-changed", (line, code) => {
