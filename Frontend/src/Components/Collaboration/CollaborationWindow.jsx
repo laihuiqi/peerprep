@@ -36,7 +36,7 @@ const CollaborationWindow = () => {
 					userId: getUserId(), // Replace with dynamic user ID
 					sessionId: sessionId, // Replace with dynamic session ID
 				},
-				//reconnection: false,
+				reconnection: true,
 			});
 
 			// Set up event listeners

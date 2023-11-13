@@ -23,7 +23,7 @@ module.exports = {
   // questionServiceUrl: "http://127.0.0.1:3003/api/questions",
   mongodbUri: "mongodb://collaboration-service-database:27017",
   // mongodbUri: "mongodb://127.0.0.1:27021/peer-prep",
-  mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
+  // mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
   DEFAULT_TIME_LIMIT,
   MAX_TIME_LIMIT,
   EXTENSION_TIME,
