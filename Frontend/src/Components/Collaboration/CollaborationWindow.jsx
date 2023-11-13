@@ -37,7 +37,6 @@ const CollaborationWindow = () => {
                 userId: getUserId(), // Replace with dynamic user ID
                 sessionId: sessionId // Replace with dynamic session ID
             },
-            reconnection: false
         });
 
         // Set up event listeners
@@ -188,27 +187,33 @@ return () => {
       setTimeout(() => navigate('/landing'), 1500);
     };
 
+    const handleExtendTimer = () => {
+      if (socket.current) {
+        socket.current.emit('extend-time'); // 15 minutes in milliseconds
+        showToast('Timer extended for 15 minutes');
+      } else {
+        console.log("reponse not available");
+      }
+    };
 
-            // Modify the handleExtendTimer function
-            const handleExtendTimer = () => {
-              // Only allow extending if less than 2 minute is remaining
-              if (timeRemaining > 120000) {
-                  showToast("You can extend the timer in the last 2 minutes of this session.");
-              } else if (socket.current) {
-                  socket.current.emit('extend-time'); 
-                  showToast('Request to extend time sent successfully!');
-                  // Reset the canExtend flag
-                  setCanExtend(false);
-              }
-          };
+//    const handleExtendTimer = () => {
+//              // Only allow extending if less than 2 minute is remaining
+//      if (timeRemaining <= 120000 && socket.current) {
+//          showToast("You can extend the timer in the last 2 minutes of this session.");
+//          socket.current.emit('extend-time'); 
+//          setCanExtend(false);
+//        } else {
+//          showToast("You can only extend the timer in the last 2 minutes of this session.");
+//              }
+//          };
     
               // useEffect for the countdown logic
-        useEffect(() => {
-          if (sessionStarted && timeRemaining > 0) {
-              const interval = setInterval(() => {
-                  setTimeRemaining((prevTime) => {
-                      // If there's only 1 minute left, allow for extension
-                      if (prevTime <= 60000 && !canExtend) {
+     useEffect(() => {
+        if (sessionStarted && timeRemaining > 0) {
+          const interval = setInterval(() => {
+            setTimeRemaining((prevTime) => {
+            // If there's only 2 minute left, allow for extension
+              if (prevTime <= 60000 && !canExtend) {
                           setCanExtend(true);
                       }
                       // If time runs out, show the popup
@@ -258,7 +263,7 @@ return () => {
         <div className="timer-bar">
           <div className="left">
             <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
-            <button className="extend-time" onClick={handleExtendTimer} disabled={timeRemaining > 120000}>Extend Timer</button>
+            <button className="extend-time" onClick={handleExtendTimer}>Extend Timer</button>
           </div>
           <div className="right">
             <button className="end-session" onClick={handleEndSession}>End Session</button>
@@ -285,8 +290,7 @@ return () => {
           </div>
 
         </div>
-        <Timer setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession} />
-        {toast.visible && <div className="toast">{toast.message}</div>}
+
       </div>
     );
 };
