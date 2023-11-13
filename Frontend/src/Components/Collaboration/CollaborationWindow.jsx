@@ -94,7 +94,7 @@ const CollaborationWindow = () => {
 				// Additional logic can be added here
 			});
 
-			socket.current.on("notify-terminate", (sessionId) => {
+			socket.current.on("notify-terminate", () => {
 				console.log(`Session ${sessionId} has been terminated by another user`);
 				// Handle the session termination in the UI
 				showToast("Session ended, redirecting to home page...");
@@ -152,7 +152,7 @@ const CollaborationWindow = () => {
 
 	const handleEndSession = () => {
 		// Emit a 'terminate-session' event to the server
-		socket.current.emit("user-terminate", {sessionId: "session-id"}); // Replace 'session-id' with the actual session ID
+		socket.current.emit("user-terminate"); // Replace 'session-id' with the actual session ID
 
 		showToast("Session terminated");
 

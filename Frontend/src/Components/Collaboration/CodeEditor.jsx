@@ -37,7 +37,7 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
 
     const toCollabInput = (code) => {
         return code.split('\n').map((line, index) => {
-            if (line == originalCode[index].line) {
+            if (line != originalCode[index].code) {
                 return {line: index + 1, code: line, lastModifier: getUserId()}
             } else {
                 return {line: index + 1, code: line, lastModifier: originalCode[index].lastModifier}
@@ -51,7 +51,7 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
                 language={language}
                 theme="vs-light"
                 value={toCode(code)}
-                onChange={e => {setCode(toCollabInput(e.target.value))}}
+                onChange={(newValue, e) => {setCode(toCollabInput(newValue))}}
                 options={{
                     inlineSuggest: true,
                     fontSize: "16px",

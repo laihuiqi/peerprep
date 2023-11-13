@@ -144,12 +144,12 @@ const startCollaboration = async (socket, io) => {
 			}, newSessionDuration - (Date.now() - sessionInitTime) + timerDelay);
 		});
 
-		socket.on("user-terminate", async (line, code) => {
+		socket.on("user-terminate", async () => {
 			console.log(`User terminated session ${sessionId}`);
 
 			clearTimeout(sessionTimer);
 
-			socket.broadcast.to(sessionId).emit("notify-terminate", sessionId);
+			socket.broadcast.to(sessionId).emit("notify-terminate");
 
 			if (line > 0 && code !== "") {
 				await updateCollaborativeLineInput(sessionId, line, code, userId);
