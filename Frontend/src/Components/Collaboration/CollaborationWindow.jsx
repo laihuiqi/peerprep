@@ -54,6 +54,13 @@ const CollaborationWindow = () => {
 
 			socket.current.on("init-code", (lang, codes) => {
 				setCollaborativeInput(codes);
+				if (lang === "None") {
+					lang = "Python";
+				}
+				setLanguage(lang);
+			});
+
+			socket.current.on("language-changed", (lang) => {
 				setLanguage(lang);
 			});
 
@@ -300,8 +307,9 @@ const CollaborationWindow = () => {
 							code={collaborativeInput}
 							setCode={setCollaborativeInput}
 							language={language}
+							setLanguage={setLanguage}
 							isReadOnly={false}
-              socket={socket.current}
+							socket={socket.current}
 						/>
 					</div>
 					<div className="submit-button-container">

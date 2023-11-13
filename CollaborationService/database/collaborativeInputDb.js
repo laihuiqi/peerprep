@@ -141,6 +141,42 @@ const updateCollaborativeInput = async (sessionId, codes) => {
 	}
 };
 
+const updateCollaborativeLanguage = async (sessionId, language) => {
+	try {
+		let collaborativeInput = await CollaborativeInput.findOne({
+			sessionId: sessionId,
+		});
+		const sessionReq = await axios.get(
+			`${config.matchingServiceUrl}/getSession/${sessionId}`
+		);
+
+		const session = sessionReq.data.session;
+
+		if (collaborativeInput.language !== null) {
+			collaborativeInput.language = language;
+		} else {
+			collaborativeInput = new CollaborativeInput({
+				sessionId: sessionId,
+				initTime: session.initTime,
+				language: language,
+				codes: [
+					new LineInput({
+						line: 1,
+						code: DEFAULT_CODE,
+						lastModifier: userId,
+					}),
+				],
+			});
+		}
+
+		await collaborativeInput.save();
+
+		console.log(`Successfully updated:`, collaborativeInput);
+	} catch (error) {
+		console.log(`Failed to update collaborative language for ${sessionId}`);
+	}
+};
+
 const deleteCollaborativeInput = async (sessionId) => {
 	try {
 		const result = await CollaborativeInput.deleteOne({sessionId: sessionId});
@@ -175,6 +211,7 @@ module.exports = {
 	initCollaborativeCode,
 	updateCollaborativeLineInput,
 	updateCollaborativeInput,
+	updateCollaborativeLanguage,
 	deleteCollaborativeInput,
 	deleteCollaborativeLineInput,
 };

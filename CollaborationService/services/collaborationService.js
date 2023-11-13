@@ -2,6 +2,7 @@ const {
 	initCollaborativeCode,
 	updateCollaborativeInput,
 	updateCollaborativeLineInput,
+	updateCollaborativeLanguage,
 	getCollaborativeInput,
 } = require("../database/collaborativeInputDb");
 const config = require("../config/config");
@@ -94,6 +95,12 @@ const startCollaboration = async (socket, io) => {
 			console.log(`Code changed`);
 			socket.broadcast.to(sessionId).emit("code-changed", codes);
 			await updateCollaborativeInput(sessionId, codes);
+		});
+
+		socket.on("update-language", async (language) => {
+			console.log(`Language changed`);
+			socket.broadcast.to(sessionId).emit("language-changed", language);
+			await updateCollaborativeLanguage(sessionId, language);
 		});
 
 		socket.on("clear", async () => {

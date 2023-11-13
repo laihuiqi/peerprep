@@ -3,10 +3,18 @@ import Editor from "@monaco-editor/react";
 import React, {useState, useEffect} from "react";
 import {getUserId} from "../../User/UserState";
 
-const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
+const CodeEditor = ({
+	code,
+	setCode,
+	language,
+	setLanguage,
+	isReadOnly,
+	socket,
+}) => {
 	const OriginalResizeObserver = window.ResizeObserver;
 
 	const [originalCode, setOriginalCode] = useState(code);
+	const [originalLanguage, setOriginalLanguage] = useState(language);
 	const [shouldEmit, setShouldEmit] = useState(false);
 
 	useEffect(() => {
@@ -35,7 +43,6 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
 		}
 	}
 
-
 	const toCode = (collabInput) => {
 		collabInput.sort((a, b) => {
 			return a.line - b.line;
@@ -45,12 +52,12 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
 
 	const toCollabInput = (code) => {
 		return code.split("\n").map((line, index) => {
-            //if a new line is being added
+			//if a new line is being added
 			if (index >= originalCode.length) {
 				setShouldEmit(true);
 				return {line: index + 1, code: line, lastModifier: getUserId()};
 			} else {
-                //if the code on an existing line number is changed
+				//if the code on an existing line number is changed
 				if (line != originalCode[index].code) {
 					setShouldEmit(true);
 					return {line: index + 1, code: line, lastModifier: getUserId()};
@@ -69,8 +76,30 @@ const CodeEditor = ({code, setCode, language, isReadOnly, socket}) => {
 		setCode(toCollabInput(value));
 	};
 
+	const handleLanguageChange = (e) => {
+		let value = e.target.value;
+		setLanguage(value);
+		if (value !== originalLanguage) {
+			socket.emit("update-language", value);
+			setOriginalLanguage(value);
+		}
+	};
+
 	return (
 		<div className="code-editor">
+			<div className="language-dropdown-div">
+				<div>Language: </div>
+				<select
+					value={language.toLowerCase()}
+					onChange={handleLanguageChange}
+					className="language-dropdown"
+				>
+					<option value="python">Python</option>
+					<option value="cpp">C++</option>
+					<option value="java">Java</option>
+					<option value="javascript">Javascript</option>
+				</select>
+			</div>
 			<Editor
 				language={language.toLowerCase()}
 				theme="vs-light"
