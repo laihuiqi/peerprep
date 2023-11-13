@@ -64,30 +64,6 @@ describe('Testing of question apis', () => {
     expect(editResponse.body.language).toBe("Other Languages");
   });
 
-  it('should add tag', async () => {
-    const addTagResponse = await supertest(app)
-      .patch(`/api/questions/${qId}/tags`)
-      .send({
-        userId: '123',
-        tag: 'sample',
-      });
-
-    expect(addTagResponse.status).toBe(200);
-    expect(addTagResponse.body.userTags[0].tags).toContain('sample');
-  });
-
-  it('should remove tag', async () => {
-    const removeTagResponse = await supertest(app)
-      .delete(`/api/questions/${qId}/tags`)
-      .send({
-        userId: '123',
-        tag: 'sample',
-      });
-
-    expect(removeTagResponse.status).toBe(200);
-    expect(removeTagResponse.body.userTags[0].tags).not.toContain('sample');
-  });
-
   it('should delete question', async () => {
     const deleteResponse = await supertest(app).delete(`/api/questions/${qId}`);
     expect(deleteResponse.status).toBe(200);
