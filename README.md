@@ -6,20 +6,24 @@
 
 ## Overall Build
 
-https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_master_docker_services.yaml/badge.svg
+![Overall Build](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_master_docker_services.yaml/badge.svg)
 
 ## Collaboration Service Build and Test
 
-https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_collaboration_service.yaml/badge.svg
+![Collaboration Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_collaboration_service.yaml/badge.svg)
 
 ## Matching Service Build and Test
 
-https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_matching_service.yaml/badge.svg
+![Matching Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_matching_service.yaml/badge.svg)
 
 ## Question Service Build and Test
 
-https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_question_service.yaml/badge.svg
+![Question Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_question_service.yaml/badge.svg)
 
 ## User Service Build and Test
 
-https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_user_service.yaml/badge.svg
+![User Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_user_service.yaml/badge.svg)
+
+## Communication Service Build and Test
+
+![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_communication_service.yaml/badge.svg)
