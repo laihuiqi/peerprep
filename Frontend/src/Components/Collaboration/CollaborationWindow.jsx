@@ -36,7 +36,7 @@ const CollaborationWindow = () => {
             query: {
                 userId: getUserId(), // Replace with dynamic user ID
                 sessionId: sessionId // Replace with dynamic session ID
-            },
+            }
         });
 
         // Set up event listeners
@@ -154,22 +154,21 @@ return () => {
       //  }
    // };
 
-    const handleEndSession = () => {
-      // Emit a 'terminate-session' event to the server
-      socket.current.emit('user-terminate', { sessionId: 'session-id' }); // Replace 'session-id' with the actual session ID
-  
-      showToast('Session terminated');
-  
-      // to home or another route after a short delay
-      setTimeout(() => navigate('/landing'), 1500);
-  };
-  
+   const handleEndSession = () => {
+    // Check if the socket instance exists and sessionId is valid
+    if (socket.current && sessionId) {
+        // Emit a 'terminate-session' event to the server with the current sessionId
+        socket.current.emit('user-terminate', { sessionId: sessionId });
 
+        showToast('Session terminated');
 
-//    const handleExtendTimer = () => {
-//        setTimeRemaining(timeRemaining + 900000);
-//        showToast('Timer extended for 15 minutes');
-//    };
+        // Navigate to home or another route after a short delay
+        setTimeout(() => navigate('/landing'), 1500);
+    } else {
+        console.log('Error: Socket not connected or invalid session ID');
+    }
+};
+  
 
     const formatTime = (time) => {
         const totalSeconds = Math.floor(time / 1000);
@@ -181,7 +180,7 @@ return () => {
     };
 
     const handleSubmit = () => {
-      socket.current.emit('user-terminate', { sessionId: 'session-id' });
+      socket.current.emit('user-terminate', { sessionId: sessionId});
 
       showToast('Your code has been submitted');
       setTimeout(() => navigate('/landing'), 1500);
@@ -199,51 +198,45 @@ return () => {
 //    const handleExtendTimer = () => {
 //              // Only allow extending if less than 2 minute is remaining
 //      if (timeRemaining <= 120000 && socket.current) {
-//          showToast("You can extend the timer in the last 2 minutes of this session.");
+//          showToast("Timer extended for 15 minutes!");
 //          socket.current.emit('extend-time'); 
-//          setCanExtend(false);
+//          setCanExtend(true);
 //        } else {
 //          showToast("You can only extend the timer in the last 2 minutes of this session.");
 //              }
 //          };
     
-              // useEffect for the countdown logic
-     useEffect(() => {
-        if (sessionStarted && timeRemaining > 0) {
-          const interval = setInterval(() => {
-            setTimeRemaining((prevTime) => {
-            // If there's only 2 minute left, allow for extension
-              if (prevTime <= 60000 && !canExtend) {
-                          setCanExtend(true);
-                      }
-                      // If time runs out, show the popup
-                      if (prevTime <= 0) {
-                          clearInterval(interval);
-                          setPopup(true);
-                      }
-                      return prevTime > 0 ? prevTime - 1000 : 0;
-                  });
-              }, 1000);
-    
-              // Cleanup interval on component unmount
-              return () => clearInterval(interval);
+    // useEffect for the countdown logic
+    useEffect(() => {
+      let interval;
+  
+      if (sessionStarted && timeRemaining > 0) {
+          interval = setInterval(() => {
+              setTimeRemaining(prevTime => {
+                  // When time runs out, show the popup and stop the interval
+                  if (prevTime <= 1000) {
+                      clearInterval(interval);
+                      setPopup(true);
+                      return 0;
+                  }
+                  // Otherwise, continue counting down
+                  return prevTime - 1000;
+              });
+          }, 1000);
+      }
+  
+      // Cleanup interval on component unmount or when session ends
+      return () => {
+          if (interval) {
+              clearInterval(interval);
           }
-      }, [sessionStarted, timeRemaining, canExtend]);
-
- //   useEffect(() => {
- //       if (sessionStarted && timeRemaining > 0) {
- //         const interval = setInterval(() => {
- //           setTimeRemaining((prevTime) => prevTime - 1000);
- //         }, 1000);
-//
- //           return () => clearInterval(interval);
- //       }
- //   }, [sessionStarted, timeRemaining]);
-
+      };
+  }, [sessionStarted, timeRemaining]);
+  
 
     return (
       <div className="collaboration-window">
-        <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} onSessionEnd={handleEndSession} socket={socket.current}/>
+        <Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} socket={socket.current}/>
           <Popup open={popup}>
               <div className="modal">
                   <div className="header"> Time Up </div>
