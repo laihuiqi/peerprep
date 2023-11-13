@@ -40,7 +40,7 @@ jobs:
       - name: Wait For Startup of Containers
         run: sleep 5
 
-      - name: Set up Node.js Environment For Running Tests
+      - name: Set up Node.js Environment For Running Tests # Due to dependency issue, have separated test for matching service
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -61,46 +61,3 @@ jobs:
 
       - name: Shut Down Containers
         run: docker-compose down
-
-  # test-matching-service: # Due to dependency issue, have separated test for matching service
-  #   needs: build-matching-service
-
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up Node.js Environment
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-
-  #     - name: Set up Docker Environment
-  #       uses: docker/setup-buildx-action@v3
-
-  #     - name: Build Matching Service, Matching Service Database and RabbitMQ with Docker Compose
-  #       run: docker-compose build --no-cache matching-service matching-service-database rabbitmq
-
-  #     - name: Run Matching Service, Matching Service Database and RabbitMQ with Docker Compose
-  #       run: docker-compose up -d matching-service matching-service-database rabbitmq
-
-  #     - name: Wait For Startup of Containers
-  #       run: sleep 10
-
-  #     - name: Install Node Dependencies
-  #       run: npm install
-  #       working-directory: MatchingService
-
-  #     - name: Run Test Cases in Matching Service
-  #       run: npm test
-  #       working-directory: MatchingService
-
-  #     - name: Retrieve and Upload Artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: matching-service-test-jest-report-artifacts
-  #         path: MatchingService/coverage/**
-
-  #     - name: Shut Down Containers
-  #       run: docker-compose down
