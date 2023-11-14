@@ -12,8 +12,6 @@ import {resetUserPasswordUsingFirebase} from "../../Authentication/UserAuthentic
 export const Login = ({setAction}) => {
     const navigate = useNavigate();
 
-    const [action, setAction] = useState("Log In");
-
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
 
