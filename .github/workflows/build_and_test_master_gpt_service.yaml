@@ -41,7 +41,7 @@ jobs:
         run: docker-compose logs
 
       - name: Create New Environment File With GPT API Key
-        run: docker exec $CONTAINER_NAME echo GPT_API_KEY=${{ secrets.GPT_API_KEY }} > ./usr/src/app/.env
+        run: docker exec $CONTAINER_NAME sh -c 'echo GPT_API_KEY=${{ secrets.GPT_API_KEY }} > /usr/src/app/.env'
 
       - name: Run Test Cases in GPT Service
         run: docker exec $CONTAINER_NAME npm test
