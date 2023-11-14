@@ -18,7 +18,7 @@ export const SignUp = (setAction) => {
     const [preferredLang, setPreferredLang] = useState("");
 
   return (
-    <div>
+    <div className = "signup-container">
         <div className="inputs">
             <div className="input">
                 <div className="input-container">

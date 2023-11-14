@@ -1,4 +1,4 @@
-.container-login {
+.container-loginsignup {
     display: flex;
     flex-direction: column;
     margin: auto;
@@ -84,7 +84,7 @@
 .submit-container {
     display: flex;
     gap: 30px;
-    margin: 40px auto;
+    margin: auto;
 }
 
 .submit {
@@ -105,3 +105,36 @@
     background: #e9e9e9;
     color: #676767;
 }
+
+.signup-nav {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-nav span{
+    color: #1f76ef;
+}
+
+.login-nav {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-nav span{
+    color: #1f76ef;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+

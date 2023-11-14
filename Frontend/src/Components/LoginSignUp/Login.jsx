@@ -17,7 +17,7 @@ export const Login = ({setAction}) => {
 
 
   return (
-    <div>
+    <div className = "login-container">
         <div className="inputs">
             <div className="input">
                 <div className="input-container">

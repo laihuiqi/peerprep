@@ -11,7 +11,7 @@ export const LoginSignUp = () => {
     const [action, setAction] = useState("Log In");
 
   return (
-    <div className="container-login">
+    <div className="container-loginsignup">
         <div className="header">
             <div className="text"> {action} </div>
             <div className="underline"></div>
