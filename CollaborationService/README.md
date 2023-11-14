@@ -30,7 +30,7 @@ http://localhost:3005
 
 1. Navigate to Collaboration directory.
    
-2. Uncomment localhost addresses and comment the docker addresses for the services in the `Collaboration\config\config.js` file as below:
+2. Uncomment localhost addresses and comment the docker addresses for the services in the `CollaborationService\config\config.js` file as below:
    
 ``` 
 // mongodbUri: "mongodb://collaboration-service-database:27017",
@@ -43,7 +43,7 @@ mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
 4. Start the microservice in terminal using commands:
    
 ```
-cd Collaboration-service
+cd CollaborationService
 npm install
 npm start
 ```
@@ -173,7 +173,7 @@ Testing is done on the initialization steps and the `getCollaborationHistory` fu
 1. Test the service using terminal commands:
 
 ```
-cd Collaboration-service
+cd CollaborationService
 npm test
 ```
 
@@ -187,7 +187,7 @@ Please ensure that there are no active container of the required services.
 
 1. Navigate to peerprep directory.
    
-2. Comment local database address and uncomment the docker address for the service in the `Collaboration-service\config\config.js` file as below:
+2. Comment local database address and uncomment the docker address for the service in the `CollaborationService\config\config.js` file as below:
    
 ```
 mongodbUri: "mongodb://collaboration-service-database:27017",
@@ -198,7 +198,7 @@ mongodbUri: "mongodb://collaboration-service-database:27017",
 3. Start the microservice in terminal using commands:
    
 ```
-cd Collaboration-service
+cd CollaborationService
 docker-compose up --build
 ```
 
