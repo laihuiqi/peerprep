@@ -26,7 +26,7 @@ test("Test User Registration With Correct Credentials", () => {
   ).then((data) => {
     console.log("> Register With Correct Credentials: " + data);
 
-    expect(data).toBe(true);
+    expect(data.success).toBe(true);
   });
 });
 
@@ -35,7 +35,7 @@ test("Test User Registration With Incorrect Credentials", () => {
     (data) => {
       console.log("> Register With Incorrect Credentials: " + data);
 
-      expect(data).toBe(false);
+      expect(data.success).toBe(false);
     }
   );
 });
@@ -47,7 +47,7 @@ test("Test User Registration With Same Duplicate Email", () => {
   ).then((data) => {
     console.log("> Register With Duplicate Email: " + data);
 
-    expect(data).toBe(false);
+    expect(data.success).toBe(false);
   });
 });
 
