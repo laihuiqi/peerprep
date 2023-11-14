@@ -66,12 +66,12 @@ describe('Collaboration Service', () => {
         io = new Server(httpServer);
         const serverReadyPromise = new Promise((resolve) => {
             httpServer.listen(() => {
-                console.log('Server is running');
-                io.on("connection", async(socket) => {
-                    console.log("socket connected: ", socket.id);
-                    await startCollaboration(socket, io);
+              console.log('Server is running');
+              io.on("connection", async(socket) => {
+                console.log("socket connected: ", socket.id);
+                await startCollaboration(socket, io);
                 });
-                resolve();
+              resolve();
             });
         });
 
