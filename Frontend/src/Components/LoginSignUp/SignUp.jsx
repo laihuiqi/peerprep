@@ -16,7 +16,7 @@ export const SignUp = ({setAction, setError}) => {
  const [userEmail, setUserEmail] = useState("");
  const [userPassword, setUserPassword] = useState("");
  const [userName, setUserName] = useState("");
- const [preferredLang, setPreferredLang] = useState("python");
+ const [preferredLang, setPreferredLang] = useState("Python");
 
  const isEmpty = (str) => {
   return str === "";
