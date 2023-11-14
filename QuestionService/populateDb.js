@@ -7,7 +7,7 @@ const questionsData = [
     title: 'Test Question 1',
     description: 'This is for Test Question 1',
     complexity: 'Easy',
-    category: 'Data Structures',
+    category: 'Data Structure',
     language: 'Other Languages',
   },
   {
