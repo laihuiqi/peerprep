@@ -13,10 +13,10 @@ const MatchPopup = ({ isOpen, isClose }) => {
     const navigate = useNavigate();
 
     // States for the matching criteria
-    const [chosenDifficulty, setChosenDifficulty] = useState("No Preference");
-    const [chosenLanguage, setChosenLanguage] = useState("No Preference");
-    const [chosenProficiency, setChosenProficiency] = useState("No Preference");
-    const [chosenTopic, setChosenTopic] = useState("No Preference");
+    const [chosenDifficulty, setChosenDifficulty] = useState("None");
+    const [chosenLanguage, setChosenLanguage] = useState("None");
+    const [chosenProficiency, setChosenProficiency] = useState("None");
+    const [chosenTopic, setChosenTopic] = useState("None");
 
     const initiateMatching = () => {
 
@@ -30,16 +30,12 @@ const MatchPopup = ({ isOpen, isClose }) => {
             return;
         }
 
-        const formatPreference = (preference) => {
-            return preference === "No Preference" ? "None" : preference;
-        };
-
         const payload = {
             userId: userId,
-            difficulty: formatPreference(chosenDifficulty),
-            language: formatPreference(chosenLanguage),
-            proficiency: formatPreference(chosenProficiency),
-            topic: formatPreference(chosenTopic)
+            difficulty: chosenDifficulty,
+            language: chosenLanguage,
+            proficiency: chosenProficiency,
+            topic: chosenTopic
         };
 
        // Make a post request to backend with the payload
@@ -84,17 +80,17 @@ const MatchPopup = ({ isOpen, isClose }) => {
                             <option value="Easy">Easy</option>
                             <option value="Medium">Medium</option>
                             <option value="Hard">Hard</option>
-                            <option value="No Preference">No Preference</option>
+                            <option value="None">No Preference</option>
                         </select>
                     </div>
                     <div className="criteria-field">
                         <label>Language:</label>
                         <select value={chosenLanguage} onChange={(e) => setChosenLanguage(e.target.value)}>
-                            <option value="Python">Python</option>
-                            <option value="Java">Java</option>
-                            <option value="C++">C++</option>
-                            <option value="JavaScript">JavaScript</option>
-                            <option value="No Preference">No Preference</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="None">No Preference</option>
                         </select>
                         </div>
                     <div className="criteria-field">
@@ -103,7 +99,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                             <option value="Beginner">Beginner</option>
                             <option value="Intermediate">Intermediate</option>
                             <option value="Advanced">Advanced</option>
-                            <option value="No Preference">No Preference</option>
+                            <option value="None">No Preference</option>
                         </select>
                         </div>
                     <div className="criteria-field">
@@ -113,7 +109,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                             <option value="Data Structure">Data Structure</option>
                             <option value="Optimisation">Optimisation</option>
                             <option value ="Recursion">Recursion</option>
-                            <option value = "No Preference">No Preference</option>
+                            <option value = "None">No Preference</option>
                         </select>
                         </div>
                 </div>

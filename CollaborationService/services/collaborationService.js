@@ -2,6 +2,7 @@ const {
 	initCollaborativeCode,
 	updateCollaborativeInput,
 	updateCollaborativeLineInput,
+	updateCollaborativeLanguage,
 	getCollaborativeInput,
 } = require("../database/collaborativeInputDb");
 const config = require("../config/config");
@@ -87,13 +88,37 @@ const startCollaboration = async (socket, io) => {
 		);
 		const [language, codes] = initValue;
 
+		if (language === "session-end") {
+			await systemTerminate(sessionId, io);
+			io.to(sessionId).emit("system-terminate", sessionId);
+		}
+
 		console.log(`init code input storage for session ${sessionId}`);
 		socket.broadcast.to(sessionId).emit("init-code", language, codes);
+		let questionValue;
+		try {
+			console.log("The session:",session)
+			const questionObject = await getQuestionById(session.questionId);
+			questionValue = questionObject.question;
+			console.log('The question description:', questionValue);
+			await new Promise((resolve) => {
+				socket.broadcast.to(sessionId).emit("recv-question", questionValue);
+				resolve();
+			});
+		} catch (error) {
+			console.error("Error retrieving or emitting question:", error);
+		}
+		
+		socket.on("update-code", async (codes) => {
+			console.log(`Code changed`);
+			socket.broadcast.to(sessionId).emit("code-changed", codes);
+			await updateCollaborativeInput(sessionId, codes);
+		});
 
-		socket.on("update-code", async (line, code) => {
-			console.log(`Code changed on line ${line}`);
-			socket.broadcast.to(sessionId).emit("code-changed", line, code);
-			await updateCollaborativeLineInput(sessionId, line, code, userId);
+		socket.on("update-language", async (language) => {
+			console.log(`Language changed`);
+			socket.broadcast.to(sessionId).emit("language-changed", language);
+			await updateCollaborativeLanguage(sessionId, language);
 		});
 
 		socket.on("clear", async () => {
@@ -102,14 +127,6 @@ const startCollaboration = async (socket, io) => {
 			socket.broadcast.to(sessionId).emit("cleared", sessionId);
 
 			await updateCollaborativeInput(sessionId, []);
-		});
-
-		socket.on("get-question", async () => {
-			console.log(`Getting question for session ${sessionId}`);
-
-			const question = await getQuestionById(session.questionId);
-
-			socket.emit("recv-question", question);
 		});
 
 		socket.on("extend-time", async () => {
@@ -144,16 +161,12 @@ const startCollaboration = async (socket, io) => {
 			}, newSessionDuration - (Date.now() - sessionInitTime) + timerDelay);
 		});
 
-		socket.on("user-terminate", async (line, code) => {
+		socket.on("user-terminate", async () => {
 			console.log(`User terminated session ${sessionId}`);
 
 			clearTimeout(sessionTimer);
 
-			socket.broadcast.to(sessionId).emit("notify-terminate", sessionId);
-
-			if (line > 0 && code !== "") {
-				await updateCollaborativeLineInput(sessionId, line, code, userId);
-			}
+			socket.broadcast.to(sessionId).emit("notify-terminate");
 
 			let endReq;
 
@@ -196,8 +209,6 @@ const startCollaboration = async (socket, io) => {
 		});
 
 		socket.on("disconnect", async () => {
-			console.log("user disconnected: ", userId);
-
 			clearTimeout(sessionTimer);
 
 			socket.broadcast.to(sessionId).emit("user-disconnected", userId);
@@ -224,7 +235,8 @@ const startCollaboration = async (socket, io) => {
 			endReq = await axios.delete(
 				`${config.matchingServiceUrl}/end/${sessionId}`
 			);
-			isEnded = endReq.data.status;
+			console.log(endReq);
+
 		} catch (error) {
 			console.log(error);
 			isEnded = "error";
