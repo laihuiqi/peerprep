@@ -15,12 +15,12 @@ const io = new Server(server, {
   });
 
 app.use(cors());
-app.use(express.static(__dirname + '/services')); // change after done to app.use(express.static(__dirname);
+app.use(express.static(__dirname)); 
 app.use(express.urlencoded({ extended: true })); // use express's built-in middleware
 app.use(express.json()); // This is the middleware to handle JSON payloads
 
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, 'services', 'index.html'));
+  res.status(200).send('<h1>Communication service is up!</h1>');
 });
 
 io.on('connection', async(socket) => {

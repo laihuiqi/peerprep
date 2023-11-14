@@ -134,14 +134,25 @@ const CommunicationWindow = () => {
   
 
   const handleReceiveCall = async (incoming) => {
-    await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.offer));
-    const answer = await peerConnection.current.createAnswer();
-    await peerConnection.current.setLocalDescription(answer);
-    socket.emit('answer', answer);
-    setShowIncomingCallModal(true);
-    setIncomingOffer(incoming.offer);
+    if (!incoming || !incoming.offer) {
+      console.error("Invalid incoming offer:", incoming);
+      showToast('Received invalid call data.');
+      return;
+    }
+  
+    try {
+      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(incoming.offer));
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
+      socket.emit('answer', answer);
+      setShowIncomingCallModal(true);
+      setIncomingOffer(incoming.offer);
+    } catch (error) {
+      console.error("Error handling incoming call:", error);
+      showToast('Error handling the call.');
+    }
   };
-
+  
   const acceptCall = async () => {
     if (!incomingOffer || !peerConnection.current) {
       console.error("No incoming call to accept");
