@@ -9,11 +9,31 @@ import user_icon from "../Assets/user.png";
 import {loginUser} from "../../User/UserServiceAPI";
 import {resetUserPasswordUsingFirebase} from "../../Authentication/UserAuthenticationController";
 
-export const Login = ({setAction}) => {
+const MISSING_FIELD_ERROR_MESSAGE = "Please fill all fields!";
+
+export const Login = ({setAction, setError}) => {
 	const navigate = useNavigate();
 
 	const [userEmail, setUserEmail] = useState("");
 	const [userPassword, setUserPassword] = useState("");
+
+	const isEmpty = (str) => {
+		return str === "";
+	};
+
+	const handleSubmit = async () => {
+		if (isEmpty(userEmail) || isEmpty(userPassword)) {
+			setError(MISSING_FIELD_ERROR_MESSAGE);
+		} else {
+			const result = await loginUser(userEmail, userPassword);
+			if (result) {
+				navigate("/landing");
+				setError("");
+			} else {
+				setError("Invalid credentials. Please try again.");
+			}
+		}
+	};
 
 	return (
 		<div className="login-container">
@@ -46,30 +66,32 @@ export const Login = ({setAction}) => {
 				</div>
 			</div>
 			<div className="forgot-password">
-				{" "}
-				Forgot Password?{" "}
+				Forgot Password?
 				<span onClick={() => resetUserPasswordUsingFirebase(userEmail)}>
-					{" "}
 					Click Here.
 				</span>
 			</div>
 			<div className="submit-container">
 				<div
 					className="submit"
-					onClick={async () => {
-						const result = await loginUser(userEmail, userPassword);
-						if (result) {
-							navigate("/landing");
-						}
+					onClick={(e) => {
+						handleSubmit();
 					}}
 				>
 					Log In
 				</div>
 			</div>
 			<div className="signup-nav">
-				{" "}
-				Don't have an account?{" "}
-				<span onClick={() => setAction("Sign Up")}> Sign Up.</span>
+				Don't have an account?
+				<span
+					onClick={() => {
+						setError("");
+						setAction("Sign Up");
+					}}
+				>
+					{" "}
+					Sign Up.
+				</span>
 			</div>
 		</div>
 	);

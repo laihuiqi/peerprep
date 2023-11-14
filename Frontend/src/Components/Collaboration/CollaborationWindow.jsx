@@ -120,7 +120,7 @@ const CollaborationWindow = () => {
 		if (question) {
 		  sessionStorage.setItem("savedQuestion", JSON.stringify(question));
 		}
-	  }, [question]);
+	}, [question]);
 
 	const userId = getUserId();
 
