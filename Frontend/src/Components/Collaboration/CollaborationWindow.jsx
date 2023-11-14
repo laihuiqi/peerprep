@@ -29,6 +29,11 @@ const CollaborationWindow = () => {
 	const {sessionId, collaboratorId} = location.state || {};
 
 	useEffect(() => {
+		const questionStored = JSON.parse(sessionStorage.getItem("savedQuestion"));
+		if (questionStored) {
+		  setQuestion(questionStored);
+		}
+		
 		if (sessionId && collaboratorId) {
 			socket.current = socketIOClient("http://localhost:3005", {
 				query: {
@@ -110,6 +115,12 @@ const CollaborationWindow = () => {
 			};
 		}
 	}, [sessionId, collaboratorId]);
+
+	useEffect(() => {
+		if (question) {
+		  sessionStorage.setItem("savedQuestion", JSON.stringify(question));
+		}
+	}, [question]);
 
 	const userId = getUserId();
 
