@@ -8,13 +8,40 @@ import user_icon from "../Assets/user.png";
 
 import {registerUser} from "../../User/UserServiceAPI";
 
-export const SignUp = ({setAction}) => {
+const MISSING_FIELD_ERROR_MESSAGE = "Please fill all fields!";
+
+export const SignUp = ({setAction, setError}) => {
 	const navigate = useNavigate();
 
 	const [userEmail, setUserEmail] = useState("");
 	const [userPassword, setUserPassword] = useState("");
 	const [userName, setUserName] = useState("");
 	const [preferredLang, setPreferredLang] = useState("");
+
+	const isEmpty = (str) => {
+		return str === "";
+	};
+
+	const handleSubmit = async () => {
+		if (isEmpty(userEmail) || isEmpty(userPassword) || isEmpty(userName)) {
+			setError(MISSING_FIELD_ERROR_MESSAGE);
+		} else {
+			const result = await registerUser(
+				userName,
+				userEmail,
+				userPassword,
+				"GitHub ID Placeholder",
+				preferredLang
+			);
+
+			if (result.success) {
+				navigate("/landing");
+			} else {
+				console.log(result);
+				setError(result.message);
+			}
+		}
+	};
 
 	return (
 		<div className="signup-container">
@@ -70,27 +97,24 @@ export const SignUp = ({setAction}) => {
 			<div className="submit-container">
 				<div
 					className="submit"
-					onClick={async () => {
-						const result = await registerUser(
-							userName,
-							userEmail,
-							userPassword,
-							"GitHub ID Placeholder",
-							preferredLang
-						);
-
-						if (result) {
-							navigate("/landing");
-						}
+					onClick={(e) => {
+						handleSubmit();
 					}}
 				>
 					Sign Up
 				</div>
 			</div>
 			<div className="login-nav">
-				{" "}
-				Already have an account?{" "}
-				<span onClick={() => setAction("Log In")}> Log In.</span>
+				Already have an account?
+				<span
+					onClick={() => {
+						setError("");
+						setAction("Log In");
+					}}
+				>
+					{" "}
+					Log In.
+				</span>
 			</div>
 		</div>
 	);
