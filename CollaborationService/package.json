@@ -4,7 +4,7 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "test": "jest --forceExit --runInBand"
+        "test": "jest --coverage --forceExit --runInBand"
     },
     "repository": {
         "type": "git",

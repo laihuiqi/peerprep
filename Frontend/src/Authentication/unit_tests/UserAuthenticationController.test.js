@@ -3,14 +3,14 @@ const {
   loginUserUsingFirebase,
   logoutUserUsingFirebase,
   resetUserPasswordUsingFirebase,
-  isUserLoggedIn,
+  isUserLoggedInUsingFirebase,
 } = require("../UserAuthenticationController");
 
 const {
   deleteUserAccountInFirebase,
 } = require("../UserProfileUpdateController");
 
-afterAll(() => {
+afterAll(async () => {
   return loginUserUsingFirebase(
     "project548@yahoo.com",
     "Sample1234Password"
@@ -83,7 +83,7 @@ test("Test User Login With Incorrect Password", () => {
 });
 
 test("Test User Authentication State When Logged In", () => {
-  return isUserLoggedIn().then((data) => {
+  return isUserLoggedInUsingFirebase().then((data) => {
     console.log("> Auth State When Logged In: " + data);
 
     expect(data).toBe(true);
@@ -99,7 +99,7 @@ test("Test User Logout When User Logged In", () => {
 });
 
 test("Test User Authentication State When Logged Out", () => {
-  return isUserLoggedIn().then((data) => {
+  return isUserLoggedInUsingFirebase().then((data) => {
     console.log("> Auth State When Logged Out: " + data);
 
     expect(data).toBe(false);

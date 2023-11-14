@@ -8,18 +8,41 @@ const TABLE_NAME = config.tableName;
 var pool = null;
 
 async function connectToDatabase() {
-  // Waiting for SQL Container to be up
-  await new Promise((r) => setTimeout(r, 10000));
+  let connected = false;
+  const maxRetries = 10;
+  const retryInterval = 3000; // 3 seconds
 
-  pool = mySql
-    .createPool({
-      host: config.databaseUrl,
-      port: config.databasePort,
-      user: "root",
-      password: "",
-      //   database: DATABASE_NAME,
-    })
-    .promise();
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      pool = mySql
+        .createPool({
+          host: config.databaseUrl,
+          port: config.databasePort,
+          user: "root",
+          password: "",
+        })
+        .promise();
+
+      console.log(`Attempting to connect to database (Attempt ${attempt})...`);
+      await pool.query(`SHOW DATABASES;`); // Simple query to test connection
+      console.log("Connected to database.");
+      connected = true;
+      break;
+    } catch (error) {
+      console.error(
+        `Database connection failed (Attempt ${attempt}):`,
+        error.message
+      );
+      if (attempt < maxRetries) {
+        console.log(`Retrying in ${retryInterval / 1000} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, retryInterval));
+      }
+    }
+  }
+
+  if (!connected) {
+    throw new Error("Failed to connect to database after multiple attempts.");
+  }
 
   await setUpDatabase();
 }
@@ -53,6 +76,8 @@ async function setUpDatabase() {
   );
 
   console.log(createTableResult);
+
+  console.log("History Database Set Up!");
 }
 
 async function getAttemptDetailsFromDatabase(userId) {
@@ -60,7 +85,7 @@ async function getAttemptDetailsFromDatabase(userId) {
     `
     SELECT * 
     FROM ${TABLE_NAME}
-    WHERE UserId1 = ? OR UserId2 = ?
+    WHERE userId1 = ? OR userId2 = ?
     `,
     [userId, userId]
   );

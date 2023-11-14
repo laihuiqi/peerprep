@@ -9,6 +9,15 @@ const getAttemptDetails = async (req, res, next) => {
   const result = await getAttemptDetailsFromDatabase(userId);
 
   if (result !== undefined) {
+    if (result[0].length === 0) {
+      res.status(404).json({
+        message: "NO HISTORY DATA FOUND: GET USER ATTEMPT HISTORY",
+        result: result[0],
+      });
+
+      return;
+    }
+
     res.status(200).json({
       message: "SUCCESSFUL: GET USER ATTEMPT HISTORY",
       result: result[0],
@@ -17,8 +26,8 @@ const getAttemptDetails = async (req, res, next) => {
     return;
   }
 
-  res.status(404).json({
-    message: "NO HISTORY DATA FOUND: GET USER ATTEMPT HISTORY",
+  res.status(500).json({
+    message: "NO HISTORY DATA FOUND",
     result: [],
   });
 };
