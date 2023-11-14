@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 io.on('connection', async(socket) => {
 
     console.log('Communication socket connected: ', socket.id);
-    startCommunication(socket);
+    await startCommunication(socket);
 
 });
 

@@ -144,6 +144,22 @@ const updateCollaborativeInput = async (sessionId, codes) => {
 	}
 };
 
+const updateInitTime = async (sessionId, initTime) => {
+	try {
+		const collaborativeInput = await CollaborativeInput.findOne({
+			sessionId: sessionId,
+		});
+
+		collaborativeInput.initTime = initTime;
+
+		await collaborativeInput.save();
+
+		console.log(`Successfully updated:`, collaborativeInput);
+	} catch (error) {
+		console.log(`Failed to update init time for ${sessionId}`);
+	}
+}
+
 const updateCollaborativeLanguage = async (sessionId, language) => {
 	try {
 		let collaborativeInput = await CollaborativeInput.findOne({
@@ -212,6 +228,7 @@ module.exports = {
 	getCollaborativeInput,
 	getCollaborativeInputByLine,
 	initCollaborativeCode,
+	updateInitTime,
 	updateCollaborativeLineInput,
 	updateCollaborativeInput,
 	updateCollaborativeLanguage,
