@@ -88,6 +88,11 @@ const startCollaboration = async (socket, io) => {
 		);
 		const [language, codes] = initValue;
 
+		if (language === "session-end") {
+			await systemTerminate(sessionId, io);
+			io.to(sessionId).emit("system-terminate", sessionId);
+		}
+
 		console.log(`init code input storage for session ${sessionId}`);
 		socket.broadcast.to(sessionId).emit("init-code", language, codes);
 		let questionValue;
@@ -204,8 +209,6 @@ const startCollaboration = async (socket, io) => {
 		});
 
 		socket.on("disconnect", async () => {
-			console.log("user disconnected: ", userId);
-
 			clearTimeout(sessionTimer);
 
 			socket.broadcast.to(sessionId).emit("user-disconnected", userId);
@@ -232,7 +235,8 @@ const startCollaboration = async (socket, io) => {
 			endReq = await axios.delete(
 				`${config.matchingServiceUrl}/end/${sessionId}`
 			);
-			isEnded = endReq.data.status;
+			console.log(endReq);
+
 		} catch (error) {
 			console.log(error);
 			isEnded = "error";
