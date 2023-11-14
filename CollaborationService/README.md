@@ -80,7 +80,6 @@ Sample data for Question collection:
     "complexity": "Easy",
     "category": "Arrays",
     "language": "Java",
-    "userTags": [],
     "__v": 0
     }
    ```

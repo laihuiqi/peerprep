@@ -26,7 +26,7 @@ const getMatchQuestion = async (req, res) => {
     if (language === "SQL") {
       actualLanguage = "SQL";
     } else {
-      actualLanguage = language;
+      actualLanguage = "Other Languages";
     }
     aggregationPipeline.push({ $match: { language: actualLanguage } });
   }

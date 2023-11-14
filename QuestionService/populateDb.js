@@ -8,14 +8,35 @@ const questionsData = [
     description: 'This is for Test Question 1',
     complexity: 'Easy',
     category: 'Data Structures',
-    language: 'C++',
+    language: 'Other Languages',
   },
   {
     title: 'Test Question 2',
     description: 'This is for Test Question 2',
     complexity: 'Medium',
-    category: 'Arrays',
-    language: 'Java',
+    category: 'Sorting',
+    language: 'SQL',
+  },
+  {
+    title: 'Test Question 3',
+    description: 'This is for Test Question 3',
+    complexity: 'Hard',
+    category: 'Recursion',
+    language: 'Other Languages',
+  },
+  {
+    title: 'Test Question 4',
+    description: 'This is for Test Question 4',
+    complexity: 'Easy',
+    category: 'Optimisation',
+    language: 'Other Languages',
+  },
+  {
+    title: 'Test Question 5',
+    description: 'This is for Test Question 5',
+    complexity: 'Medium',
+    category: 'Data Structure',
+    language: 'Other Languages',
   }
 ];
 

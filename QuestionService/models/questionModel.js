@@ -9,7 +9,6 @@ const questionSchema = new Schema({
   complexity: {type: String, required: true},
   category: {type: String, required: true},
   language:{type: String, required: true},
-  userTags: [{ userId: String, tags: [String]}],
 });
 
 module.exports = mongoose.model('Question', questionSchema);

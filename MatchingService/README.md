@@ -97,7 +97,6 @@ Sample data for Question collection:
   "complexity": "Intermediate",
   "category": "Strings",
   "language": "Python",
-  "userTags": [],
   "__v": 0
 }
 ```
