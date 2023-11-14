@@ -73,7 +73,7 @@ const initCollaborativeCode = async (initTime, sessionId, language, userId) => {
 			return [input[1], input[2]];
 		}
 	} catch (error) {
-		console.log(`Failed to add collaborative input for ${sessionId}`);
+		console.log(`Failed to add collaborative input for ${sessionId}: ${error}`);
 
 		return ["None", []];
 	}
