@@ -87,7 +87,8 @@ const CollaborationWindow = () => {
 			});
 
 			socket.current.on("system-terminate", (sessionId) => {
-				navigate("/landing"); // Navigate to home or another route
+         	showToast("Session ended, redirecting to home page...");
+				 setTimeout(() => navigate('/landing'), 1500); // Navigate to home or another route
 			});
 
 			socket.current.on("user-reconnected", (userId) => {
