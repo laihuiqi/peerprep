@@ -67,6 +67,9 @@ const initCollaborativeCode = async (initTime, sessionId, language, userId) => {
 
 			return [collaborativeInput.language, collaborativeInput.codes];
 		} else {
+			if (Date.now() - input[0] >= config.MAX_TIME_LIMIT) {
+				return ["session-end", []];
+			}
 			console.log(
 				`Collaborative input already exists for ${sessionId}: ${input}`
 			);
