@@ -84,7 +84,7 @@ export const SignUp = ({setAction, setError}) => {
     </div>
     <div className="input">
      <select
-      value={preferredLang.toLowerCase()}
+      value={preferredLang}
       onChange={(e) => {
        setPreferredLang(e.target.value);
       }}
