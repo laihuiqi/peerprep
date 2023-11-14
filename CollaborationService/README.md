@@ -33,8 +33,8 @@ http://localhost:3005
 2. Uncomment localhost addresses and comment the docker addresses for the services in the `Collaboration\config\config.js` file as below:
    
 ``` 
-   // mongodbUri: "mongodb://collaboration-service-database:27017",
-  // mongodbUri: "mongodb://127.0.0.1:27021/peer-prep",
+// mongodbUri: "mongodb://collaboration-service-database:27017",
+// mongodbUri: "mongodb://127.0.0.1:27021/peer-prep",
 mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
 ```
 
