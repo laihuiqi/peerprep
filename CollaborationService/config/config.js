@@ -16,11 +16,7 @@ const SYSTEM_TERMINATE_TIMEOUT = 10 * 1000; // 10 secsS
 module.exports = {
   PORT: 3005,
   serverAddress: "http://collaboration-service:3005",
-<<<<<<< HEAD
   //  serverAddress: "http://127.0.0.1:3005",
-=======
-  // serverAddress: "http://127.0.0.1:3005",
->>>>>>> origin/collab-fix
   matchingServiceUrl: "http://matching-service:3004",
   // matchingServiceUrl: "http://127.0.0.1:3004",
   questionServiceUrl: "http://question-service:3003/api/questions",

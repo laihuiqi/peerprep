@@ -1,6 +1,5 @@
 import "./CodeEditor.css";
 import Editor from "@monaco-editor/react";
-<<<<<<< HEAD
 import React, {useState, useEffect} from "react";
 import {getUserId} from "../../User/UserState";
 
@@ -13,20 +12,6 @@ const CodeEditor = ({
 	socket,
 }) => {
 	const OriginalResizeObserver = window.ResizeObserver;
-=======
-import React from "react";
-
-const CodeEditor = ({code, setCode, language, isReadOnly}) => {
-    const OriginalResizeObserver = window.ResizeObserver;
-
-    // Monaco Editor Resize Fix (https://github.com/microsoft/vscode/issues/183324#issuecomment-1575484617)
-    window.ResizeObserver = function (callback) {
-        const wrappedCallback = (entries, observer) => {
-            window.requestAnimationFrame(() => {
-                callback(entries, observer);
-            });
-        };
->>>>>>> origin/collab-fix
 
 	const [originalCode, setOriginalCode] = useState(code);
 	const [originalLanguage, setOriginalLanguage] = useState(language);
@@ -40,7 +25,6 @@ const CodeEditor = ({code, setCode, language, isReadOnly}) => {
 		}
 	}, [code]);
 
-<<<<<<< HEAD
 	// Monaco Editor Resize Fix (https://github.com/microsoft/vscode/issues/183324#issuecomment-1575484617)
 	window.ResizeObserver = function (callback) {
 		const wrappedCallback = (entries, observer) => {
@@ -131,25 +115,6 @@ const CodeEditor = ({code, setCode, language, isReadOnly}) => {
 			/>
 		</div>
 	);
-=======
-    return (
-        <div className="code-editor">
-            <Editor
-                language={language}
-                theme="vs-light"
-                value={code}
-                onChange={e => {setCode(code)}}
-                options={{
-                    inlineSuggest: true,
-                    fontSize: "16px",
-                    formatOnType: true,
-                    minimap: { enabled: false },
-                    readOnly: isReadOnly 
-                }}
-            />
-        </div>
-    );
->>>>>>> origin/collab-fix
 };
 
 export default CodeEditor;
