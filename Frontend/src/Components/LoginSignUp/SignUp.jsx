@@ -16,7 +16,7 @@ export const SignUp = ({setAction, setError}) => {
  const [userEmail, setUserEmail] = useState("");
  const [userPassword, setUserPassword] = useState("");
  const [userName, setUserName] = useState("");
- const [preferredLang, setPreferredLang] = useState("");
+ const [preferredLang, setPreferredLang] = useState("python");
 
  const isEmpty = (str) => {
   return str === "";
@@ -83,14 +83,6 @@ export const SignUp = ({setAction, setError}) => {
      />
     </div>
     <div className="input">
-     {/* <input
-      type="text"
-      placeholder="Preferred programming language"
-      onChange={(e) => {
-       setPreferredLang(e.target.value);
-      }}
-      value={preferredLang}
-     /> */}
      <select
       value={preferredLang.toLowerCase()}
       onChange={(e) => {
@@ -98,10 +90,10 @@ export const SignUp = ({setAction, setError}) => {
       }}
       className="signup-language-dropdown"
      >
-      <option value="python">Python</option>
-      <option value="cpp">C++</option>
-      <option value="java">Java</option>
-      <option value="javascript">Javascript</option>
+      <option value="Python">Python</option>
+      <option value="C++">C++</option>
+      <option value="Java">Java</option>
+      <option value="Javascript">Javascript</option>
      </select>
     </div>
    </div>
