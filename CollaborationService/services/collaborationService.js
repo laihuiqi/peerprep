@@ -90,7 +90,20 @@ const startCollaboration = async (socket, io) => {
 
 		console.log(`init code input storage for session ${sessionId}`);
 		socket.broadcast.to(sessionId).emit("init-code", language, codes);
-
+		let questionValue;
+		try {
+			console.log("The session:",session)
+			const questionObject = await getQuestionById(session.questionId);
+			questionValue = questionObject.question;
+			console.log('The question description:', questionValue);
+			await new Promise((resolve) => {
+				socket.broadcast.to(sessionId).emit("recv-question", questionValue);
+				resolve();
+			});
+		} catch (error) {
+			console.error("Error retrieving or emitting question:", error);
+		}
+		
 		socket.on("update-code", async (codes) => {
 			console.log(`Code changed`);
 			socket.broadcast.to(sessionId).emit("code-changed", codes);
@@ -109,14 +122,6 @@ const startCollaboration = async (socket, io) => {
 			socket.broadcast.to(sessionId).emit("cleared", sessionId);
 
 			await updateCollaborativeInput(sessionId, []);
-		});
-
-		socket.on("get-question", async () => {
-			console.log(`Getting question for session ${sessionId}`);
-
-			const question = await getQuestionById(session.questionId);
-
-			socket.emit("recv-question", question);
 		});
 
 		socket.on("extend-time", async () => {

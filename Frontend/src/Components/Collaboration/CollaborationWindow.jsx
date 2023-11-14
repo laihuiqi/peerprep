@@ -51,6 +51,11 @@ const CollaborationWindow = () => {
 				// Handle new user joining
 			});
 
+			socket.current.on('recv-question', (receivedQuestion) => {
+				console.log('Received question: ', receivedQuestion);
+				setQuestion(receivedQuestion);
+			});
+
 			socket.current.on("init-code", (lang, codes) => {
 				setCollaborativeInput(codes);
 				if (lang === "None") {
@@ -107,24 +112,6 @@ const CollaborationWindow = () => {
 	}, [sessionId, collaboratorId]);
 
 	const userId = getUserId();
-
-	const fetchQuestion = async () => {
-		try {
-			const response = await axios.get(`http://localhost:3004/home/${userId}`);
-			if (response.status === 200) {
-				const json = response.data;
-				setQuestion(json.questionId);
-			} else {
-				console.log("Response is not ok:", response.statusText);
-			}
-		} catch (error) {
-			console.error("Loading questions encountered error:", error);
-		}
-	};
-
-	useEffect(() => {
-		fetchQuestion();
-	}, []);
 
 	const showToast = (message) => {
 		setToast({visible: true, message});
@@ -266,11 +253,13 @@ const CollaborationWindow = () => {
 			</div>
 			<div className="content-area">
 				<div className="question-section">
-					{question && (
+					{question ? (
 						<>
-							<h2>{question.title}</h2>
-							<p>{question.description}</p>
+						<h2>{question.title}</h2>
+						<p>{question.description}</p>
 						</>
+					) : (
+						<p>Loading question...</p>
 					)}
 				</div>
 				<div className="editor-section">
