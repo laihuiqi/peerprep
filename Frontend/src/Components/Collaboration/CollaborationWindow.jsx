@@ -9,7 +9,6 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { getUserId } from '../../User/UserState'; 
 import { useLocation } from 'react-router-dom';
-import CommunicationWindow from './CommunicationWindow';
 
 import axios from "axios"
 
@@ -73,11 +72,13 @@ const CollaborationWindow = () => {
   
   
   socket.current.on('time-extended', (totalTimeLeft) => {
+      showToast('Timer extended for 15 minutes');
       setTimeRemaining(totalTimeLeft);
   });
 
   socket.current.on('system-terminate', (sessionId) => {
-    navigate('/landing'); // Navigate to home or another route
+    showToast('Session terminated');
+    setTimeout(() => navigate('/landing'), 1500); // Navigate to home or another route
 });
 
 socket.current.on('user-disconnected', (userId) => {
@@ -98,7 +99,7 @@ socket.current.on('notify-terminate', (sessionId) => {
   console.log(`Session ${sessionId} has been terminated by another user`);
   // Handle the session termination in the UI
   showToast('Session ended, redirecting to home page...');
-  navigate('/landing'); // Redirect to home or another route
+  setTimeout(() => navigate('/landing'), 1500); // Redirect to home or another route
   // Any cleanup or finalization logic can be added here
 });
 
@@ -180,16 +181,15 @@ return () => {
     };
 
     const handleSubmit = () => {
-      socket.current.emit('user-terminate', { sessionId: sessionId});
-
       showToast('Your code has been submitted');
+      socket.current.emit('user-terminate', { sessionId: sessionId});
       setTimeout(() => navigate('/landing'), 1500);
     };
 
     const handleExtendTimer = () => {
       if (socket.current) {
-        socket.current.emit('extend-time'); // 15 minutes in milliseconds
         showToast('Timer extended for 15 minutes');
+        socket.current.emit('extend-time'); // 15 minutes in milliseconds
       } else {
         console.log("reponse not available");
       }
