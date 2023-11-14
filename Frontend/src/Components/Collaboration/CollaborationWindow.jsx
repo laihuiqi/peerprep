@@ -1,18 +1,18 @@
-import React, {useState, useEffect, useReducer, useRef} from "react";
-import "./CollaborationWindow.css";
-import Timer from "./Timer";
-import {useNavigate} from "react-router-dom";
-import socketIOClient, {Socket} from "socket.io-client";
-import "firebase/auth";
-import CodeEditor from "./CodeEditor";
-import Popup from "reactjs-popup";
-import "reactjs-popup/dist/index.css";
-import {getUserId} from "../../User/UserState";
-import {useLocation} from "react-router-dom";
-import CommunicationWindow from "./CommunicationWindow";
-import axios from "axios";
+import React, { useState, useEffect, useReducer, useRef } from 'react';
+import './CollaborationWindow.css'; 
+import Timer from './Timer';
+import { useNavigate } from 'react-router-dom';
+import socketIOClient, { Socket } from "socket.io-client";
+import 'firebase/auth';
+import CodeEditor from './CodeEditor';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import { getUserId } from '../../User/UserState'; 
+import { useLocation } from 'react-router-dom';
+import CommunicationWindow from './CommunicationWindow';
 
-export const DEFAULT_CODE = "#Enter your code here";
+import axios from "axios"
+
 
 const CollaborationWindow = () => {
 	const [sessionStarted, setSessionStarted] = useState(false);
@@ -188,117 +188,78 @@ const CollaborationWindow = () => {
 
 	// Modify the handleExtendTimer function
 	const handleExtendTimer = () => {
-		// Only allow extending if less than 2 minute is remaining
-		if (timeRemaining > 120000) {
-			showToast(
-				"You can extend the timer in the last 2 minutes of this session."
-			);
-		} else if (socket.current) {
-			socket.current.emit("extend-time");
-			showToast("Request to extend time sent successfully!");
-			// Reset the canExtend flag
-			setCanExtend(false);
-		}
-	};
+    if (socket.current) {
+      socket.current.emit('extend-time'); // 15 minutes in milliseconds
+      showToast('Timer extended for 15 minutes');
+    } else {
+      console.log("reponse not available");
+    }
+  };
 
 	// useEffect for the countdown logic
-	useEffect(() => {
-		if (sessionStarted && timeRemaining > 0) {
-			const interval = setInterval(() => {
-				setTimeRemaining((prevTime) => {
-					// If there's only 1 minute left, allow for extension
-					if (prevTime <= 60000 && !canExtend) {
-						setCanExtend(true);
-					}
-					// If time runs out, show the popup
-					if (prevTime <= 0) {
-						clearInterval(interval);
-						setPopup(true);
-					}
-					return prevTime > 0 ? prevTime - 1000 : 0;
-				});
-			}, 1000);
+  useEffect(() => {
+    let interval;
 
-			// Cleanup interval on component unmount
-			return () => clearInterval(interval);
-		}
-	}, [sessionStarted, timeRemaining, canExtend]);
+    if (sessionStarted && timeRemaining > 0) {
+        interval = setInterval(() => {
+            setTimeRemaining(prevTime => {
+                // When time runs out, show the popup and stop the interval
+                if (prevTime <= 1000) {
+                    clearInterval(interval);
+                    setPopup(true);
+                    return 0;
+                }
+                // Otherwise, continue counting down
+                return prevTime - 1000;
+            });
+        }, 1000);
+    }
 
-	//   useEffect(() => {
-	//       if (sessionStarted && timeRemaining > 0) {
-	//         const interval = setInterval(() => {
-	//           setTimeRemaining((prevTime) => prevTime - 1000);
-	//         }, 1000);
-	//
-	//           return () => clearInterval(interval);
-	//       }
-	//   }, [sessionStarted, timeRemaining]);
+    // Cleanup interval on component unmount or when session ends
+    return () => {
+        if (interval) {
+            clearInterval(interval);
+        }
+    };
+}, [sessionStarted, timeRemaining]);
 
 	return (
 		<div className="collaboration-window">
-			<Timer
-				sessionId={sessionId}
-				userId={userId}
-				setTimeRemaining={setTimeRemaining}
-				onSessionEnd={handleEndSession}
-				socket={socket.current}
-			/>
-			<Popup open={popup}>
-				<div className="modal">
-					<div className="header"> Time Up </div>
-					<div className="content">
-						<div>Do you want to extend the time ?</div>
-					</div>
-					<div className="actions">
-						<button
-							className="button extend-popup"
-							onClick={(e) => {
-								handleExtendTimer();
-								onClosePopup();
-							}}
-						>
-							Yes
-						</button>
-						<button
-							className="button close-popup"
-							onClick={(e) => {
-								onClosePopup();
-								handleEndSession();
-							}}
-						>
-							No
-						</button>
-					</div>
-				</div>
-			</Popup>
-			<div className="timer-bar">
-				<div className="left">
-					<span className="time-remaining">
-						Time remaining: {formatTime(timeRemaining)}
-					</span>
-					<button
-						className="extend-time"
-						onClick={handleExtendTimer}
-						disabled={timeRemaining > 120000}
-					>
-						Extend Timer
-					</button>
-				</div>
-				<div className="right">
-					<button className="end-session" onClick={handleEndSession}>
-						End Session
-					</button>
-				</div>
-			</div>
-			<div className="content-area">
-				<div className="question-section">
-					{question && (
-						<>
-							<h2>{question.title}</h2>
-							<p>{question.description}</p>
-						</>
-					)}
-				</div>
+			<Timer sessionId={sessionId} userId={userId} setTimeRemaining={setTimeRemaining} socket={socket.current}/>
+          <Popup open={popup}>
+              <div className="modal">
+                  <div className="header"> Time Up </div>
+                  <div className="content">
+                      <div>Do you want to extend the time ?</div>
+                  </div>
+                  <div className="actions">
+                      <button className="button extend-popup" onClick={(e) => {handleExtendTimer(); onClosePopup()}}>
+                          Yes
+                      </button>
+                      <button className="button close-popup" onClick={(e) => {onClosePopup(); handleEndSession()}}>
+                          No
+                      </button>
+                  </div>
+              </div>
+          </Popup>
+          <div className="timer-bar">
+          <div className="left">
+            <span className="time-remaining">Time remaining: {formatTime(timeRemaining)}</span>
+            <button className="extend-time" onClick={handleExtendTimer}>Extend Timer</button>
+          </div>
+          <div className="right">
+            <button className="end-session" onClick={handleEndSession}>End Session</button>
+          </div>
+        </div>
+        <div className="content-area">
+          <div className="question-section">
+          {question && (
+            <>
+              <h2>{question.title}</h2>
+              <p>{question.description}</p>
+            </>
+          )}
+          </div>
 				<div className="editor-section">
 					{/* Placeholder for code editor */}
 					{/*<p>Code editor will go here...</p>*/}
