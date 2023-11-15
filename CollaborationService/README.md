@@ -163,6 +163,10 @@ Sample data for MatchedPair collection:
     - reconnect
   
     - disconnect
+  
+Note:
+
+> For other test, please refer to the project report appendix.
 
 
 #### Jest testing
