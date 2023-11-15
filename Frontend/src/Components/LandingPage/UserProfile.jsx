@@ -57,8 +57,6 @@ export const UserProfile = ({setUsername}) => {
     <div className="profile-info">
      <div className="profile-field">Preferred Language</div>
      {isEdit ? (
-      // <input type="text" className="profile-input" defaultValue = {getUserPreferredLanguage()}
-      //     onChange = {(e) => {setLang(e.target.value)}}/>
       <select
        value={lang}
        onChange={(e) => {
