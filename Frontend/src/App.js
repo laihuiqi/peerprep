@@ -48,7 +48,9 @@ const AIChatWrapper = () => {
 
 const ChatWrapper = () => {
   const location = useLocation();
-  return location.pathname === "/collaboration" ? <CommunicationWindow /> : null;
+  return location.pathname === "/collaboration" ? (
+    <CommunicationWindow />
+  ) : null;
 };
 
 function App() {

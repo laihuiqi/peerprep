@@ -37,6 +37,8 @@ async function getUserAdminStatus() {
     const result = await getUserData(userId);
 
     console.log(result.data.user.isAdmin);
+
+    return result.data.user.isAdmin;
   }
 
   return false;

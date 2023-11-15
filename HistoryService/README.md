@@ -9,7 +9,7 @@
 Command:
 
 ```
-docker-compose build
+docker-compose build history-service history-service-database
 ```
 
 3. Start the Containers.
@@ -17,10 +17,10 @@ docker-compose build
 Command:
 
 ```
-docker-compose up
+docker-compose up history-service history-service-database
 ```
 
-4. Using Postman or a likewise app, you can connect to `localhost:3006` to send http (REST) queries.
+4. Using Postman or a likewise app, you can connect to `http://localhost:3006/history/` to send http (REST) queries.
 
 # Starting Containers Individually
 
@@ -34,7 +34,7 @@ docker-compose up
 
 Set up a Docker network using the following command, and ensure to use the same network name when starting the various services and databases later. (This step is important if you dont want to run via `docker-compose up` command)
 
-Command:
+Using Terminal, Run the following Command:
 
 ```
 docker network create -d bridge peer-prep-network
@@ -43,6 +43,8 @@ docker network create -d bridge peer-prep-network
 This command is to be run only for the initial set up, and once the network is setup, this step does not need to be repeated
 
 ## mySQL Container
+
+Navigate into `HistoryService` Directory
 
 First and foremost change the `databaseUrl` in the `Config/config.js` file to `127.0.0.1`
 
@@ -64,7 +66,7 @@ docker exec -it history-service-database sh
 
 The above will open a terminal window for the mySql Docker Container, where `mysql` can be used.
 
-## History Service Server
+## History Service Microservice
 
 1. Navigate to the `HistoryService` Directory in Terminal or Powershell
 
@@ -83,3 +85,5 @@ Command:
 ```
 docker run --rm -p 3006:3006 -v $(pwd):/app -it --network peer-prep-network history-service
 ```
+
+Using Postman or a likewise app, you can connect to `http://localhost:3006/history/` to send http (REST) queries.
