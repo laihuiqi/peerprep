@@ -9,12 +9,9 @@ export const AttemptHistory = ({isList, setIsList}) => {
 	const [attempts, setAttempts] = useState([]);
 	const [selectedAttempt, setSelectedAttempt] = useState(null);
 
-	// to be replaced with actual attempt fetch
 	const fetchAttempts = async () => {
 		const results = await getUserAttempts(getUserId());
 		setAttempts(results);
-		console.log("Attempts");
-		console.log(attempts);
 	};
 
 	useEffect(() => {
