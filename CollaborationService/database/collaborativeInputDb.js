@@ -201,8 +201,13 @@ const deleteCollaborativeInput = async (sessionId) => {
 		const result = await CollaborativeInput.deleteOne({sessionId: sessionId});
 
 		console.log(`Successfully deleted:`, result);
+
+		return true;
+
 	} catch (error) {
 		console.log(`Failed to delete collaborative input for ${sessionId}`);
+
+		return false;
 	}
 };
 
