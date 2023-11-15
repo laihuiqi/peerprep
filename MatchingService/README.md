@@ -25,7 +25,7 @@
 
 #### Listening port
 
-http://localhost:3001
+http://localhost:3004
 
 
 #### Run RabbitMQ Server by:
@@ -45,15 +45,18 @@ rabbitmq-plugins enable rabbitmq_management
 
 #### Start the microservice on local machine by:
 
-1. Navigate to peerprep directory.
+1. Navigate to MatchingService directory.
    
-2. Uncomment localhost addresses and comment the docker addresses for the services in the `peer-prep\src\backend\matching-service\config\config.js` file as below:
+2. Uncomment localhost addresses and comment the docker addresses for the services in the `MatchingService\config\config.js` file as below:
    
 ``` 
-mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
-//mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
-rabbitmqUrl: 'amqp://127.0.0.1:5672',
-//rabbitmqUrl: 'amqp://rabbitmq:5672'
+// questionServiceUrl: "http://question-service:3003/api/questions",
+questionServiceUrl: "http://127.0.0.1:3003/api/questions",
+// mongodbUri: "mongodb://matching-service-database:27017/peer-prep",
+// mongodbUri: "mongodb://127.0.0.1:27020/peer-prep",
+mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
+// rabbitmqUrl: "amqp://rabbitmq:5672",
+rabbitmqUrl: "amqp://127.0.0.1:5672",
 ```
 
 3. Initiate connection of local MongoDB service to address `mongodb://localhost:27017/peer-prep`.
@@ -61,7 +64,7 @@ rabbitmqUrl: 'amqp://127.0.0.1:5672',
 4. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\matching-service
+cd MatchingService
 npm install
 npm start
 ```
@@ -72,7 +75,7 @@ npm start
 > matching-service@1.0.0 start
 > node server.js
 
-Matching service listening on port 3001
+Matching service listening on port 3004
 MongoDB Connected: 127.0.0.1
 ```
 
@@ -105,13 +108,13 @@ Sample data for Question collection:
    
    Send **POST** request to:
    
-    `http://localhost:3000/home/:UserId` and specify post fields.
+    `http://localhost:3004/home/:UserId` and specify post fields.
    
    Example:
    
    Set 1 :-
    
-   Url link: `http://localhost:3001/home/Qa5Xb8Rv2KpL`
+   Url link: `http://localhost:3004/home/Qa5Xb8Rv2KpL`
 
    For testing using Postman, enter data using the `Body` panel (2 methods are available):
    
@@ -139,7 +142,7 @@ Sample data for Question collection:
 
    Set 2 :-
    
-   Url link: `http://localhost:3001/home/Zu8YkQ3mBvLx`
+   Url link: `http://localhost:3004/home/Zu8YkQ3mBvLx`
 
    For testing using Postman, enter data using the `Body` panel (2 methods are available):
    
@@ -209,11 +212,11 @@ Sample data for Question collection:
    
    Send **DELETE** request to:
    
-   `http://localhost:3000/home/:UserId/matching`
+   `http://localhost:3004/home/:UserId/matching`
    
    Example:
    
-   `http://localhost:3000/home/Zu8YkQ3mBvLx/matching`
+   `http://localhost:3004/home/Zu8YkQ3mBvLx/matching`
 
    Server response :-
 
@@ -233,13 +236,17 @@ Sample data for Question collection:
     }
     ```
 
+Note:
+
+> For other test, please refer to the project report appendix.
+
 
 #### Jest testing
 
 1. Test the service using terminal commands:
 
 ```
-cd peer-prep\src\backend\matching-service
+cd MatchingService
 npm test
 ```
 
@@ -248,23 +255,26 @@ npm test
 
 **Note**:
 
-> Please delete the containers for other microservices.
+> Please ensure that there are no active container of the required services.
 
-1. Navigate to peerprep directory.
+1. Navigate to MatchingService directory.
    
-2. Comment localhost addresses and uncomment the docker addresses for the service in the `peer-prep\src\backend\matching-service\config\config.js` file as below:
+2. Comment localhost addresses and uncomment the docker addresses for the service in the `MatchingService\config\config.js` file as below, it sometimes use local addresses depend on different configuration of machine / docker:
    
 ``` 
-//mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
-mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
-//rabbitmqUrl: 'amqp://127.0.0.1:5672',
-rabbitmqUrl: 'amqp://rabbitmq:5672'
+questionServiceUrl: "http://question-service:3003/api/questions",
+// questionServiceUrl: "http://127.0.0.1:3003/api/questions",
+mongodbUri: "mongodb://matching-service-database:27017/peer-prep",
+// mongodbUri: "mongodb://127.0.0.1:27020/peer-prep",
+// mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
+rabbitmqUrl: "amqp://rabbitmq:5672",
+//rabbitmqUrl: "amqp://127.0.0.1:5672",
 ```
    
 4. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\matching-service
+cd MatchingService
 docker-compose up --build
 ```
 
@@ -273,8 +283,8 @@ docker-compose up --build
 ```
 > matching-service@1.0.0 start
 > node server.js
-> Matching service listening on port 3001
-> MongoDB Connected: mongo_db
+> Matching service listening on port 3004
+> MongoDB Connected: matching-service-database
 ```
 
 6. End matching service in terminal using `Ctrl+C` twice.
