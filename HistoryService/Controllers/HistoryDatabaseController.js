@@ -8,45 +8,6 @@ const TABLE_NAME = config.tableName;
 var pool = null;
 
 async function connectToDatabase() {
-<<<<<<< Updated upstream
-  let connected = false;
-  const maxRetries = 10;
-  const retryInterval = 3000; // 3 seconds
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      pool = mySql
-        .createPool({
-          host: config.databaseUrl,
-          port: config.databasePort,
-          user: "root",
-          password: "",
-        })
-        .promise();
-
-      console.log(`Attempting to connect to database (Attempt ${attempt})...`);
-      await pool.query(`SHOW DATABASES;`); // Simple query to test connection
-      console.log("Connected to database.");
-      connected = true;
-      break;
-    } catch (error) {
-      console.error(
-        `Database connection failed (Attempt ${attempt}):`,
-        error.message
-      );
-      if (attempt < maxRetries) {
-        console.log(`Retrying in ${retryInterval / 1000} seconds...`);
-        await new Promise((resolve) => setTimeout(resolve, retryInterval));
-      }
-    }
-  }
-
-  if (!connected) {
-    throw new Error("Failed to connect to database after multiple attempts.");
-  }
-
-  await setUpDatabase();
-=======
 	let connected = false;
 	const maxRetries = 10;
 	const retryInterval = 3000; // 3 seconds
@@ -85,7 +46,6 @@ async function connectToDatabase() {
 	}
 
 	await setUpDatabase();
->>>>>>> Stashed changes
 }
 
 async function setUpDatabase() {
