@@ -20,7 +20,7 @@ async function connectToDatabase() {
           port: config.databasePort,
           user: "root",
           password: "",
-          database: "attemptsDatabase",
+          // database: "attemptsDatabase",
         })
         .promise();
 
