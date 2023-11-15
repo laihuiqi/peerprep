@@ -1,11 +1,12 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import "./AttemptView.css"
 import CodeEditor from '../Collaboration/CodeEditor'
 import Utility from "../../Utility/Utility"
+import axios from 'axios';
 
 import back_icon from "../Assets/back.png"
 
-const {getCollaborativeInput} = require("../../../../CollaborationService/database/collaborativeInputDb");
+const COLLABORATION_SERVICE_HOST = "http://localhost:3005/";;
 
 export const AttemptView = ({attempt, setIsList}) => {
     //to be replaced with attempt.code
@@ -15,9 +16,13 @@ export const AttemptView = ({attempt, setIsList}) => {
     let tagClass = Utility.setDifficultyTag("user-q-tag", attempt.complexity);
 
     const fetchCode = async () => {
-        const collaborativeInput = await getCollaborativeInput(attempt.sessionId);
-        setCode(collaborativeInput[2]);
-        setLang(collaborativeInput[1]);
+        const result = await axios.get(COLLABORATION_SERVICE_HOST + "getCollaborationHistory/" + attempt.sessionId)
+
+        if (result.status === 200) {
+            console.log(result)
+            setCode(result.data.codes);
+            setLang(result.data.language);
+        }
     }
 
     useEffect(() => {
