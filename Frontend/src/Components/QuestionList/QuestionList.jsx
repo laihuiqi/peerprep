@@ -3,7 +3,6 @@ import { QuestionForm } from './QuestionForm';
 import { Question } from './Question';
 import './QuestionList.css';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
 import FilterPopup from './FilterPopup';
 
 import { QUESTION_SERVICE_URL } from './config';
@@ -12,75 +11,52 @@ export const Questions = () => {
   const [qs, setQs] = useState([]);
   const [qId, setQId] = useState(0);
   const [isAddQ, setAddQ] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [filterQns, setFilterQns] = useState([]);
+  const [filterApplied, setFilterApplied] = useState(false);
   const [isFilterPopupOpen, setFilterPopupOpen] = useState(false);
-  const [filterQuestions, setFilteredQs] = useState([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState('No Preference');
   const [selectedLanguage, setSelectedLanguage] = useState('No Preference');
   const [selectedTopic, setSelectedTopic] = useState('No Preference');
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.pathname.includes('/filter')) {
-      const fetchFilterQns = async () => {
-        try {
-          const response = await axios.get(location.pathname);
-          if (response.status === 200) {
-            setFilteredQs(response.data);
-            setQId(response.data.length);
-          } else {
-            console.error('Unable to fetch filtered questions');
-          }
-        } catch (error) {
-          console.error('Unable to fetch filtered questions:', error);
-        }
-      };
-
-      fetchFilterQns();
-    } else {
-      fetchQuestions();
-      setFilteredQs([]);
-    }
-  }, [location.pathname]);
+  const [filterURL, setFilterURL] = useState('');
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get(QUESTION_SERVICE_URL);
+      let response;
+
+      if (filterApplied) {
+        response = await axios.get(filterURL);
+        console.log('got filter url');
+      } else {
+        response = await axios.get(QUESTION_SERVICE_URL);
+        console.log('did not get filter url');
+      }
+
       if (response.status === 200) {
+        setFilterQns(response.data);
         setQs(response.data);
         setQId(response.data.length);
+      } else {
+        console.error('Error fetching questions:', response);
       }
     } catch (error) {
-      console.error('Error loading questions:', error);
+      console.error('Error fetching questions:', error);
     }
   };
 
   useEffect(() => {
+    // Call fetchQuestions when the component mounts or when isAddQ or filterApplied changes
     fetchQuestions();
-  }, [isAddQ]);
+  }, [isAddQ, filterApplied, filterURL]);
 
-  const applyFilter = async (filteredLink) => {
-    try {
-      const response = await axios.get(filteredLink);
-      console.log('Response from API:', response);
-      setFilterPopupOpen(false);
-
-      if (response.status === 200) {
-        console.log('Questions after filtering:', response.data);
-        setFilteredQs(response.data);
-        setQId(response.data.length);
-
-        // Store the filter URL in sessionStorage
-        sessionStorage.setItem('Link after filtering', filteredLink);
-
-        navigate('/questions/filter');
-      } else {
-        console.error('Error getting questions according to filter');
-      }
-    } catch (error) {
-      console.error('Error fetching questions according to filter:', error);
-    }
+  const handleSearchChange = (e) => {
+    const searchQuery = e.target.value;
+    setSearchValue(searchQuery);
+    const filtered = qs.filter((q) =>
+      q.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilterQns(filtered);
   };
 
   const addQuestion = async (qTitle, qDifficulty, qTopic, qDescription, qLanguage) => {
@@ -92,6 +68,10 @@ export const Questions = () => {
         },
       });
 
+      if (response.status >= 200 && response.status <= 400) {
+        setFilterApplied(false);
+        fetchQuestions();
+      }
       return response;
     } catch (error) {
       console.error('Creating question error:', error);
@@ -105,6 +85,7 @@ export const Questions = () => {
       const response = await axios.patch(QUESTION_SERVICE_URL + '/' + String(qId), question);
 
       if (response.status === 200) {
+        setFilterApplied(false);
         fetchQuestions();
         return [];
       } else {
@@ -121,7 +102,8 @@ export const Questions = () => {
       const response = await axios.delete(QUESTION_SERVICE_URL + '/' + String(qId));
       const json = response.data;
 
-      if (response.status < 300 && response.status >= 200) {
+      if (response.status >= 200 && response.status < 300) {
+        setFilterApplied(false);
         fetchQuestions();
         return [];
       } else {
@@ -138,6 +120,16 @@ export const Questions = () => {
       <div className="filter-q-btn" onClick={() => setFilterPopupOpen(true)}>
         Filter Questions
       </div>
+
+      <div className="search-entry">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+      </div>
+
       {isAddQ === false ? <div></div> : <QuestionForm questionNumber={qs.length + 1} qId={qId} setAddQ={setAddQ} setQId={setQId} addQuestion={addQuestion} />}
 
       {isFilterPopupOpen && (
@@ -150,11 +142,15 @@ export const Questions = () => {
           onChosenLanguage={(e) => setSelectedLanguage(e.target.value)}
           chosenTopic={selectedTopic}
           onChosenTopic={(e) => setSelectedTopic(e.target.value)}
-          onSubmission={(filteredLink) => applyFilter(filteredLink)}
+          onSubmission={(filterURL) => {
+            setFilterURL(filterURL);
+            setFilterApplied(true);
+            setFilterPopupOpen(false);
+          }}
         />
       )}
 
-      {(location.pathname.includes('/filter') ? filterQuestions : qs).map((q, index) => (
+      {filterQns.map((q, index) => (
         <Question key={index} question={q} i={index} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />
       ))}
 

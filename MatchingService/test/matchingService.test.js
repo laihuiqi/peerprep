@@ -2,12 +2,25 @@ const { findMatch, cancelMatch } = require('../services/matchingService');
 const { getCurrentMatchedPair, deleteAllMatchedPairs } = require('../database/matchedPairDb');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const config = require('../config/config');
+const axios = require('axios');
+const MockAdapter = require('axios-mock-adapter');
 
 jest.setTimeout(200000);
 
 describe('Matching Service', () => {
 
     let mongod;
+
+    const testQuestion = {
+        _id: new mongoose.Types.ObjectId("65378371752185e6e1b5b342"),
+        title: "test1",
+        description: "test1 desp",
+        complexity: "Test",
+        category: "Test",
+        language:"Test",
+        userTags: [],
+    };
     
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -19,6 +32,14 @@ describe('Matching Service', () => {
         });
 
         console.log("testDB connected");
+
+        const mock = new MockAdapter(axios);
+
+        mock.onPost(`${config.questionServiceUrl}/match`)
+            .reply(200, {
+                questionId: "65378371752185e6e1b5b342",
+                question: testQuestion,
+            });
     });
 
     afterAll(async () => {
@@ -144,7 +165,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            questionId: null,
+            questionId: testQuestion._id,
             collaboratorId: javaRequest2.id,
             request: javaRequest1
         }
@@ -153,7 +174,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            questionId: null,
+            questionId: testQuestion._id,
             collaboratorId: javaRequest1.id,
             request: javaRequest2
         }
@@ -209,7 +230,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId, 
-            questionId: null,
+            questionId: testQuestion._id,
             collaboratorId: cppFullRequest2.id,
             request: cppFullRequest1
         }
@@ -218,7 +239,7 @@ describe('Matching Service', () => {
             status: 'success',
             isMatched: true,
             sessionId: matchPair.sessionId,
-            questionId: null,
+            questionId: testQuestion._id,
             collaboratorId: cppFullRequest1.id,
             request: cppFullRequest2
         }
@@ -297,7 +318,7 @@ describe('Matching Service', () => {
     test('Cancel an existing match', async() => {
         const [matchResult, cancelResult] = await Promise.all([
             findMatch(javaRequest1),
-            new Promise(resolve => setTimeout(resolve, 5000)).then(() => cancelMatch(javaRequest1.id))
+            new Promise(resolve => setTimeout(resolve, 8000)).then(() => cancelMatch(javaRequest1.id))
         ]);
 
         const expectResult1 = {

@@ -3,7 +3,7 @@
 ### Features
 
 - startCollaboration : server socket events
-- getQuestionById
+- getCollaborationHistory
 
 ### Table of Contents:
 
@@ -23,18 +23,19 @@
 
 #### Listening port
 
-http://localhost:3002
+http://localhost:3005
 
 
 #### Start the microservice on local machine by:
 
-1. Navigate to peerprep directory.
+1. Navigate to Collaboration directory.
    
-2. Uncomment localhost addresses and comment the docker addresses for the services in the `peer-prep\src\backend\collaboration-service\config\config.js` file as below:
+2. Uncomment localhost addresses and comment the docker addresses for the services in the `CollaborationService\config\config.js` file as below:
    
 ``` 
-mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
-//mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
+// mongodbUri: "mongodb://collaboration-service-database:27017",
+// mongodbUri: "mongodb://127.0.0.1:27021/peer-prep",
+mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
 ```
 
 3. Initiate connection of local MongoDB service to address `mongodb://localhost:27017/peer-prep`.
@@ -42,7 +43,7 @@ mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
 4. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\collaboration-service
+cd CollaborationService
 npm install
 npm start
 ```
@@ -53,7 +54,7 @@ npm start
 > collaboration-service@1.0.0 start
 > node server.js
 
-Collaboration service listening on port 3002
+Collaboration service listening on port 3005
 MongoDB Connected: 127.0.0.1
 ```
 
@@ -80,7 +81,6 @@ Sample data for Question collection:
     "complexity": "Easy",
     "category": "Arrays",
     "language": "Java",
-    "userTags": [],
     "__v": 0
     }
    ```
@@ -109,95 +109,97 @@ Sample data for MatchedPair collection:
 
 2. Add events to listen include:
 
-    - cleared
     - join
     - user-joined
+    - init-timer
+    - system-terminate
     - init-code
+    - recv-question
     - code-changed
-    - time-exceeded
+    - language-changed
+    - cleared
+    - time-extended
     - notify-terminate
     - user-disconnected
+    - success-reconnected
     - user-reconnected
-    - successfully-reconnected
-    - system-terminated
-    - time-extended
-    - update-time
 
 3. Connect clients to server:
 
-    Url 1: http://localhost:3002?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=Gc2Bz9Nl8Wx4
+    Url 1: http://localhost:3005?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=Gc2Bz9Nl8Wx4
 
-    Url 2: http://localhost:3002?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=PxJ3lVtWz8Kq
+    Url 2: http://localhost:3005?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=PxJ3lVtWz8Kq
 
 4. Test events using the message panel:
 
-    - update-code: (line not saved in MongoDB)
+    - update-code: 
 
         Arg1 : number 
 
         Arg2 : string
 
-    - change-line: (line saved in MongoDB)
-
-        Arg1 : number 
-
-        Arg2 : string
-
-    - user-terminate: (line saved in MongoDB)
-
-        Arg1 : number 
-
-        Arg2 : string
+    - update-language:
+      
+         Arg1: codes -> { line: Number,
+	                       code: String,
+	                       lastModifier: String }
+      
+    - clear
 
     - extend-time
-    - clear
+      
+    - user-terminate: 
+
+        Arg1 : number 
+
+        Arg2 : string
+      
+   - ack-terminate:
+
+        Arg1 : number
+     
+        Arg2 : string
+
     - reconnect
+  
+    - disconnect
 
 
 #### Jest testing
 
 **Note**:
+Testing is done on the initialization steps and the `getCollaborationHistory` function.
 
-> Collections setup is required as above section, modifications to database data are expected. 
-
-1. Two terminal windows are required for Jest testing.
-
-2. Initiate the collaboration service in first window by:
+1. Test the service using terminal commands:
 
 ```
-cd peer-prep\src\backend\collaboration-service
-npm start
-```
-
-3. Test the service in the other window using terminal commands:
-
-```
-cd peer-prep\src\backend\collaboration-service
+cd CollaborationService
 npm test
 ```
 
-4. Quit the server after finished testing using `Ctrl+C`.
+2. Quit the server after finished testing using `Ctrl+C`.
 
 
 #### Running in Docker
 
 **Note**:
 
-> Please delete the containers for other microservices.
+> Please ensure that there are no active container of the required services.
 
-1. Navigate to peerprep directory.
+1. Navigate to CollaborationService directory.
    
-2. Comment local database address and uncomment the docker address for the service in the `peer-prep\src\backend\collaboration-service\config\config.js` file as below:
+2. Comment local database address and uncomment the docker address for the service in the `CollaborationService\config\config.js` file as below:
    
-``` 
-//mongodbUri: 'mongodb://127.0.0.1:27017/peer-prep',
-mongodbUri: 'mongodb://mongo_db:27017/peer-prep',
+```
+mongodbUri: "mongodb://collaboration-service-database:27017",
+// mongodbUri: "mongodb://127.0.0.1:27021/peer-prep",
+// mongodbUri: "mongodb://127.0.0.1:27017/peer-prep",
 ```
    
 3. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\collaboration-service
+cd CollaborationService
 docker-compose up --build
 ```
 
@@ -206,8 +208,8 @@ docker-compose up --build
 ```
 > collaboration-service@1.0.0 start
 > node server.js
-> Collaboration service listening on port 3002
-> MongoDB Connected: mongo_db
+> Collaboration service listening on port 3005
+> MongoDB Connected: collaboration-service-database
 ```
 
 5. End collaboration service in terminal using `Ctrl+C` twice.

@@ -1,5 +1,6 @@
 const {
 	initCollaborativeCode,
+	updateInitTime,
 	updateCollaborativeInput,
 	updateCollaborativeLineInput,
 	updateCollaborativeLanguage,
@@ -13,6 +14,7 @@ let initSession = new Map();
 let sessionTracker = new Map();
 
 const startCollaboration = async (socket, io) => {
+	console.log(`Starting collaboration for socket ${socket.id}`);
 	const collaborationSessionExist = await verifyCurrentSession(
 		socket.handshake.query.sessionId,
 		socket.handshake.query.userId
@@ -62,6 +64,7 @@ const startCollaboration = async (socket, io) => {
 				initSession.get(sessionId)[0],
 				initSession.get(sessionId)[1]
 			);
+			await updateInitTime(sessionId, initSession.get(sessionId)[0]);
 			timerDelay = 1000;
 		} else {
 			console.log(`init session ${sessionId}`);
@@ -87,6 +90,11 @@ const startCollaboration = async (socket, io) => {
             userId
 		);
 		const [language, codes] = initValue;
+
+		if (language === "session-end") {
+			await systemTerminate(sessionId, io);
+			io.to(sessionId).emit("system-terminate", sessionId);
+		}
 
 		console.log(`init code input storage for session ${sessionId}`);
 		socket.broadcast.to(sessionId).emit("init-code", language, codes);
@@ -204,8 +212,6 @@ const startCollaboration = async (socket, io) => {
 		});
 
 		socket.on("disconnect", async () => {
-			console.log("user disconnected: ", userId);
-
 			clearTimeout(sessionTimer);
 
 			socket.broadcast.to(sessionId).emit("user-disconnected", userId);
@@ -232,7 +238,8 @@ const startCollaboration = async (socket, io) => {
 			endReq = await axios.delete(
 				`${config.matchingServiceUrl}/end/${sessionId}`
 			);
-			isEnded = endReq.data.status;
+			console.log(endReq);
+
 		} catch (error) {
 			console.log(error);
 			isEnded = "error";

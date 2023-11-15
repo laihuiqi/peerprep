@@ -7,5 +7,3 @@ app.use((req, res, next) => {
     message: "Trial",
   });
 });
-
-module.exports = app;

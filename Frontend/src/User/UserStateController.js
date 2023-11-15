@@ -36,7 +36,7 @@ async function getUserAdminStatus() {
     const userId = getFirebaseUserCredentials().uid;
     const result = await getUserData(userId);
 
-    return result.data.user.isAdmin;
+    console.log(result.data.user.isAdmin);
   }
 
   return false;

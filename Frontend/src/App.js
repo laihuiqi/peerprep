@@ -72,7 +72,7 @@ function App() {
           </Route>
 
           <Route
-            path="/questions/*"
+            path="/questions"
             element={
               <ProtectedRoute
                 redirectPath="/unauthorized"

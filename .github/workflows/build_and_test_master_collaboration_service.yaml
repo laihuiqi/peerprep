@@ -1,0 +1,63 @@
+name: Build And Test Collaboration Service
+
+on:
+  push:
+    paths:
+      - "CollaborationService/**"
+      - ".github/workflows/build_and_test_master_collaboration_service.yaml"
+
+  pull_request:
+    paths:
+      - "CollaborationService/**"
+      - ".github/workflows/build_and_test_master_collaboration_service.yaml"
+
+jobs:
+  build-and-test-collaboration-service:
+    runs-on: ubuntu-latest
+
+    env:
+      CONTAINER_NAME: "ay2324s1-course-assessment-g16_collaboration-service_1" # Here _ is being used after file directory and service name vs -
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Environment
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Collaboration Service and Collaboration Service Database with Docker Compose
+        run: docker-compose build --no-cache collaboration-service collaboration-service-database
+
+      - name: Run Collaboration Service and Collaboration Service Database with Docker Compose
+        run: docker-compose up -d collaboration-service collaboration-service-database
+
+      # - name: Wait For Startup
+      #   run: sleep 30
+
+      - name: List Docker Containers
+        run: docker ps
+
+      - name: Logs [For Checking Status Only]
+        run: docker-compose logs
+
+      - name: Set up Node.js Environment For Running Tests # Due to dependency issue, have separated test for matching service
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Node Dependencies For Running Tests
+        run: npm install
+        working-directory: CollaborationService
+
+      - name: Run Test Cases in Collaboration Service
+        run: npm test
+        working-directory: CollaborationService
+
+      - name: Retrieve and Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: collaboration-service-test-jest-report-artifacts
+          path: CollaborationService/coverage/**
+
+      - name: Shut Down Containers
+        run: docker-compose down

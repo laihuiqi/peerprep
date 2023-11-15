@@ -30,7 +30,7 @@ async function findMatch(request) {
                             .${request.topic}`;
 
             checkCancel = setInterval(async() => {
-                if (matchId && isCancelled.has(parseInt(matchId))) {
+                if (matchId && isCancelled.has(matchId)) {
                     clearInterval(checkCancel);
                     resolve({ status: 'cancel', 
                               isMatched: false, 
@@ -236,9 +236,9 @@ async function listenToMatchingQueue(channel, matchId, request) {
 
                 // Check if there is an active pair and if the criteria still match
                 if (checkActivePair ||
-                    isCancelled.has(parseInt(currentRequest.matchId) ||
-                    availabilityCache.get(currentRequest.request.id) !== currentRequest.matchId)) {
-
+                    isCancelled.has(currentRequest.matchId) ||
+                    availabilityCache.get(currentRequest.request.id) !== currentRequest.matchId) {
+                    
                     console.log(`Remove match ${currentRequest.request.id}`);
 
                     availabilityCache.delete(currentRequest.request.id);
@@ -250,7 +250,7 @@ async function listenToMatchingQueue(channel, matchId, request) {
                     criteriaMatches(request, currentRequest.request) &&
                     availabilityCache.has(currentRequest.request.id) &&
                     availabilityCache.get(request.id) === matchId &&
-                    !isCancelled.has(parseInt(matchId))) {
+                    !isCancelled.has(matchId)) {
 
                     console.log(`Found a match for ${request.id}`);
 
@@ -305,7 +305,7 @@ async function getMatchQuestion(language, difficulty, topic) {
 
 async function cancelMatch(requestId) {
     // Adding the requestId to the cancelled set
-    isCancelled.add(parseInt(availabilityCache.get(requestId)));
+    isCancelled.add(availabilityCache.get(requestId));
 
     // Removing the requestId from the availability cache
     availabilityCache.delete(requestId);

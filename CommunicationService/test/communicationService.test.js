@@ -1,23 +1,47 @@
-const { io } = require('socket.io-client');
+const { createServer } = require("node:http");
+const { Server } = require("socket.io");
+const ioc = require('socket.io-client');
 const config = require('../config/config');
-
-const socketURL = config.serverAddress;
+const { startCommunication } = require('../services/communicationService');
 
 jest.setTimeout(50000);
 
 describe('Collaboration Service', () => {
-    let user1, user2, sessionId;
+    let io, user1, user2, sessionId, port;
+    
+    sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
 
-    beforeEach(async() => {
+    beforeAll(async() => {
+        const httpServer = createServer();
+        io = new Server(httpServer);
+        const serverReadyPromise = new Promise((resolve) => {
+            httpServer.listen(() => {
+              console.log('Server is running');
+              io.on("connection", async(socket) => {
+                console.log("socket connected: ", socket.id);
+                await startCommunication(socket);
+                });
+              resolve();
+            });
+        });
 
-        sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
+        await serverReadyPromise;
+
+        port = httpServer.address().port;
 
     });
 
     test('same session should be connected', async() => {
-        user1 = io(socketURL, {
+        user1 = ioc(`http://localhost:${port}`, {
             query: {
                 userId: 'Gc2Bz9Nl8Wx4',
+                sessionId: sessionId
+            }
+        });
+
+        user2 = ioc(`http://localhost:${port}`, {
+            query: {
+                userId: 'PxJ3lVtWz8Kq',
                 sessionId: sessionId
             }
         });
@@ -38,14 +62,7 @@ describe('Collaboration Service', () => {
                 resolve();
             });
         });
-
-        user2 = io(socketURL, {
-            query: {
-                userId: 'PxJ3lVtWz8Kq',
-                sessionId: sessionId
-            }
-        });
-
+        
         const user2JoinPromise = new Promise((resolve) => {
             user2.on('join', (recvSessionId) => {
                 expect(recvSessionId).toBe(sessionId);
@@ -121,7 +138,7 @@ describe('Collaboration Service', () => {
             user2RecvMessageLogPromise,
             user1EndCallPromise,
         ]);
-
+        
         user1.disconnect();
         user2.disconnect();
 

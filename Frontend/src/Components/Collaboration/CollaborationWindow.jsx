@@ -29,6 +29,11 @@ const CollaborationWindow = () => {
 	const {sessionId, collaboratorId} = location.state || {};
 
 	useEffect(() => {
+		const questionStored = JSON.parse(sessionStorage.getItem("savedQuestion"));
+		if (questionStored) {
+		  setQuestion(questionStored);
+		}
+
 		if (sessionId && collaboratorId) {
 			socket.current = socketIOClient("http://localhost:3005", {
 				query: {
@@ -82,7 +87,8 @@ const CollaborationWindow = () => {
 			});
 
 			socket.current.on("system-terminate", (sessionId) => {
-				navigate("/landing"); // Navigate to home or another route
+         	showToast("Session ended, redirecting to home page...");
+				 setTimeout(() => navigate('/landing'), 1500); // Navigate to home or another route
 			});
 
 			socket.current.on("user-reconnected", (userId) => {
@@ -110,6 +116,12 @@ const CollaborationWindow = () => {
 			};
 		}
 	}, [sessionId, collaboratorId]);
+
+	useEffect(() => {
+		if (question) {
+		  sessionStorage.setItem("savedQuestion", JSON.stringify(question));
+		}
+	}, [question]);
 
 	const userId = getUserId();
 

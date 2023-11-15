@@ -26,7 +26,7 @@ const getMatchQuestion = async (req, res) => {
     if (language === "SQL") {
       actualLanguage = "SQL";
     } else {
-      actualLanguage = language;
+      actualLanguage = "Other Languages";
     }
     aggregationPipeline.push({ $match: { language: actualLanguage } });
   }
@@ -217,69 +217,11 @@ const deleteQuestion = async (req, res) => {
   res.status(200).json(question);
 };
 
-const addUserTag = async (req, res) => {
-  const { id } = req.params;
-  const { userId, tag } = req.body;
-
-  try {
-    checkIdValidity(id);
-    const question = await Question.findById(id);
-    checkQuestionValidity(question);
-
-    const userIndex = question.userTags.findIndex(
-      (value) => value.userId === userId
-    );
-
-    if (userIndex != -1) {
-      question.userTags[userIndex].tags.push(tag);
-    } else {
-      question.userTags.push({ userId, tags: [tag] });
-    }
-
-    const modifiedQuestion = await question.save();
-    res.status(200).json(modifiedQuestion);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to add tag" });
-  }
-};
-
-const deleteUserTag = async (req, res) => {
-  const { id } = req.params;
-  const { userId, tag } = req.body;
-
-  try {
-    checkIdValidity(id);
-    const question = await Question.findById(id);
-    checkQuestionValidity(question);
-
-    const userIndex = question.userTags.findIndex(
-      (value) => value.userId === userId
-    );
-
-    if (userIndex == -1) {
-      res.status(400).json({ error: "Error with finding user for question" });
-    } else {
-      const tagIndex = question.userTags[userIndex].tags.indexOf(tag);
-      if (tagIndex == -1) {
-        res.status(400).json({ error: "Error with finding tag for user" });
-      } else {
-        question.userTags[userIndex].tags.splice(tagIndex, 1);
-        const updatedQuestion = await question.save();
-        res.status(200).json(updatedQuestion);
-      }
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Unable to delete tag" });
-  }
-};
-
 module.exports = {
   getAllQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  addUserTag,
-  deleteUserTag,
   getMatchQuestion,
   getQuestion,
   duplicateTitleMessage,
