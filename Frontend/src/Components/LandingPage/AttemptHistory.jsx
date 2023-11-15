@@ -12,6 +12,7 @@ export const AttemptHistory = ({isList, setIsList}) => {
     // to be replaced with actual attempt fetch
     const fetchAttempts = async () => {
         setAttempts(getUserAttempts(getUserId()));
+        console.log(attempts);
     };
     
       useEffect(() => {
@@ -23,9 +24,9 @@ export const AttemptHistory = ({isList, setIsList}) => {
          {isList?
             <div className="attempt-list-container">
                 {/* to be replaced by mapping over actual stored attempts */}
-                {attempts.map((a, index) => (
+                {/* {attempts.map((a, index) => (
                     <Attempt key = {index} attempt = {a} i = {index} 
-                    setSelectedAttempt = {setSelectedAttempt} setIsList = {setIsList}/>))}
+                    setSelectedAttempt = {setSelectedAttempt} setIsList = {setIsList}/>))} */}
             </div>:
             <AttemptView attempt = {selectedAttempt} setIsList = {setIsList}/>
         }

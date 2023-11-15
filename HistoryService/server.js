@@ -7,3 +7,6 @@ const port = config.port;
 const server = http.createServer(app);
 
 server.listen(port);
+
+const routes = require("./Routes/HistoryRoutes");
+app.use("/history", routes);
