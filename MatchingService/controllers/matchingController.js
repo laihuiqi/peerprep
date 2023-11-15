@@ -85,7 +85,7 @@ async function getSession(req, res, next) {
 async function endSession(req, res, next) {
     try {
         const sessionId = req.params.sessionId;
-        const sessionInfo = await getMatchedPairBySessionId(sessionId);
+        const sessionInfo = await matchingDB.getMatchedPairBySessionId(sessionId);
         const isEnded = await matchingDB.endSession(sessionId);
 
         if (isEnded) {
@@ -100,6 +100,7 @@ async function endSession(req, res, next) {
             
         }
     } catch (error) {
+        console.log(error);
         await res.status(500).json({ status: 'error', message: 'Failed to end session' });
     }
 }
