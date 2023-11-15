@@ -2,8 +2,8 @@
 
 ### Features
 
-- provide video call function with audio
-- startCommunication : server socket events
+- provide audio call
+- startCommunication : server socket events for text based communication
 
 ### Table of Contents:
 
@@ -22,17 +22,17 @@
 
 #### Listening port
 
-http://localhost:3003
+http://localhost:3007
 
 
 #### Start the microservice on local machine by:
 
-1. Navigate to peerprep directory.
+1. Navigate to CommunicationService directory.
    
 2. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\communication-service
+cd CommunicationService
 npm install
 npm start
 ```
@@ -43,7 +43,7 @@ npm start
 > communication-service@1.0.0 start
 > node server.js
 
-Communication service listening on port 3003
+Communication service listening on port 3007
 ```
 
 4. End communication service in terminal using `Ctrl+C`.
@@ -51,62 +51,82 @@ Communication service listening on port 3003
 
 #### For backend self-testing:
 
-Here demonstrate local testing using Webpage:
+Here demonstrate local testing using Postman:
 
-**Note**:
+1. In the history panel of Postman, click `new` button and select `Socket.io`.
 
-> This testing only available currently.
+2. Add events to listen include:
 
-1. Follow step 1 to step 3 in [Initiate Communication Service - Local Machine](#start-the-microservice-on-local-machine-by).
+    - join
+    - collaborator-joined
+    - collaborator-recv-join
+    - new-message
+    - recv-message-log
+    - called
+    - answered
+    - colllaborator-end-call
+    - call-rejected
+    - collaborator-disconnected
+    - ice-candidate
 
-2. In browser, create 2 webpage with url: `http://localhost:3003`.
+3. Connect clients to server:
 
-3. Wait until `Call Collaborator panel` is initialized.
+    Url 1: http://localhost:3007?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=Gc2Bz9Nl8Wx4
 
-4. Click on the `Call Collaborator panel` once in one of the pages, local video will be initiated.
+    Url 2: http://localhost:3007?sessionId=123c44c9-9bc3-402f-ba56-689eb0d2774d&userId=PxJ3lVtWz8Kq
 
-5. The `Accept Button` in the other page will be enabled, click it.
+4. Test events using the message panel:
 
-6. Video call is enabled now.
+    - recv-join
 
-7. Stop video call by clicking the `End Button`. Video call will be ended for both clients.
+    - message
 
-8. End communication service in terminal using `Ctrl+C`.
+        Arg1: string
+      
+    - get-message-log
+
+    - call
+
+        Arg1: any
+
+    - answer
+
+        Arg1: any
+
+    - end-call
+      
+    - reject-call
+  
+    - disconnect
+  
+    - ice-candidate
+        Arg1: any
 
 
 #### Jest testing
 
-1. Two terminal windows are required for Jest testing.
-
-2. Initiate the communication service in first window by:
+1. Test the service using terminal commands:
 
 ```
-cd peer-prep\src\backend\communication-service
-npm start
-```
-
-3. Test the service in the other window using terminal commands:
-
-```
-cd peer-prep\src\backend\communication-service
+cd CommunicationService
 npm test
 ```
 
-4. Quit the server after finished testing using `Ctrl+C`.
+2. Quit the server after finished testing using `Ctrl+C`.
 
 
 #### Running in Docker
 
 **Note**:
 
-> Please delete the containers for other microservices.
+> Please ensure that there are no active container of the required services.
 
-1. Navigate to peerprep directory.
+1. Navigate to CommunicationService directory.
    
 2. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\communication-service
+cd CommunicationService
 docker-compose up --build
 ```
 
@@ -115,7 +135,7 @@ docker-compose up --build
 ```
 > communication-service@1.0.0 start
 > node server.js
-> Communication service listening on port 3003
+> Communication service listening on port 3007
 ```
 
 4. End communication service in terminal using `Ctrl+C` twice.
