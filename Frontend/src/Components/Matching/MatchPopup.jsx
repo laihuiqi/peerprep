@@ -90,6 +90,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                             <option value="java">Java</option>
                             <option value="cpp">C++</option>
                             <option value="javascript">JavaScript</option>
+                            <option value="sql">SQL</option>
                             <option value="None">No Preference</option>
                         </select>
                         </div>
