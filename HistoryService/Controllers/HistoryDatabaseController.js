@@ -62,7 +62,6 @@ async function setUpDatabase() {
 
   console.log(useDbResult);
 
-  // Create Table if not exist
   const createTableResult = await pool.query(
     `
     CREATE TABLE IF NOT EXISTS ${TABLE_NAME}
@@ -71,6 +70,10 @@ async function setUpDatabase() {
     userId2 VARCHAR(255) NOT NULL, 
     sessionId VARCHAR(255) NOT NULL, 
     questionId VARCHAR(255) NOT NULL, 
+    questionTitle TEXT NOT NULL,
+    questionDescription TEXT NOT NULL,
+    questionCategory TEXT NOT NULL,
+    questionComplexity TEXT NOT NULL,
     attempt_time TIMESTAMP NOT NULL DEFAULT NOW());
     `
   );
@@ -96,16 +99,30 @@ async function addAttemptDetailsToDatabase(
   userId1,
   userId2,
   sessionId,
-  questionId
+  questionId,
+  questionTitle,
+  questionDescription,
+  questionCategory,
+  questionComplexity
 ) {
   const result = await pool.query(
     `
     INSERT INTO ${TABLE_NAME}
-    (userId1, userId2, sessionId, questionId) 
+    (userId1, userId2, sessionId, questionId, questionTitle, questionDescription, questionCategory, questionComplexity) 
     VALUES 
-    (?, ?, ?, ?)
+    (?, ?, ?, ?, ?, ?, ?, ?)
     `,
-    [userId1, userId2, sessionId, questionId]
+
+    [
+      userId1,
+      userId2,
+      sessionId,
+      questionId,
+      questionTitle,
+      questionDescription,
+      questionCategory,
+      questionComplexity,
+    ]
   );
 
   return result;

@@ -17,7 +17,11 @@ async function addUserAttemptToHistoryDatabase(
   userId1,
   userId2,
   sessionId,
-  questionId
+  questionId,
+  questionTitle,
+  questionDescription,
+  questionCategory,
+  questionComplexity
 ) {
   try {
     const result = await axios.post(
@@ -27,6 +31,10 @@ async function addUserAttemptToHistoryDatabase(
         userId2: userId2,
         sessionId: sessionId,
         questionId: questionId,
+        questionTitle: questionTitle,
+        questionDescription: questionDescription,
+        questionCategory: questionCategory,
+        questionComplexity: questionComplexity,
       }
     );
 

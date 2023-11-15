@@ -1,31 +1,44 @@
 import {
-	getUserAttemptsFromHistoryDatabase,
-	addUserAttemptToHistoryDatabase,
+  getUserAttemptsFromHistoryDatabase,
+  addUserAttemptToHistoryDatabase,
 } from "./HistoryServiceController";
 
 async function getUserAttempts(userId) {
-	const result = await getUserAttemptsFromHistoryDatabase(userId);
-	console.log(result);
-	if (result !== null && result.status === 200) {
-		return result.data.result;
-	}
+  const result = await getUserAttemptsFromHistoryDatabase(userId);
+  console.log(result);
+  if (result !== null && result.status === 200) {
+    return result.data.result;
+  }
 
-	return null;
+  return null;
 }
 
-async function addUserAttempt(userId1, userId2, sessionId, questionId) {
-	const result = await addUserAttemptToHistoryDatabase(
-		userId1,
-		userId2,
-		sessionId,
-		questionId
-	);
+async function addUserAttempt(
+  userId1,
+  userId2,
+  sessionId,
+  questionId,
+  questionTitle,
+  questionDescription,
+  questionCategory,
+  questionComplexity
+) {
+  const result = await addUserAttemptToHistoryDatabase(
+    userId1,
+    userId2,
+    sessionId,
+    questionId,
+    questionTitle,
+    questionDescription,
+    questionCategory,
+    questionComplexity
+  );
 
-	if (result !== null && result.status === 201) {
-		return true;
-	}
+  if (result !== null && result.status === 201) {
+    return true;
+  }
 
-	return false;
+  return false;
 }
 
-export {addUserAttempt, getUserAttempts};
+export { addUserAttempt, getUserAttempts };
