@@ -55,7 +55,7 @@ async function getActiveSession(req, res, next) {
             
         }
     } catch (error) {
-        next(error);
+        await res.status(500).json({ sessionId: null })
     }
 }
 
@@ -78,7 +78,7 @@ async function getSession(req, res, next) {
             
         }
     } catch (error) {
-        next(error);
+        await res.status(500).json({ sessionId: null, session: null});
     }
 }
 
@@ -96,7 +96,7 @@ async function endSession(req, res, next) {
             
         }
     } catch (error) {
-        next(error);
+        await res.status(500).json({ status: 'error', message: 'Failed to end session' });
     }
 }
 
@@ -112,7 +112,7 @@ async function cancelMatch(req, res, next) {
             
         }
     } catch (error) {
-        next(error);
+        await res.status(500).json({ message: 'Failed to cancel match' });
     }
 }
 
