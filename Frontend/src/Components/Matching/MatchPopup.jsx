@@ -5,12 +5,14 @@ import './MatchPopup.css'; // Ensure this path is correct
 import { LoadPopup } from './LoadPopup';
 import { getUserId } from '../../User/UserState'; 
 import { useNavigate } from 'react-router-dom';
+import { NotSuccessOutput } from './NotSuccessOutput';
 
 const MatchPopup = ({ isOpen, isClose }) => {
     const [goToLoadPopup, setGoToLoadPopup] = useState(false);
     const [showSuccessOutput, setShowSuccessOutput] = useState(false);
     const [collaboratorId, setCollaboratorId] = useState(null);
     const navigate = useNavigate();
+    const [showNotSuccessOutput, setShowNotSuccessOutput] = useState(false);
 
     // States for the matching criteria
     const [chosenDifficulty, setChosenDifficulty] = useState("None");
@@ -56,12 +58,15 @@ const MatchPopup = ({ isOpen, isClose }) => {
                } else {
                    console.log("No match found");
                    setShowSuccessOutput(false); // SuccessOutput popup does not show
+                   setShowNotSuccessOutput(true); // Triggers the NotSuccessOutput popup
+                   
                }
 //               setGoToLoadPopup(false); // Close the loading popup
            })
            .catch(error => {
                console.error("Error finding a match: ", error);
                setGoToLoadPopup(false); // Close the loading popup
+               setShowNotSuccessOutput(true); // Triggers the NotSuccessOutput popup
            
            });
         };
@@ -120,6 +125,8 @@ const MatchPopup = ({ isOpen, isClose }) => {
 
                 {showSuccessOutput && 
                 <SuccessOutput isOpen={true} isClose={() => setShowSuccessOutput(false)} />}
+                {showNotSuccessOutput &&
+                <NotSuccessOutput isOpen={true} isClose={() => setShowNotSuccessOutput(false)} />}
             </div>
     );
 }
