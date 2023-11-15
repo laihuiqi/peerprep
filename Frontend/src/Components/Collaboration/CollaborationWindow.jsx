@@ -9,6 +9,7 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import {getUserId} from "../../User/UserState";
 import {useLocation} from "react-router-dom";
+import {addUserAttempt} from "../../History/HistoryServiceAPI";
 import CommunicationWindow from "./CommunicationWindow";
 
 import axios from "axios";
@@ -25,13 +26,14 @@ const CollaborationWindow = () => {
 	const navigate = useNavigate();
 	const socket = useRef(null);
 	const [canExtend, setCanExtend] = useState(false);
+	const [otherUserId, setOtherUserId] = useState("");
 	const location = useLocation();
 	const {sessionId, collaboratorId} = location.state || {};
 
 	useEffect(() => {
 		const questionStored = JSON.parse(sessionStorage.getItem("savedQuestion"));
 		if (questionStored) {
-		  setQuestion(questionStored);
+			setQuestion(questionStored);
 		}
 
 		if (sessionId && collaboratorId) {
@@ -53,11 +55,12 @@ const CollaborationWindow = () => {
 			socket.current.on("user-joined", (userId) => {
 				console.log(`User ${userId} joined the session`);
 				showToast("Get ready to collaborate and solve the challenge!");
+				setOtherUserId(userId);
 				// Handle new user joining
 			});
 
-			socket.current.on('recv-question', (receivedQuestion) => {
-				console.log('Received question: ', receivedQuestion);
+			socket.current.on("recv-question", (receivedQuestion) => {
+				console.log("Received question: ", receivedQuestion);
 				setQuestion(receivedQuestion);
 			});
 
@@ -87,8 +90,9 @@ const CollaborationWindow = () => {
 			});
 
 			socket.current.on("system-terminate", (sessionId) => {
-         	showToast("Session ended, redirecting to home page...");
-				 setTimeout(() => navigate('/landing'), 1500); // Navigate to home or another route
+				showToast("Session ended, redirecting to home page...");
+				addUserAttempt(userId);
+				setTimeout(() => navigate("/landing"), 1500); // Navigate to home or another route
 			});
 
 			socket.current.on("user-reconnected", (userId) => {
@@ -119,7 +123,7 @@ const CollaborationWindow = () => {
 
 	useEffect(() => {
 		if (question) {
-		  sessionStorage.setItem("savedQuestion", JSON.stringify(question));
+			sessionStorage.setItem("savedQuestion", JSON.stringify(question));
 		}
 	}, [question]);
 
@@ -142,11 +146,18 @@ const CollaborationWindow = () => {
 	//  }
 	// };
 
-	const handleEndSession = () => {
+	const handleEndSession = async () => {
 		// Emit a 'terminate-session' event to the server
 		socket.current.emit("user-terminate"); // Replace 'session-id' with the actual session ID
 
 		showToast("Session terminated");
+		const result = await addUserAttempt(
+			userId,
+			otherUserId,
+			sessionId,
+			question._id
+		);
+		console.log(result);
 
 		// to home or another route after a short delay
 		setTimeout(() => navigate("/landing"), 1500);
@@ -168,9 +179,15 @@ const CollaborationWindow = () => {
 			.padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		socket.current.emit("user-terminate", {sessionId: "session-id"});
-
+		const result = await addUserAttempt(
+			userId,
+			otherUserId,
+			sessionId,
+			question._id
+		);
+		console.log(result);
 		showToast("Your code has been submitted");
 		setTimeout(() => navigate("/landing"), 1500);
 	};
@@ -267,8 +284,8 @@ const CollaborationWindow = () => {
 				<div className="question-section">
 					{question ? (
 						<>
-						<h2>{question.title}</h2>
-						<p>{question.description}</p>
+							<h2>{question.title}</h2>
+							<p>{question.description}</p>
 						</>
 					) : (
 						<p>Loading question...</p>
