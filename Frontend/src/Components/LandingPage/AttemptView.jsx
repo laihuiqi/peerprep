@@ -5,11 +5,24 @@ import Utility from "../../Utility/Utility"
 
 import back_icon from "../Assets/back.png"
 
+const {getCollaborativeInput} = require("../../../../CollaborationService/database/collaborativeInputDb");
+
 export const AttemptView = ({attempt, setIsList}) => {
     //to be replaced with attempt.code
-    const [code, setCode] = useState("# This is the code from your attempt");
+    const [code, setCode] = useState("#Here is the code from your attempt");
+    const [lang, setLang] = useState("python")
 
     let tagClass = Utility.setDifficultyTag("user-q-tag", attempt.complexity);
+
+    const fetchCode = async () => {
+        const collaborativeInput = await getCollaborativeInput(attempt.sessionId);
+        setCode(collaborativeInput[2]);
+        setLang(collaborativeInput[1]);
+    }
+
+    useEffect(() => {
+        fetchCode();
+    }, [])
 
   return (
     <div className="attempt-view-container">
@@ -19,19 +32,19 @@ export const AttemptView = ({attempt, setIsList}) => {
         <div className="attempt-details-container">
             <div className="attempt-q">
                 <div className="attempt-q-header">
-                    <div className="attempt-q-name">{attempt.title}</div>
+                    <div className="attempt-q-name">{attempt.questionTitle}</div>
                     <div className="attempt-q-tags">
-                        <div className={tagClass}>{attempt.complexity}</div>
-                        <div className="user-q-tag">{attempt.category}</div>
+                        <div className={tagClass}>{attempt.questionComplexity}</div>
+                        <div className="user-q-tag">{attempt.questionCategory}</div>
                     </div>
                 </div>
                 <div className="attempt-q-desc">
-                    {attempt.description}
+                    {attempt.questionDescription}
                 </div>
             </div>
             <div className="attempt-code">
                 {/* replace language with state variable - attempt.language*/}
-                <CodeEditor code={code} setCode={setCode} language={'python'} isReadOnly = {true}/>
+                <CodeEditor code={code} setCode={setCode} language={lang} isReadOnly = {true}/>
             </div>
         </div>
     </div>

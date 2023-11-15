@@ -16,12 +16,12 @@ export const Attempt = ({i, attempt, setSelectedAttempt, setIsList}) => {
 		>
 			<div className="attempt-name">
 				<div className="attempt-id"> #{i + 1} </div>
-				<div className="attempt-title">{attempt.title}</div>
+				<div className="attempt-title">{attempt.questionTitle}</div>
 			</div>
 			<div className="attempt-tags">
-				<div className="user-q-tag attempt-date">{question.attempt_time}</div>
-				<div className={tagClass}>{question.complexity}</div>
-				<div className="user-q-tag">{question.category}</div> 
+				<div className="user-q-tag attempt-date">{attempt.attempt_time}</div>
+				<div className={tagClass}>{attempt.questionComplexity}</div>
+				<div className="user-q-tag">{attempt.questionCategory}</div> 
 			</div>
 		</div>
 	);
