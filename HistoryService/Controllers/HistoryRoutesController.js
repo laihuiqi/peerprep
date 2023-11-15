@@ -28,7 +28,7 @@ const getAttemptDetails = async (req, res, next) => {
 
   res.status(500).json({
     message: "NO HISTORY DATA FOUND",
-    result: [],
+    error: "Internal Error",
   });
 };
 
@@ -42,30 +42,34 @@ const addAttemptDetails = async (req, res, next) => {
   const questionCategory = req.body.questionCategory;
   const questionComplexity = req.body.questionComplexity;
 
-  const result = await addAttemptDetailsToDatabase(
-    userId1,
-    userId2,
-    sessionId,
-    questionId,
-    questionTitle,
-    questionDescription,
-    questionCategory,
-    questionComplexity
-  );
+  try {
+    const result = await addAttemptDetailsToDatabase(
+      userId1,
+      userId2,
+      sessionId,
+      questionId,
+      questionTitle,
+      questionDescription,
+      questionCategory,
+      questionComplexity
+    );
 
-  if (result !== undefined) {
-    res.status(201).json({
-      message: "SUCCESSFUL: ADD USER ATTEMPT HISTORY",
-      result: result[0],
+    if (result !== undefined) {
+      res.status(201).json({
+        message: "SUCCESSFUL: ADD USER ATTEMPT HISTORY",
+        result: result[0],
+      });
+
+      return;
+    }
+  } catch (error) {
+    console.log("Error Adding Question");
+
+    res.status(500).json({
+      message: "HISTORY DATA COULD NOT BE ADDED",
+      error: "Missing Fields or Internal Error",
     });
-
-    return;
   }
-
-  res.status(500).json({
-    message: "HISTORY DATA COULD NOT BE ADDED",
-    error: "Internal Error",
-  });
 };
 
 module.exports = {
