@@ -23,23 +23,28 @@
 
 #### Listening port
 
-http://localhost:3004
+http://localhost:3008
 
 
 #### Start the microservice on local machine by:
 
-1. Navigate to peerprep directory.
+1. Navigate to GptService directory.
    
-2. Insert your own GPT-API_KEY for the services in the `peer-prep\src\backend\gpt-service\config\config.js` file as below:
+2. Insert your own GPT-API_KEY for the services in the `GptService\config\config.js` file as below:
    
 ``` 
 const API_KEY = '<Your api key>';
 ```
+
+Warning:
+
+> Please do not publish your API key to public.
+
    
 3. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\gpt-service
+cd GptService
 npm install
 npm start
 ```
@@ -50,7 +55,7 @@ npm start
 > gpt-service@1.0.0 start
 > node server.js
 
-GPT service listening on port 3004
+GPT service listening on port 3008
 ```
 
 5. End generative AI service in terminal using `Ctrl+C`.
@@ -66,11 +71,11 @@ GPT service listening on port 3004
    
    Send **POST** request to:
    
-    `http://localhost:3004/generate` and specify post fields.
+    `http://localhost:3008/generate` and specify post fields.
    
    Example:
    
-   Url link: `http://localhost:3004`
+   Url link: `http://localhost:3008`
 
    For testing using Postman, enter data using the `Body` panel (2 methods are available):
    
@@ -115,11 +120,11 @@ GPT service listening on port 3004
    
    Send **DELETE** request to:
    
-   `http://localhost:3004/exitGpt`
+   `http://localhost:3008/exitGpt`
    
    Example:
    
-   `http://localhost:3004/exitGpt`
+   `http://localhost:3008/exitGpt`
 
    raw:
 
@@ -145,11 +150,11 @@ GPT service listening on port 3004
      
    Send **GET** request to:
    
-   `http://localhost:3004/getCache`
+   `http://localhost:3008/getCache`
    
    Example:
    
-   `http://localhost:3004/getCache`
+   `http://localhost:3008/getCache`
 
    raw:
 
@@ -190,7 +195,7 @@ GPT service listening on port 3004
 1. Test the service using terminal commands:
 
 ```
-cd peer-prep\src\backend\gpt-service
+cd GptService
 npm test
 ```
 
@@ -199,20 +204,24 @@ npm test
 
 **Note**:
 
-> Please delete the containers for other microservices.
+> Please ensure that there are no active container of the required services.
 
-1. Navigate to peerprep directory.
+1. Navigate to GptService directory.
 
-2. Insert your own GPT-API_KEY for the services in the `peer-prep\src\backend\gpt-service\config\config.js` file as below:
+2. Insert your own GPT-API_KEY for the services in the `GptService\config\config.js` file as below:
    
 ``` 
 const API_KEY = '<Your api key>';
 ```
+Warning:
+
+> Please do not publish your API key to public.
+
    
 3. Start the microservice in terminal using commands:
    
 ```
-cd peer-prep\src\backend\gpt-service
+cd GptService
 docker-compose up --build
 ```
 
@@ -221,7 +230,7 @@ docker-compose up --build
 ```
 > gpt-service@1.0.0 start
 > node server.js
-> GPT service listening on port 3004
+> GPT service listening on port 3008
 ```
 
-5. End matching service in terminal using `Ctrl+C` twice.
+5. End GPT service in terminal using `Ctrl+C` twice.

@@ -70,6 +70,7 @@ export const UserProfile = ({setUsername}) => {
        <option value="C++">C++</option>
        <option value="Java">Java</option>
        <option value="Javascript">Javascript</option>
+       <option value="SQL">SQL</option>
       </select>
      ) : (
       <div className="profile-detail">{lang}</div>

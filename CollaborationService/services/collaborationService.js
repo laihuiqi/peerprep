@@ -1,5 +1,6 @@
 const {
 	initCollaborativeCode,
+	updateInitTime,
 	updateCollaborativeInput,
 	updateCollaborativeLineInput,
 	updateCollaborativeLanguage,
@@ -13,6 +14,7 @@ let initSession = new Map();
 let sessionTracker = new Map();
 
 const startCollaboration = async (socket, io) => {
+	console.log(`Starting collaboration for socket ${socket.id}`);
 	const collaborationSessionExist = await verifyCurrentSession(
 		socket.handshake.query.sessionId,
 		socket.handshake.query.userId
@@ -62,6 +64,7 @@ const startCollaboration = async (socket, io) => {
 				initSession.get(sessionId)[0],
 				initSession.get(sessionId)[1]
 			);
+			await updateInitTime(sessionId, initSession.get(sessionId)[0]);
 			timerDelay = 1000;
 		} else {
 			console.log(`init session ${sessionId}`);

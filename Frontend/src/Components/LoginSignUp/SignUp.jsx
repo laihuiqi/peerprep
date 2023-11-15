@@ -94,6 +94,7 @@ export const SignUp = ({setAction, setError}) => {
       <option value="C++">C++</option>
       <option value="Java">Java</option>
       <option value="Javascript">Javascript</option>
+      <option value="SQL">SQL</option>
      </select>
     </div>
    </div>

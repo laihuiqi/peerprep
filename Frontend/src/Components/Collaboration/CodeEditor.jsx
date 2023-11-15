@@ -98,6 +98,7 @@ const CodeEditor = ({
 					<option value="cpp">C++</option>
 					<option value="java">Java</option>
 					<option value="javascript">Javascript</option>
+					<option value="sql">SQL</option>
 				</select>
 			</div>
 			<Editor

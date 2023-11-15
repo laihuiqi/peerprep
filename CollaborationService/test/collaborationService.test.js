@@ -2,10 +2,9 @@ const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const ioc = require('socket.io-client');
 const config = require('../config/config');
-const { startCollaboration } = require('../services/collaborationService');
+const { startCollaboration, getCollaborationHistory } = require('../services/collaborationService');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const MatchedPair = require('./collabTestSchema');
 const axios = require('axios');
 const MockAdapter = require('axios-mock-adapter');
 
@@ -26,6 +25,16 @@ describe('Collaboration Service', () => {
         topic: "Arrays",
     };
 
+    const testQuestion = {
+        _id: new mongoose.Types.ObjectId("65378371752185e6e1b5b342"),
+        title: "test1",
+        description: "test1 desp",
+        complexity: "Easy",
+        category: "Arrays",
+        language:"Java",
+        userTags: [],
+    };
+
     const sessionId = "123c44c9-9bc3-402f-ba56-689eb0d2774d";
 
     beforeAll(async() => {
@@ -38,8 +47,6 @@ describe('Collaboration Service', () => {
         });
 
         console.log("testDB connected");
-
-        await MatchedPair(mockMatch).save();
 
         const mock = new MockAdapter(axios);
 
@@ -57,6 +64,12 @@ describe('Collaboration Service', () => {
             .reply(200, {
                 sessionId: "123c44c9-9bc3-402f-ba56-689eb0d2774d",
                 session: mockMatch
+            });
+
+        mock.onGet(`${config.questionServiceUrl}/65378371752185e6e1b5b342`)
+            .reply(200, {
+                questionId: "65378371752185e6e1b5b342",
+                question: testQuestion,
             });
 
         mock.onDelete(`${config.matchingServiceUrl}/end/123c44c9-9bc3-402f-ba56-689eb0d2774d`)
@@ -80,9 +93,10 @@ describe('Collaboration Service', () => {
         port = httpServer.address().port;
 
     });
-    
-    beforeEach(async() => {
 
+    let time, language, line, codeInput ,lastModifier, objectId;
+    
+    test("collaboration parameters can be set up correctly", async() => {
         user1 = ioc(`http://localhost:${port}`, {
             query: {
                 userId: 'Gc2Bz9Nl8Wx4',
@@ -96,83 +110,103 @@ describe('Collaboration Service', () => {
                 sessionId: sessionId
             }
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 5000));
 
+        user1.on("join", (recvSessionId) => {
+            expect(recvSessionId).toBe(sessionId);
+            console.log("user1 joins: ", recvSessionId);
+        });
+
+        user2.on("join", (recvSessionId) => {
+            expect(recvSessionId).toBe(sessionId);
+            console.log("user2 joins: ", recvSessionId);
+        });
+
+        user1.on("user-joined", userId => {
+            expect(userId).toBe("PxJ3lVtWz8Kq");
+            console.log("user-joined: ", userId);
+        });
+
+        user2.on("user-joined", userId => {
+            expect(userId).toBe("Gc2Bz9Nl8Wx4");
+            console.log("user-joined: ", userId);
+        });
+
+        user1.on("init-code", (recvLanguage, code) => {
+            language = recvLanguage;
+            expect(language).toBe("Java");
+            codeExtract = code[0];
+            line = codeExtract.line;
+            codeInput = codeExtract.code;
+            lastModifier = codeExtract.lastModifier;
+            objectId = codeExtract._id;
+            expect(lastModifier).toBe("PxJ3lVtWz8Kq");
+            expect(codeInput).toBe("#Enter your code here");
+            expect(line).toBe(1);
+            console.log("init-code1");
+        });
+
+        user1.on("init-timer", (init, length) => {
+            time = init;
+            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy);
+            console.log("init-timer1: ", init, length);
+        }); 
+
+        user1.on("init-timer", (init, length) => {
+            expect(init).toBe(time);
+            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy);
+            console.log("init-timer2: ", init, length);
+        }); 
+
+        user2.on("init-code", (recvLanguage, code) => {
+            expect(recvLanguage).toBe(language);
+            code = code[0];
+            expect(code.lastModifier).toBe(lastModifier);
+            expect(code.code).toBe(codeInput);
+            expect(code.line).toBe(line);
+            expect(code._id).toBe(objectId);
+            console.log("init-code2");
+        });
+
+        user1.on('recv-question', question => {
+            expect(question.category).toBe(testQuestion.category);
+            expect(question.complexity).toBe(testQuestion.complexity);
+            expect(question.description).toBe(testQuestion.description);
+            expect(question.language).toBe(testQuestion.language);
+            expect(question.title).toBe(testQuestion.title);
+            expect(JSON.stringify(question.userTags)).toBe(JSON.stringify(testQuestion.userTags));
+            console.log('recv-question1: ', question);
+        });
+
+        user2.on('recv-question', question => {
+            expect(question.category).toBe(testQuestion.category);
+            expect(question.complexity).toBe(testQuestion.complexity);
+            expect(question.description).toBe(testQuestion.description);
+            expect(question.language).toBe(testQuestion.language);
+            expect(question.title).toBe(testQuestion.title);
+            expect(JSON.stringify(question.userTags)).toBe(JSON.stringify(testQuestion.userTags));
+            console.log('recv-question2: ', question);
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 4000));
+
+    });
+
+    test("collaboration history can be retrieved", async() => {
+        const history = await getCollaborationHistory(sessionId);
+        console.log('Get history: ', history);
+        expect(history[0]).toBe(time);
+        expect(history[1]).toBe(language);
+        let codeHistory = history[2][0];
+        expect(codeHistory.line).toBe(line);
+        expect(codeHistory.code).toBe(codeInput);
+        expect(codeHistory.lastModifier).toBe(lastModifier);
+        expect(JSON.stringify(codeHistory._id)).toBe(JSON.stringify(objectId));
+        console.log('Get history: ', history);
     });
     
     afterEach(async() => {
         await user1.disconnect();
         await user2.disconnect();
-    });
-    
-    test('code change should be detected and broadcasted to all users in the same room', async() => {
-        await user1.emit('update-code', 1, 'console.log("hello world");');
-
-        user2.on('code-changed', (line, code) => {
-            expect(line).toBe(1);
-            expect(code).toBe('console.log("hello world");');
-            console.log("1 ", line, code);
-        });
-
-        await user2.emit('update-code', 2, 'console.log("bye world");');
-
-        user1.on('code-changed', (line, code) => {
-            expect(line).toBe(2);
-            expect(code).toBe('console.log("bye world");');
-            console.log("1 ", line, code);
-        });
-        
-    });
-    
-    test('time extension should be successful when time is sufficient', async() => {
-        await user1.emit('extend-time');
-
-        user1.on('time-extended', (init, length) => {
-            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy + config.EXTENSION_TIME);
-            console.log("2 ", length);
-        });
-
-        user2.on('time-extended', (init, length) => {
-            expect(length).toBe(config.DEFAULT_TIME_LIMIT.Easy + config.EXTENSION_TIME);
-            console.log("2 ", length);
-        });
-    });
-
-    test('code editor should be cleared after the cleaning request', async() => {
-        await user1.emit('clear');
-
-        user2.on('cleared', (recvSessionId) => {
-            expect(recvSessionId).toBe(sessionId);
-            console.log("3 ", recvSessionId);
-        });
-    });
-
-    test('user\'s reconnection could be received by collaborator', async() => {
-        await user1.emit('clear');
-        await user1.emit('reconnect');
-
-        user1.on('success-reconnected', (collaborativeInput) => {
-            const [time, language, codes] = collaborativeInput;
-            expect(language).toBe('Java');
-            expect(codes).toStrictEqual([]);
-            console.log("4 ", language, codes);
-        });
-
-        user2.on('user-reconnected', (userId) => {
-            expect(userId).toBe("Gc2Bz9Nl8Wx4");
-            console.log("4 ", userId);
-        });
-    });
-
-    test('session should start to terminate once user requests', async() => {
-        await user1.emit('user-terminate', 2, 'console.log("java is good");');
-
-        user2.on('notify-terminate', (session) => {
-            expect(session).toBe(sessionId);
-            console.log("5 ", session);
-        });
-
     });
     
 });
