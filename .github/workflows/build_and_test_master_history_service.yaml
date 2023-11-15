@@ -32,7 +32,7 @@ jobs:
         run: docker-compose up -d history-service history-service-database
 
       - name: Wait For Startup of MySQL Container
-        run: sleep 5
+        run: sleep 10
 
       - name: List Docker Containers
         run: docker ps
