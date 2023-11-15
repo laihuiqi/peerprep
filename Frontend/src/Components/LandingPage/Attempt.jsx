@@ -4,7 +4,7 @@ import Utility from "../../Utility/Utility";
 
 
 export const Attempt = ({i, attempt, setSelectedAttempt, setIsList}) => {
-	let tagClass = Utility.setDifficultyTag("user-q-tag", question.complexity);
+	let tagClass = Utility.setDifficultyTag("user-q-tag", attempt.questionComplexity);
 
 	return (
 		<div
