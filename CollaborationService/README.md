@@ -186,7 +186,7 @@ npm test
 
 > Please ensure that there are no active container of the required services.
 
-1. Navigate to peerprep directory.
+1. Navigate to CollaborationService directory.
    
 2. Comment local database address and uncomment the docker address for the service in the `CollaborationService\config\config.js` file as below:
    
