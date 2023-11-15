@@ -8,12 +8,14 @@ const bodyParser = require("body-parser");
 
 // MongoDB Database using Mongoose as Client
 const mongoose = require("mongoose");
+const { addDemoUsersToDatabase } = require("./scripts/addSampleUser");
 
 // Connecting to MongoDB Database
 mongoose
   .connect(config.databaseUrl)
   .then((result) => {
     console.log("Connected To MongoDB");
+    addDemoUsersToDatabase();
   })
   .catch((error) => {
     console.log("Could not connect: " + error);
