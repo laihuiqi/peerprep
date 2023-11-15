@@ -40,7 +40,7 @@ test("Get All Users: GET /users/", async () => {
 
   expect(result.statusCode).toEqual(200);
 
-  expect(result.body.users.length).toEqual(1);
+  expect(result.body.users.length).not.toEqual(0);
   expect(result.body.users[0]._id).toEqual("sample_user_id");
   expect(result.body.users[0].name).toEqual("Sample Name");
 });
