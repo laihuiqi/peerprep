@@ -155,7 +155,11 @@ const CollaborationWindow = () => {
 			userId,
 			otherUserId,
 			sessionId,
-			question._id
+			question._id,
+			question.title,
+			question.description,
+			question.category,
+			question.complexity
 		);
 		console.log(result);
 
@@ -185,7 +189,11 @@ const CollaborationWindow = () => {
 			userId,
 			otherUserId,
 			sessionId,
-			question._id
+			question._id,
+			question.title,
+			question.description,
+			question.category,
+			question.complexity
 		);
 		console.log(result);
 		showToast("Your code has been submitted");
