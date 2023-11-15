@@ -11,6 +11,12 @@ export const AttemptHistory = ({isList, setIsList}) => {
 
 	const fetchAttempts = async () => {
 		const results = await getUserAttempts(getUserId());
+		if (results === null) {
+			console.log("No Attempt")
+			return;
+		}
+
+		console.log(results)
 		setAttempts(results);
 	};
 
