@@ -183,7 +183,8 @@ npm test
 #### Running in Docker
 
 **Note**:
-Please ensure that there are no active container of the required services.
+
+> Please ensure that there are no active container of the required services.
 
 1. Navigate to peerprep directory.
    
