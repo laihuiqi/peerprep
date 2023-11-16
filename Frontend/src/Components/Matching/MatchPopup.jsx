@@ -20,6 +20,11 @@ const MatchPopup = ({ isOpen, isClose }) => {
     const [chosenProficiency, setChosenProficiency] = useState("None");
     const [chosenTopic, setChosenTopic] = useState("None");
 
+    const handleMatchCancellation = () => {
+        setGoToLoadPopup(false);
+        setShowNotSuccessOutput(true);
+      };
+
     const initiateMatching = () => {
 
         // Show the loading popup
@@ -39,11 +44,6 @@ const MatchPopup = ({ isOpen, isClose }) => {
             proficiency: chosenProficiency,
             topic: chosenTopic
         };
-
-        const handleMatchCancellation = () => {
-            setGoToLoadPopup(false);
-            setShowNotSuccessOutput(true);
-          };
 
        // Make a post request to backend with the payload
        const URL = `http://localhost:3004/home/${userId}`;
