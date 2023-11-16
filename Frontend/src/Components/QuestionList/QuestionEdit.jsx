@@ -42,19 +42,22 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
         }
     };
 
-    const handleSubmit = (toggleEdit, editQ) => async e => {
-        e.preventDefault();
+    const handleSubmit = async (toggleEdit, editQ) => {
+        // e.preventDefault();
         if(isEmpty(title) || isEmpty(difficulty) || isEmpty(topic) || isEmpty(description)) {
-        setIsMissingField(true);
+            setIsMissingField(true);
         } else {
-        setIsMissingField(false);
-        const response = await editQ(q._id, title, description, difficulty, topic, language);
-        if(response.status === 200) {
-            toggleEdit(false);
-        } else {
-            let res = await response.json();
-            setErrorVar(res.errors)
-        }
+        
+            setIsMissingField(false);
+
+            const response = await editQ(q._id, title, description, difficulty, topic, language);
+            
+            if(response.status === 200) {
+                toggleEdit(false);
+            } else {
+                let res = await response.json();
+                setErrorVar(res.errors)
+            }
         }
     }
 
@@ -94,6 +97,7 @@ export const QuestionEdit = ({ q, index, updateQ, setEdit }) => {
             <div className="btn-container">
                     <button type = "cancel" className="cancel-btn" onClick = {(e)=> {setEdit(false)}}>Cancel</button>
                     <button className="submit-btn" onClick = {(e) => {
+                        e.preventDefault();
                         handleSubmit(setEdit, updateQ);
                     }}>Submit
                     </button> 

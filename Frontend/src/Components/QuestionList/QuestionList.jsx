@@ -86,8 +86,8 @@ export const Questions = () => {
 
       if (response.status === 200) {
         setFilterApplied(false);
-        fetchQuestions();
-        return [];
+        await fetchQuestions();
+        return response;
       } else {
         return ['Unable to edit question'];
       }
