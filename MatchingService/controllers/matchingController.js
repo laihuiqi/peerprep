@@ -90,10 +90,6 @@ async function endSession(req, res, next) {
 
         if (isEnded) {
             await res.status(200).json({ status: 'success', message: 'Session ended successfully' });
-            await addUserAttemptToHistoryDatabase(sessionInfo.id1,
-                sessionInfo.id2,
-                sessionInfo.sessionId,
-                sessionInfo.questionId);
 
         } else {
             await res.status(500).json({ status: 'error', message: 'Failed to end session' });
