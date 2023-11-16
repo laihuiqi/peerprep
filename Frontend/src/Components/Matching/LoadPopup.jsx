@@ -18,13 +18,14 @@ export const LoadPopup = ({ isOpen, isClose, userId, onMatchCancelled }) => {
   const handleCancelMatching = () => { 
     setButtonEnabled(false); 
 
-    axios.delete(`/home/${userId}/matching`) 
+    const URL = `http://localhost:3004/home/${userId}/matching`;
+    axios.delete(URL) 
       .then(response => { 
         if (response.status !== 200) { 
           throw new Error(response.data.message); 
         } 
         console.log(response.data.message); 
-        onMatchCancelled(); //  match is cancelled
+        onMatchCancelled(); // Inform the parent component that the match is cancelled
       }) 
       .catch(error => { 
         console.error("Error canceling the match: ", error); 
