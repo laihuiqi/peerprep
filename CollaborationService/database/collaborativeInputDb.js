@@ -48,6 +48,9 @@ const initCollaborativeCode = async (initTime, sessionId, language, userId) => {
 		const input = await getCollaborativeInput(sessionId);
 
 		if (input[0] === "None") {
+			if (language === "None") {
+				language = "python";
+			}
 			const collaborativeInput = new CollaborativeInput({
 				sessionId: sessionId,
 				initTime: initTime,
@@ -158,7 +161,7 @@ const updateInitTime = async (sessionId, initTime) => {
 	} catch (error) {
 		console.log(`Failed to update init time for ${sessionId}`);
 	}
-}
+};
 
 const updateCollaborativeLanguage = async (sessionId, language) => {
 	try {
@@ -203,7 +206,6 @@ const deleteCollaborativeInput = async (sessionId) => {
 		console.log(`Successfully deleted:`, result);
 
 		return true;
-
 	} catch (error) {
 		console.log(`Failed to delete collaborative input for ${sessionId}`);
 
