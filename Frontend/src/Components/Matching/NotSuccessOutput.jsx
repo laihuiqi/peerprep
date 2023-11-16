@@ -7,7 +7,7 @@ export const NotSuccessOutput = ({ isOpen, isClose }) => {
         return (
             <div className="output-overlay">
                 <div className="output-popup">
-                    <h3>Not Match Found!</h3>
+                    <h3>No Match Found!</h3>
                     <img src={error_icon} className="image" alt="Error icon" />
                     <p>Try Again!</p>
                     <div>

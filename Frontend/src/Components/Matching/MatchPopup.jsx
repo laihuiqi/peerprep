@@ -40,6 +40,11 @@ const MatchPopup = ({ isOpen, isClose }) => {
             topic: chosenTopic
         };
 
+        const handleMatchCancellation = () => {
+            setGoToLoadPopup(false);
+            setShowNotSuccessOutput(true);
+          };
+
        // Make a post request to backend with the payload
        const URL = `http://localhost:3004/home/${userId}`;
        axios.post(URL, payload) // replace /${props.userId} with how we access userId
@@ -121,7 +126,7 @@ const MatchPopup = ({ isOpen, isClose }) => {
                 </div>
                 <button className="match-button" onClick={initiateMatching}>Match</button>
                 </div>
-                {goToLoadPopup && <LoadPopup isOpen={true} isClose={() => setGoToLoadPopup(false)} />}
+                {goToLoadPopup && <LoadPopup isOpen={true} isClose={() => setGoToLoadPopup(false)} userId={getUserId()} onMatchCancelled={handleMatchCancellation} />}
 
                 {showSuccessOutput && 
                 <SuccessOutput isOpen={true} isClose={() => setShowSuccessOutput(false)} />}
