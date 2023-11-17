@@ -7,11 +7,14 @@ import {
  getUserPreferredLanguage,
  updateUserState,
 } from "../../User/UserState";
-import {updateUserData} from "../../User/UserServiceAPI";
+import {updateUserData, deleteUser, logoutUser} from "../../User/UserServiceAPI";
+import {useNavigate} from "react-router-dom";
 
 import edit_icon from "../Assets/pencil.png";
 
 export const UserProfile = ({setUsername}) => {
+const navigate = useNavigate();
+
  const [isEdit, setEdit] = useState(false);
  const [name, setName] = useState(getUserName());
  const [email, setEmail] = useState(getUserEmail());
@@ -22,6 +25,20 @@ export const UserProfile = ({setUsername}) => {
   updateUserState(name, email, "", lang);
   setUsername(name);
  };
+
+ const handleLogout = async () => {
+    const result = await logoutUser();
+    if(result) {
+        navigate("/login");
+    }
+ }
+
+ const handleDeleteUser = async () => {
+    const result = await deleteUser();
+    if(result) {
+        navigate("/login");
+    }
+ }
 
  return (
   <div className="profile-container">
@@ -74,7 +91,17 @@ export const UserProfile = ({setUsername}) => {
       <div className="profile-detail">{lang}</div>
      )}
     </div>
+    <div className="profile-delete-container">
+        <div className="profile-delete-btn" onClick = {(e) => {handleDeleteUser()}}>
+            Delete Account
+        </div>
+
+        <div className="logout-btn" onClick = {(e) => {handleLogout()}}>
+            Logout
+        </div>
+    </div>
    </div>
+   
 
    {isEdit ? (
     <div className="profile-submit-container">
