@@ -67,7 +67,7 @@ export const Login = ({setAction, setError}) => {
 			</div>
 			<div className="forgot-password">
 				Forgot Password?
-				<span onClick={() => resetUserPasswordUsingFirebase(userEmail)}>
+				<span onClick={() => {resetUserPasswordUsingFirebase(userEmail); setError("Password Reset Email Sent");} }>
 					Click Here.
 				</span>
 			</div>
