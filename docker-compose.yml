@@ -7,7 +7,7 @@ services:
       - 3001:3001
     volumes:
       - ./Frontend:/app
-      - /app/node_modules # Anonymous Volume
+      - /app/node_modules 
     env_file:
       - ./Frontend/.env
     networks:
@@ -19,7 +19,7 @@ services:
       - 3002:3002
     volumes:
       - ./UserService:/app
-      - /app/node_modules # Anonymous Volume
+      - /app/node_modules 
     networks:
       - peer-prep-network
   
