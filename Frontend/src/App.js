@@ -78,7 +78,7 @@ function App() {
             element={
               <ProtectedRoute
                 redirectPath="/unauthorized"
-                checkAdminStatus={true}
+                checkAdminStatus={false}
               >
                 <Questions />
               </ProtectedRoute>
