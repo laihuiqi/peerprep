@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  # Mongodb service
+  collaboration-service-database:
+    container_name: db_container_collab_service
+    image: mongo:latest
+    ports:
+      - "27021:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - my-net
+
+  # Node api service
+  collaboration-service:
+    build: .
+    ports:
+      - "3005:3005"
+    depends_on: 
+      - collaboration-service-database
+    networks:
+      - my-net
+
+volumes:
+  mongo_data: 
+    driver: local
+
+networks:
+  my-net:
+    driver: bridge

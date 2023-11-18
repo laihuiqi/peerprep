@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  history-service:
+    build: .
+    ports:
+      - 3006:3006
+    volumes:
+      - .:/app
+    networks:
+      - peer-prep-network
+    depends_on:
+      - history-service-database
+  
+  history-service-database:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    networks:
+      - peer-prep-network
+
+networks:
+  peer-prep-network:
+    driver: bridge
