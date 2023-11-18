@@ -91,15 +91,18 @@ const navigate = useNavigate();
       <div className="profile-detail">{lang}</div>
      )}
     </div>
-    <div className="profile-delete-container">
-        <div className="profile-delete-btn" onClick = {(e) => {handleDeleteUser()}}>
-            Delete Account
-        </div>
+    {!isEdit ? 
+        <div className="profile-delete-container">
+            <div className="profile-delete-btn" onClick = {(e) => {handleDeleteUser()}}>
+                Delete Account
+            </div>
 
-        <div className="logout-btn" onClick = {(e) => {handleLogout()}}>
-            Logout
-        </div>
-    </div>
+            <div className="logout-btn" onClick = {(e) => {handleLogout()}}>
+                Logout
+            </div>
+        </div> : 
+        <div ></div>
+    }
    </div>
    
 
