@@ -1,83 +1,33 @@
-# Getting Started
+# PeerPrep App
 
-## Prerequisites
+## Prerequisites 
+1. Have [Node and NPM installed](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-Install [Docker](https://www.docker.com/)
+## To Run the App
 
-## Cloning the Repository
+1. Open Terminal or Powershell.
 
-1. Open Terminal and navigate to the directory of your choice
-
+2. Navigate to directory of your choice
 ```
-cd path/to/directory
+cd <directory of your choice>
 ```
 
-2. Clone the repository into that directory
-
+3. Clone this repository into your system
 ```
 git clone https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16.git
 ```
 
-## Build and Run on Local Docker Environment
-
-Ensure that Docker and Docker Engine is up and running in your system.
-
-1. Run the following command to build the containers.
-
+4. Navigate into the Repository directory
 ```
-docker-compose build
+cd ay2324s1-course-assessment-g16
 ```
 
-2. Run the following command to start the various services and frontend
-
+5. In this Repository directory, navigate into `peer-prep` directory
 ```
-docker-compose up
+cd peer-prep
 ```
-
-3. Now you can access the frontend of the application at `http://localhost:3001/`
-
-4. For subsequent starts, you may skip the building step and run the `docker-compose up` command
-
-5. To shut down the application, open a new Terminal and run the following command to graciously shut down these containers.
-
-```
-docker-compose down
-```
-
-# Service Status
-
-## Overall Build
-
-![Overall Build](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_master_docker_services.yaml/badge.svg)
-
-## Collaboration Service Build and Test
-
-![Collaboration Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_collaboration_service.yaml/badge.svg)
-
-## Matching Service Build and Test
-
-![Matching Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_matching_service.yaml/badge.svg)
-
-## Question Service Build and Test
-
-![Question Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_question_service.yaml/badge.svg)
-
-## User Service Build and Test
-
-![User Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_user_service.yaml/badge.svg)
-
-## Communication Service Build and Test
-
-![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_communication_service.yaml/badge.svg)
-
-## GPT Service Build and Test
-
-![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_gpt_service.yaml/badge.svg)
-
-## History Service Build and Test
-
-![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_history_service.yaml/badge.svg)
-
-## Frontend Client Build and Test
-
-![Communication Service Build and Test](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16/actions/workflows/build_and_test_master_frontend_client.yaml/badge.svg)
+6. Run the command `npm i` to install dependencies.
+    
+7. Run the command `npm start` to start the app.
+    
+8. Open browser of your choice and access `http://localhost:3000/`, and you can use the app.
