@@ -105,3 +105,39 @@
     border: none;
     border-bottom: 3px solid;
    }
+
+   .profile-delete-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+   .profile-delete-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: fit-content;
+    height: 50px;
+    color: #fff;
+    background: #d63636;
+    border: none;
+    border-radius: 5px;
+    font-size: 19px;
+    cursor: pointer;
+   }
+
+   .logout-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: fit-content;
+    height: 50px;
+    color: #fff;
+    background: #000;
+    border: none;
+    border-radius: 5px;
+    font-size: 19px;
+    cursor: pointer;
+   }
