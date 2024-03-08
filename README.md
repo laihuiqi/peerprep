@@ -1,3 +1,6 @@
+# Credit original repository
+**[Original repository and contibutions](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g16)**
+
 # Getting Started
 
 ## Prerequisites
